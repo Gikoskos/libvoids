@@ -1,6 +1,7 @@
 #include "alghead.h"
 
-void printArray(int *arrayPtr,int wall){
+void printArray(int *arrayPtr,int wall)
+{
 	for(i = 0; i < ARRAY_SIZE; i++){
 		printf("%d ", *arrayPtr++);
 		if(wall == i+1) printf("\b|");
@@ -8,13 +9,15 @@ void printArray(int *arrayPtr,int wall){
 	printf("\n\n");
 }
 
-void fillArray(int *arrayPtr){
+void fillArray(int *arrayPtr)
+{
 	srand (time(NULL));
 	for(i = 0; i < ARRAY_SIZE; i++)
 		*arrayPtr++ = RANDOM_INT(30);
 }
 
-void insertionSort(int array[]){
+void insertionSort(int array[])
+{
 	int curr, index, wall;
 	
 	for(wall = 1; wall < ARRAY_SIZE; wall++){
@@ -29,7 +32,8 @@ void insertionSort(int array[]){
 	}
 }
 
-void selectionSort(int array[]){
+void selectionSort(int array[])
+{
 	int min, index, wall, c;
 	
 	for(wall = 0; wall < ARRAY_SIZE-1; wall++){
