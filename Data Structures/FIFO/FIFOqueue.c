@@ -26,7 +26,7 @@ static FIFOnode *newFIFOnode(void *node_data);
 
 static FIFOnode *newFIFOnode(void *node_data)
 {
-    FIFOnode *newnode = q_malloc(sizeof(FIFOnode));
+    FIFOnode *newnode = (FIFOnode*)q_malloc(sizeof(FIFOnode));
 
     if (!newnode) {
         fprintf(stderr, "Failed allocating memory for new node!\n");
@@ -34,13 +34,13 @@ static FIFOnode *newFIFOnode(void *node_data)
     }
 
     newnode->data = node_data;
-    newnode->next = NULL;
-    return newnode;
+    newnode->next = (FIFOnode*)NULL;
+    return (FIFOnode*)newnode;
 }
 
 FIFOqueue *newFIFOqueue(void)
 {
-    FIFOqueue *newqueue = q_malloc(sizeof(FIFOqueue));
+    FIFOqueue *newqueue = (FIFOqueue*)q_malloc(sizeof(FIFOqueue));
 
     if (!newqueue) {
         fprintf(stderr, "Failed allocating memory for new queue!\n");
@@ -82,7 +82,7 @@ void *FIFOdequeue(FIFOqueue *queue)
     void *retvalue = to_pop->data;
 
     queue->head = queue->head->next;
-    q_free(to_pop);
+    q_free((void*)to_pop);
     queue->total_nodes--;
     return retvalue;
 }
@@ -113,13 +113,13 @@ bool deleteFIFOqueue(FIFOqueue *queue, int flag)
                     break;
                 }
             }
-            q_free(to_delete);
+            q_free((void*)to_delete);
             to_delete = NULL;
             queue->total_nodes--;
         }
     }
 
-    q_free(queue);
+    q_free((void*)queue);
     queue = (FIFOqueue*)NULL;
     return true;
 }

@@ -23,10 +23,17 @@ typedef struct _FIFOqueue {
     unsigned int total_nodes;
 } FIFOqueue;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 FIFOqueue *newFIFOqueue(void);
 bool FIFOenqueue(FIFOqueue *queue, void *node_data);
 void *FIFOdequeue(FIFOqueue *queue);
 bool deleteFIFOqueue(FIFOqueue *queue, int flag);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //__FIFO_QUEUE_H
