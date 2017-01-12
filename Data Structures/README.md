@@ -23,7 +23,7 @@ Build support for other systems coming soon...
  - [ ] Double ended queue (dequeue)
  - [ ] Binary search tree (unbalanced)
  - [ ] AVL tree
- - [ ] (a, b) tree
+ - [ ] \(a, b\) tree
  - [ ] B-tree
  - [ ] Red black tree
 
