@@ -53,25 +53,28 @@ void enqueueFIFO(FIFOqueue *queue, void *node_data)
 
 void *dequeueFIFO(FIFOqueue *queue)
 {
-    if (!queue || !queue->total_nodes) //short-circuit eval protection
-        return NULL;
+    void *pData = NULL;
 
-    FIFOnode *to_pop = queue->head;
-    void *retvalue = to_pop->data;
+    if (queue && queue->total_nodes) {//short-circuit eval protection
 
-    queue->head = queue->head->next;
-    free((void*)to_pop);
-    queue->total_nodes--;
-    return retvalue;
+        FIFOnode *to_pop = queue->head;
+        pData = to_pop->data;
+
+        queue->head = queue->head->next;
+        free((void*)to_pop);
+        queue->total_nodes--;
+    }
+
+    return pData;
 }
 
-void deleteFIFO(FIFOqueue *queue, CustomDataCallback freeData)
+void deleteFIFO(FIFOqueue **queue, CustomDataCallback freeData)
 {
-    if (queue) {
+    if (queue && (*queue)) {
 
-        if (queue->total_nodes) {
+        if ((*queue)->total_nodes) {
             FIFOnode *curr;
-            for (curr = queue->head; curr && queue->total_nodes;) {
+            for (curr = (*queue)->head; curr && (*queue)->total_nodes;) {
                 FIFOnode *to_delete = curr;
                 curr = curr->next;
 
@@ -80,12 +83,12 @@ void deleteFIFO(FIFOqueue *queue, CustomDataCallback freeData)
 
                 free((void*)to_delete);
                 to_delete = NULL;
-                queue->total_nodes--;
+                (*queue)->total_nodes--;
             }
         }
 
-        free((void*)queue);
-        queue = (FIFOqueue*)NULL;
+        free(*queue);
+        *queue = NULL;
 
     }
 }

@@ -32,7 +32,7 @@ GiDS_API void enqueueFIFO(FIFOqueue *queue, void *node_data);
 
 GiDS_API void *dequeueFIFO(FIFOqueue *queue);
 
-GiDS_API void deleteFIFO(FIFOqueue *queue, CustomDataCallback freeData);
+GiDS_API void deleteFIFO(FIFOqueue **queue, CustomDataCallback freeData);
 
 GiDS_API void printFIFO(FIFOqueue *queue, CustomDataCallback printData);
 

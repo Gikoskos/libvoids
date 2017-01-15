@@ -14,5 +14,6 @@
 #include "CircularDoublyLinkedList.h"
 #include "BinarySearchTree.h"
 #include "FIFOqueue.h"
+#include "LIFOstack.h"
 
 #endif //_GiDS_SINGLE_INCLUDE_HEADER__

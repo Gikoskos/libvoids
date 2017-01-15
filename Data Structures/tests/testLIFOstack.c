@@ -11,30 +11,30 @@ int main(int argc, char *argv[])
 {
     int a[5] = {4442, 2224, 1321, 7820, 98};
     int b[3] = {6, 12, 18};
-    FIFOqueue *test = newFIFO();
+    LIFOstack *test = newLIFO();
 
     for (int i = 0; i < 5; i++) {
-        enqueueFIFO(test, (void*)&a[i]);
+        pushLIFO(test, (void*)&a[i]);
     }
 
-    printFIFO(test, printIntData);
+    printLIFO(test, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 5; i++) {
-        printf("dequeueFIFO = %d\n", *(int*)dequeueFIFO(test));
+        printf("popLIFO = %d\n", *(int*)popLIFO(test));
     }
 
     for (int i = 0; i < 3; i++) {
-        enqueueFIFO(test, (void*)&b[i]);
+        pushLIFO(test, (void*)&b[i]);
     }
 
-    printFIFO(test, printIntData);
+    printLIFO(test, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 2; i++) {
-        printf("dequeueFIFO = %d\n", *(int*)dequeueFIFO(test));
+        printf("popLIFO = %d\n", *(int*)popLIFO(test));
     }
 
-    deleteFIFO(&test, NULL);
+    deleteLIFO(&test, NULL);
     return 0;
 }
