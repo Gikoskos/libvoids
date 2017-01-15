@@ -6,10 +6,32 @@
 #include <stdlib.h>
 #include "DoublyLinkedList.h"
 
-void insertNodeDLList(DLListNode **dllHead, void *pData)
+DLListNode *insertNodeDLList(DLListNode **dllHead, void *pData)
 {
+    DLListNode *new_node = NULL;
+
     if (dllHead) {
-        DLListNode *new_node = malloc(sizeof(DLListNode));
+        new_node = malloc(sizeof(DLListNode));
+
+        new_node->pData = pData;
+        new_node->prv = NULL;
+        new_node->nxt = *dllHead;
+
+        if (*dllHead)
+            (*dllHead)->prv = new_node;
+
+        *dllHead = new_node;
+    }
+
+    return new_node;
+}
+
+DLListNode *appendNodeDLList(DLListNode **dllHead, void *pData)
+{
+    DLListNode *new_node = NULL;
+
+    if (dllHead) {
+        new_node = malloc(sizeof(DLListNode));
 
         new_node->pData = pData;
         new_node->nxt = new_node->prv = NULL;
@@ -25,6 +47,8 @@ void insertNodeDLList(DLListNode **dllHead, void *pData)
             new_node->prv = curr;
         }
     }
+
+    return new_node;
 }
 
 void *deleteNodeDLList(DLListNode **dllHead, DLListNode *dllToDelete)
@@ -39,13 +63,11 @@ void *deleteNodeDLList(DLListNode **dllHead, DLListNode *dllToDelete)
         if (curr) {
             pRet = curr->pData;
                
-            if (curr->nxt) {
+            if (curr->nxt)
                 curr->nxt->prv = curr->prv;
-            }
 
-            if (curr->prv) {
+            if (curr->prv)
                 curr->prv->nxt = curr->nxt;
-            }
 
             if (curr == *dllHead)
                 *dllHead = curr->nxt;
@@ -75,13 +97,13 @@ void printDLList(DLListNode *dllHead, CustomDataCallback printData)
 void deleteDLList(DLListNode **dllHead, CustomDataCallback freeData)
 {
     if (dllHead) {
-        DLListNode *curr;
+        DLListNode *curr, *tmp;
 
         for (curr = *dllHead; curr;) {
             if (freeData)
                 freeData(curr->pData);
 
-            DLListNode *tmp = curr;
+            tmp = curr;
             curr = curr->nxt;
             free(tmp);
         }

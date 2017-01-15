@@ -13,7 +13,7 @@ Build support for other systems coming soon...
 ## Data Structures
 
 - [x] Singly linked list
-- [ ] Singly linked list with sentinel
+- [x] Singly linked list with sentinel
 - [x] Doubly linked list
 - [ ] Doubly linked list with sentinel
 - [ ] Circular singly linked list
@@ -21,7 +21,7 @@ Build support for other systems coming soon...
 - [x] FIFO
 - [ ] Stack
 - [ ] Double ended queue (dequeue)
-- [ ] Binary search tree (unbalanced)
+- [x] Binary search tree (unbalanced)
 - [ ] AVL tree
 - [ ] \(a, b\) tree
 - [ ] B-tree

@@ -21,7 +21,9 @@ typedef struct _DLListNode {
 
 
 
-GiDS_API void insertNodeDLList(DLListNode **dllHead, void *pData);
+GiDS_API DLListNode *insertNodeDLList(DLListNode **dllHead, void *pData);
+
+GiDS_API DLListNode *appendNodeDLList(DLListNode **dllHead, void *pData);
 
 GiDS_API void *deleteNodeDLList(DLListNode **dllHead, DLListNode *dllToDelete);
 

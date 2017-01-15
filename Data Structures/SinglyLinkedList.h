@@ -21,7 +21,9 @@ typedef struct _SLListNode {
 
 
 
-GiDS_API void insertNodeSLList(SLListNode **sllHead, void *pData);
+GiDS_API SLListNode *insertNodeSLList(SLListNode **sllHead, void *pData);
+
+GiDS_API SLListNode *appendNodeSLList(SLListNode **sllHead, void *pData);
 
 GiDS_API void *deleteNodeSLList(SLListNode **sllHead, SLListNode *sllToDelete);
 

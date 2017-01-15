@@ -6,10 +6,12 @@
 #include <stdlib.h>
 #include "CircularDoublyLinkedList.h"
 
-void insertFirstNodeCDLList(CDLListNode **cdllHead, void *pData)
+CDLListNode *insertFirstNodeCDLList(CDLListNode **cdllHead, void *pData)
 {
+    CDLListNode *new_node = NULL;
+
     if (cdllHead) {
-        CDLListNode *new_node = malloc(sizeof(CDLListNode));
+        new_node = malloc(sizeof(CDLListNode));
 
         new_node->pData = pData;
 
@@ -24,12 +26,16 @@ void insertFirstNodeCDLList(CDLListNode **cdllHead, void *pData)
 
         *cdllHead = new_node;
     }
+
+    return new_node;
 }
 
-void insertLastNodeCDLList(CDLListNode **cdllHead, void *pData)
+CDLListNode *insertLastNodeCDLList(CDLListNode **cdllHead, void *pData)
 {
+    CDLListNode *new_node = NULL;
+
     if (cdllHead) {
-        CDLListNode *new_node = malloc(sizeof(CDLListNode));
+        new_node = malloc(sizeof(CDLListNode));
 
         new_node->pData = pData;
 
@@ -42,6 +48,8 @@ void insertLastNodeCDLList(CDLListNode **cdllHead, void *pData)
             (*cdllHead)->prv = new_node;
         }
     }
+
+    return new_node;
 }
 
 void *deleteNodeCDLList(CDLListNode **cdllHead, CDLListNode *cdllToDelete)
@@ -108,7 +116,7 @@ void printCDLList(CDLListNode *cdllHead, CustomDataCallback printData)
 void deleteCDLList(CDLListNode **cdllHead, CustomDataCallback freeData)
 {
     if (cdllHead && *cdllHead) {
-        CDLListNode *curr;
+        CDLListNode *curr, *tmp;
 
         (*cdllHead)->prv->nxt = NULL;
 
@@ -116,7 +124,7 @@ void deleteCDLList(CDLListNode **cdllHead, CustomDataCallback freeData)
             if (freeData)
                 freeData(curr->pData);
 
-            CDLListNode *tmp = curr;
+            tmp = curr;
             curr = curr->nxt;
             free(tmp);
         }

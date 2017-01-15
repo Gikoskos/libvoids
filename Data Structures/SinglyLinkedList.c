@@ -6,10 +6,28 @@
 #include <stdlib.h>
 #include "SinglyLinkedList.h"
 
-void insertNodeSLList(SLListNode **sllHead, void *pData)
+SLListNode *insertNodeSLList(SLListNode **sllHead, void *pData)
 {
+    SLListNode *new_node = NULL;
+
     if (sllHead) {
-        SLListNode *new_node = malloc(sizeof(SLListNode));
+        new_node = malloc(sizeof(SLListNode));
+
+        new_node->pData = pData;
+        new_node->nxt = *sllHead;
+
+        *sllHead = new_node;
+    }
+
+    return new_node;
+}
+
+SLListNode *appendNodeSLList(SLListNode **sllHead, void *pData)
+{
+    SLListNode *new_node = NULL;
+
+    if (sllHead) {
+        new_node = malloc(sizeof(SLListNode));
 
         new_node->pData = pData;
         new_node->nxt = NULL;
@@ -24,6 +42,8 @@ void insertNodeSLList(SLListNode **sllHead, void *pData)
             curr->nxt = new_node;
         }
     }
+
+    return new_node;
 }
 
 void *deleteNodeSLList(SLListNode **sllHead, SLListNode *sllToDelete)
@@ -41,7 +61,6 @@ void *deleteNodeSLList(SLListNode **sllHead, SLListNode *sllToDelete)
 
             if (prev) {
                 prev->nxt = curr->nxt;
-                *sllHead = prev;
             } else {
                 *sllHead = curr->nxt;
             }
@@ -71,13 +90,13 @@ void printSLList(SLListNode *sllHead, CustomDataCallback printData)
 void deleteSLList(SLListNode **sllHead, CustomDataCallback freeData)
 {
     if (sllHead) {
-        SLListNode *curr;
+        SLListNode *curr, *tmp;
 
         for (curr = *sllHead; curr;) {
             if (freeData)
                 freeData(curr->pData);
 
-            SLListNode *tmp = curr;
+            tmp = curr;
             curr = curr->nxt;
             free(tmp);
         }
