@@ -20,7 +20,6 @@ BSTreeNode *insertNodeBSTree(BSTreeNode **bstRoot, unsigned long key, void *pDat
         new_node->key = key;
         new_node->pData = pData;
         //done by calloc
-        //new_node->depth = 0;
         //new_node->right = new_node->left = new_node->parent = NULL;
 
         if (!(*bstRoot)) {
@@ -29,7 +28,6 @@ BSTreeNode *insertNodeBSTree(BSTreeNode **bstRoot, unsigned long key, void *pDat
             BSTreeNode *curr = *bstRoot, *parent = NULL;
 
             while (1) {
-                new_node->depth++;
 
                 if (key > curr->key) {
 
@@ -71,14 +69,12 @@ void *deleteNodeBSTree(BSTreeNode **bstRoot, BSTreeNode *bstToDelete)
     if (bstRoot) {
         if (*bstRoot && bstToDelete) {
 
-            BSTreeNode *parent = bstToDelete->parent;
-
             //if the node we want to delete has two children nodes
             //we switch it with the first leftmost leaf node from the right subtree
             if (bstToDelete->right && bstToDelete->left) {
 
                 //temporary value to store the data that is being swapped
-                BSTreeNode bstTmp;
+                BSTreeNode *bstTmp;
                 BSTreeNode *bstFirstLeaf = bstToDelete->right;
 
                 while (bstFirstLeaf->left && bstFirstLeaf->right) {
@@ -88,14 +84,21 @@ void *deleteNodeBSTree(BSTreeNode **bstRoot, BSTreeNode *bstToDelete)
                         bstFirstLeaf = bstFirstLeaf->right;
                 }
 
-                //swap the two nodes
-                memcpy(&bstTmp, bstFirstLeaf, sizeof(BSTreeNode));
-                memcpy(bstFirstLeaf, bstToDelete, sizeof(BSTreeNode));
-                memcpy(bstToDelete, &bstTmp, sizeof(BSTreeNode));
+                //swap the *parent, *left and *right pointers of the two nodes
+                bstTmp = bstToDelete->parent;
+                bstToDelete->parent = bstFirstLeaf->parent;
+                bstFirstLeaf->parent = bstTmp;
+                bstFirstLeaf->left = bstToDelete->left;
+                bstFirstLeaf->right = bstToDelete->right;
+                //since the node we want to delete, becomes a leaf now,
+                //its children are NULLed
+                bstToDelete->left = bstToDelete->right = NULL;
 
             }
 
             //now the node we want to delete has AT MOST one child node
+
+            BSTreeNode *parent = bstToDelete->parent;
 
             //if the node we want to delete ISN'T the root node
             if (parent) {
@@ -112,7 +115,7 @@ void *deleteNodeBSTree(BSTreeNode **bstRoot, BSTreeNode *bstToDelete)
                 }
             //else if the node we want to delete IS the root node
             } else {
-                //change bstRoot accordingly, so that it points to the new root
+                //change bstRoot accordingly, so that it points to the new root (or NULL, if it's the only node in the tree)
                 *bstRoot = (bstToDelete->right) ? bstToDelete->right : bstToDelete->left;
             }
 

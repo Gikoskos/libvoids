@@ -15,7 +15,7 @@ extern "C" {
 
 
 typedef struct _BSTreeNode {
-    unsigned long key, depth;
+    unsigned long key;
     void *pData;
     struct _BSTreeNode *left, *right, *parent;
 } BSTreeNode;

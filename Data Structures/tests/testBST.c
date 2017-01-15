@@ -5,13 +5,9 @@
 
 void printIntData(void *param)
 {
-    int i;
     BSTreeNode *treeNode = (BSTreeNode *)param;
 
-    for (i = 0; i < treeNode->depth; i++)
-        putchar('\t');
-
-    printf("node %lu at depth %lu has data %d\n", treeNode->key, treeNode->depth, *(int*)(treeNode->pData));
+    printf("node %lu has data %d\n", treeNode->key, *(int*)(treeNode->pData));
 }
 
 int main(int argc, char *argv[])
@@ -37,7 +33,7 @@ int main(int argc, char *argv[])
     }
 
     //testing traversals
-    printf("\npre-order traversal:\n");
+    /*printf("\npre-order traversal:\n");
     traverseBSTree(bstTest, PRE_ORDER, printIntData);
 
     printf("\nin-order traversal:\n");
@@ -50,7 +46,7 @@ int main(int argc, char *argv[])
     traverseBSTree(bstTest, BREADTH_FIRST, printIntData);
 
     printf("\neuler traversal:\n");
-    traverseBSTree(bstTest, EULER, printIntData);
+    traverseBSTree(bstTest, EULER, printIntData);*/
 
     for (unsigned long i = 0; i < 50; i++) {
         int *data = (int*) deleteByKeyBSTree(&bstTest, i);
@@ -58,6 +54,8 @@ int main(int argc, char *argv[])
         if (data) {
             printf("\nDeleted node %lu with data %d\n", i, *data);
             free(data);
+            printf("in-order traversal (the node numbers should be in ascending order):\n");
+            traverseBSTree(bstTest, IN_ORDER, printIntData);
         }
     }
     deleteBSTree(&bstTest, free);
