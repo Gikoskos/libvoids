@@ -19,7 +19,7 @@ Build support for other systems coming soon...
 - [ ] Circular singly linked list
 - [x] Circular doubly linked list
 - [x] FIFO
-- [ ] Stack
+- [x] Stack
 - [ ] Double ended queue (dequeue)
 - [x] Binary search tree (unbalanced)
 - [ ] AVL tree
