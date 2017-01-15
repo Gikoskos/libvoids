@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -pedantic -c
+CFLAGS = -std=c99 -Wall -Wextra -pedantic -c
 CPP = -DEXPORT_API_GiDS_DLL
 
 SRCS = $(wildcard *.c)

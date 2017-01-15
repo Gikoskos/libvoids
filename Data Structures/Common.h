@@ -2,6 +2,7 @@
 *                   Common.h                    *
 *           George Koskeridis (C) 2016          *
 \***********************************************/
+//LIBRARY INTERNAL HEADER. DO NOT INCLUDE THIS ANYWHERE ELSE.
 
 #ifndef __GiDS_COMMON_H
 #define __GiDS_COMMON_H
@@ -12,8 +13,20 @@
 # else
 #  define GiDS_API __declspec(dllimport)
 # endif
+# define GiDS_LOCAL
 #else
-# define GiDS_API
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define GiDS_API    __attribute__ ((visibility ("default")))
+#   define GiDS_LOCAL  __attribute__ ((visibility ("hidden")))
+#  else
+#   define GiDS_API
+#   define GiDS_LOCAL
+#  endif
+# else
+#  define GiDS_API
+#  define GiDS_LOCAL
+# endif
 #endif
 
 typedef void (*CustomDataCallback)(void*);

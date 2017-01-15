@@ -1,7 +1,7 @@
 CC = gcc
 CPP = -I./../
 LINKER = -L./../ -lGiDS
-CFLAGS = -Wall
+CFLAGS = -Wall -std=c99
 
 SRCS = $(wildcard *.c)
 EXES = $(patsubst %.c,%.exe,$(SRCS))
