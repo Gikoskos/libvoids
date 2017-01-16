@@ -37,18 +37,20 @@ FIFOqueue *newFIFO(void)
 
 void enqueueFIFO(FIFOqueue *queue, void *node_data)
 {
-    FIFOnode *to_inject = newFIFOnode(node_data);
+    if (queue) {
+        FIFOnode *to_inject = newFIFOnode(node_data);
 
-    if (!to_inject || !queue)
-        return;
+        if (to_inject) {
+            if (!queue->total_nodes)
+                queue->head = to_inject;
+            else
+                queue->tail->next = to_inject;
 
-    if (!queue->total_nodes)
-        queue->head = to_inject;
-    else
-        queue->tail->next = to_inject;
+            queue->tail = to_inject;
+            queue->total_nodes++;
+        }
 
-    queue->tail = to_inject;
-    queue->total_nodes++;
+    }
 }
 
 void *dequeueFIFO(FIFOqueue *queue)

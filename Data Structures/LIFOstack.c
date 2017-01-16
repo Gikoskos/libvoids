@@ -32,18 +32,18 @@ LIFOstack *newLIFO(void)
 
 void pushLIFO(LIFOstack *stack, void *node_data)
 {
-    LIFOnode *to_push = newLIFOnode(node_data);
+    if (stack) {
+        LIFOnode *to_push = newLIFOnode(node_data);
 
-    if (to_push && stack) {
+        if (to_push) {
+            if (!stack->total_nodes)
+                stack->head = to_push;
+            else
+                stack->tail->next = to_push;
 
-        if (!stack->total_nodes)
-            stack->head = to_push;
-        else
-            stack->tail->next = to_push;
-
-        stack->tail = to_push;
-        stack->total_nodes++;
-
+            stack->tail = to_push;
+            stack->total_nodes++;
+        }
     }
 }
 
