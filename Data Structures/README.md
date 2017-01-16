@@ -15,7 +15,7 @@ Build support for other systems coming soon...
 - [x] Singly linked list
 - [x] Singly linked list with sentinel
 - [x] Doubly linked list
-- [ ] Doubly linked list with sentinel
+- [x] Doubly linked list with sentinel
 - [ ] Circular singly linked list
 - [x] Circular doubly linked list
 - [x] FIFO
