@@ -118,6 +118,8 @@ void deleteCDLList(CDLListNode **cdllHead, CustomDataCallback freeData)
     if (cdllHead && *cdllHead) {
         CDLListNode *curr, *tmp;
 
+        //make the last node point to NULL
+        //so that we can traverse the list as a non-circular list
         (*cdllHead)->prv->nxt = NULL;
 
         for (curr = *cdllHead; curr;) {

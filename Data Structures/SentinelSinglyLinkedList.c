@@ -94,6 +94,9 @@ SLListNode *findNodeSSLList(SSLList *ssllList, void *pToFind)
     if (ssllList) {
         ssllList->sentinel->pData = pToFind;
         for (curr = ssllList->head; curr->pData != ssllList->sentinel; curr = curr->nxt);
+
+        if (curr == ssllList->sentinel)
+            curr = NULL;
     }
 
     return curr;
@@ -101,8 +104,9 @@ SLListNode *findNodeSSLList(SSLList *ssllList, void *pToFind)
 
 void printSSLList(SSLList *ssllList, CustomDataCallback printData)
 {
-    for (SLListNode *curr = ssllList->head; curr != ssllList->sentinel; curr = curr->nxt)
-        printData(curr->pData);
+    if (ssllList)
+        for (SLListNode *curr = ssllList->head; curr != ssllList->sentinel; curr = curr->nxt)
+            printData(curr->pData);
 }
 
 void deleteSSLList(SSLList **ssllList, CustomDataCallback freeData)
@@ -122,7 +126,7 @@ void deleteSSLList(SSLList **ssllList, CustomDataCallback freeData)
         if (*ssllList) {
             free((*ssllList)->sentinel);
             free(*ssllList);
+            *ssllList = NULL;
         }
-        *ssllList = NULL;
     }
 }

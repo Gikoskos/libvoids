@@ -68,8 +68,7 @@ void *deleteNodeDLList(DLListNode **dllHead, DLListNode *dllToDelete)
 
             if (curr->prv)
                 curr->prv->nxt = curr->nxt;
-
-            if (curr == *dllHead)
+            else
                 *dllHead = curr->nxt;
 
             free(curr);

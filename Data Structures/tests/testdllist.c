@@ -14,15 +14,25 @@ int main(int argc, char *argv[])
     int arr[] = {42, 2, 31, 4, 5, 55, 7, 77, 9, 232};
 
     for (int i = 0; i < 10; i++) {
-        insertNodeDLList(&myList, &arr[i]);
+        if (i < 5)
+            insertNodeDLList(&myList, &arr[i]);
+        else
+            appendNodeDLList(&myList, &arr[i]);
     }
 
     printDLList(myList, printIntData);
+    putchar('\n');
 
-    //by this point the list is empty, so this line won't do anything
     deleteNodeDLList(&myList, findNodeDLList(myList, &arr[6]));
+    printDLList(myList, printIntData);
+    putchar('\n');
+
     for (int i = 0; i < 10; i++) {
-        deleteNodeDLList(&myList, findNodeDLList(myList, &arr[i]));
+        if (deleteNodeDLList(&myList, findNodeDLList(myList, &arr[i]))) {
+            printf("\nDeleted node %d successfully!\n", arr[i]);
+            printDLList(myList, printIntData);
+            putchar('\n');
+        }
     }
 
     printDLList(myList, printIntData);

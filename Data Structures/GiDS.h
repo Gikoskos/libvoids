@@ -9,8 +9,9 @@
 #include "Common.h"
 
 #include "SinglyLinkedList.h"
-#include "SentinelSinglyLinkedList.h"
 #include "DoublyLinkedList.h"
+#include "SentinelSinglyLinkedList.h"
+#include "SentinelDoublyLinkedList.h"
 #include "CircularDoublyLinkedList.h"
 #include "BinarySearchTree.h"
 #include "FIFOqueue.h"
