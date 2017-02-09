@@ -5,10 +5,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include "BinarySearchTree.h"
 #include "FIFOqueue.h"
 
-#define isLeafNode(x) (!(x->right || x-left))
+#define isLeafNode(x) (!(x->right || x->left))
 
 
 static void pre_orderTraversal(BSTreeNode *bstRoot, CustomDataCallback callback);
@@ -22,7 +23,7 @@ BSTreeNode *insertNodeBSTree(BSTreeNode **bstRoot, unsigned long key, void *pDat
 {
     BSTreeNode *new_node = NULL;
 
-    if (bstRoot) {
+    if (bstRoot && key < ULONG_MAX) {
 
         new_node = calloc(1, sizeof(BSTreeNode));
 
@@ -148,7 +149,6 @@ void *deleteNodeBSTree(BSTreeNode **bstRoot, BSTreeNode *bstToDelete)
 
 void *deleteByKeyBSTree(BSTreeNode **bstRoot, unsigned long key)
 {
-    //inefficient solution
     return deleteNodeBSTree(bstRoot, findNodeBSTree(*bstRoot, key));
 }
 

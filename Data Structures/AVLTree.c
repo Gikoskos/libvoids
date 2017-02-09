@@ -5,9 +5,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include "AVLTree.h"
 
-#define isLeafNode(x) (!(x->right || x-left))
+#define isLeafNode(x) (!(x->right || x->left))
 
 static void pre_orderTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback);
 static void in_orderTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback);
@@ -19,35 +20,37 @@ static long balanceFactor(AVLTreeNode *avltNode);
 static void correctNodeHeight(AVLTreeNode *avltNode);
 static void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode);
 
-#include <stdint.h>
-int isBSTUtil(AVLTreeNode* node, unsigned long min, unsigned long max);
+
+static int isBSTUtil(AVLTreeNode* node, unsigned long min, unsigned long max);
+
+
 int isBST(AVLTreeNode* node)
-{ 
-    return(isBSTUtil(node, 0, UINT32_MAX)); 
-} 
+{
+    return(isBSTUtil(node, 0, ULONG_MAX)); 
+}
 
 int isBSTUtil(AVLTreeNode* node, unsigned long min, unsigned long max) 
-{ 
+{
     /* an empty tree is BST */
-    if (node==NULL) 
+    if (node==NULL)
         return 1;
-       
-    /* false if this node violates the min/max constraint */ 
-    if (node->key < min || node->key > max) 
-        return 0; 
 
-    /* otherwise check the subtrees recursively, 
+    /* false if this node violates the min/max constraint */
+    if (node->key < min || node->key > max)
+        return 0;
+
+    /* otherwise check the subtrees recursively,
     tightening the min or max constraint */
     return
         isBSTUtil(node->left, min, node->key-1) &&  // Allow only distinct values
         isBSTUtil(node->right, node->key+1, max);  // Allow only distinct values
-} 
+}
 
 AVLTreeNode *insertNodeAVLTree(AVLTreeNode **avltRoot, unsigned long key, void *pData)
 {
     AVLTreeNode *new_node = NULL;
 
-    if (avltRoot) {
+    if (avltRoot && key < ULONG_MAX) {
 
         new_node = calloc(1, sizeof(AVLTreeNode));
 
@@ -131,18 +134,17 @@ void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
 
         AVLTreeNode *curr = avltStartNode->parent;
 
-        correctNodeHeight(curr);
-
         //climb the path up to the root
-        while (curr->parent) {
+        while (curr) {
 
+            correctNodeHeight(curr);
             long bf = balanceFactor(curr);
 
             //if the left subtree is heavier
             if (bf < -1) {
 
                 //if the right subtree of the left subtree is heavier
-                if (balanceFactor(curr->left) > 1) {
+                if (balanceFactor(curr->left) > 0) {
                     /**************************************
                      perform left-right rotation
                       a                a
@@ -159,21 +161,17 @@ void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
 
                     //left rotation
                     c->left = b;
+                    c->parent = a;
                     b->parent = c;
                     a->left = c;
-                    c->parent = a;
-
-                    b->height--;
+                    b->right = NULL;
 
                     //right rotation
-                    a->left = c->right;
+                    //a->left = c->right;
                     c->right = a;
-                    c->parent = a->parent;
-                    c->parent->left = c;
+                    a->left = c;
                     a->parent = c;
-
-                    a->height-=2;
-                    correctNodeHeight(c);
+                    a->left = NULL;
 
                 } else {
                     /**********************
@@ -189,19 +187,21 @@ void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
                     a = curr;
                     b = a->left;
 
-                    a->left = b->right;
+                    //a->left = b->right;
                     b->right = a;
                     b->parent = a->parent;
-                    b->parent->left = b;
+
+                    //b->parent->left = b;
                     a->parent = b;
 
                 }
 
+                break;
             //else if the right subtree is heavier
             } else if (bf > 1) {
 
                 //if the left subtree of the right subtree is heavier
-                if (balanceFactor(curr->right) > 1) {
+                if (balanceFactor(curr->right) < 0) {
                     /***************************************
                      perform right-left rotation
                     a                a
@@ -251,6 +251,7 @@ void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
 
                 }
 
+                break;
             }
 
             curr = curr->parent;
@@ -265,7 +266,7 @@ void correctNodeHeight(AVLTreeNode *avltNode)
 
         unsigned long right_height, left_height;
 
-        right_height = left_height = (unsigned long)-1;
+        right_height = left_height = (unsigned long)-1; //ULONG_MAX
 
         if (avltNode->right)
             right_height = avltNode->right->height;

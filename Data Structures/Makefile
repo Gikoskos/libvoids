@@ -30,11 +30,7 @@ $(DLLRESOBJ): $(DLLRES)
 
 $(DLL): $(DLLRESOBJ) $(OBJS)
 	$(CC) -shared -o $@ $^ -Wl,--output-def=$(DEFFILE) -Wl,--dll -Wl,-no-undefined,--enable-runtime-pseudo-reloc,--out-implib,$(STATIC)
-	@echo off
-	@copy $@ tests /Y
-	@echo on
+	@xcopy $@ tests /Y
 
 clean:
-	@echo off
-	@del *.o *.exe *.a *.lib *.dll *.def
-	@echo on
+	@rm *.o *.a *.dll *.def
