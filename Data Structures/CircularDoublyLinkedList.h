@@ -29,7 +29,7 @@ GiDS_API void *deleteNodeCDLList(CDLListNode **cdllHead, CDLListNode *cdllToDele
 
 GiDS_API CDLListNode *findNodeCDLList(CDLListNode *cdllHead, void *pToFind);
 
-GiDS_API void printCDLList(CDLListNode *cdllHead, CustomDataCallback printData);
+GiDS_API void traverseCDLList(CDLListNode *cdllHead, CustomDataCallback handleData);
 
 GiDS_API void deleteCDLList(CDLListNode **cdllHead, CustomDataCallback freeData);
 

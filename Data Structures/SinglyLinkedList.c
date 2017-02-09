@@ -81,10 +81,11 @@ SLListNode *findNodeSLList(SLListNode *sllHead, void *pToFind)
     return curr;
 }
 
-void printSLList(SLListNode *sllHead, CustomDataCallback printData)
+void traverseSLList(SLListNode *sllHead, CustomDataCallback handleData)
 {
-    for (SLListNode *curr = sllHead; curr; curr = curr->nxt)
-        printData(curr->pData);
+    if (sllHead && handleData)
+        for (SLListNode *curr = sllHead; curr; curr = curr->nxt)
+            handleData(curr->pData);
 }
 
 void deleteSLList(SLListNode **sllHead, CustomDataCallback freeData)

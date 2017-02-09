@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
         enqueueFIFO(test, (void*)&a[i]);
     }
 
-    printFIFO(test, printIntData);
+    traverseFIFO(test, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 5; i++) {
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
         enqueueFIFO(test, (void*)&b[i]);
     }
 
-    printFIFO(test, printIntData);
+    traverseFIFO(test, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 2; i++) {

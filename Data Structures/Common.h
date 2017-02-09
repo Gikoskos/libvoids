@@ -31,5 +31,13 @@
 
 typedef void (*CustomDataCallback)(void*);
 
+typedef enum _TreeTraversalMethod {
+    PRE_ORDER,
+    IN_ORDER,
+    POST_ORDER,
+    BREADTH_FIRST, //level-order
+    EULER
+} TreeTraversalMethod;
+
 
 #endif //__GiDS_COMMON_H

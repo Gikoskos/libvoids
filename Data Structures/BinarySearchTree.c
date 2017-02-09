@@ -5,9 +5,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h> //memcpy
 #include "BinarySearchTree.h"
-#include "TreeTraversals.h"
+#include "FIFOqueue.h"
+
+#define isLeafNode(x) (!(x->right || x-left))
+
+
+static void pre_orderTraversal(BSTreeNode *bstRoot, CustomDataCallback callback);
+static void in_orderTraversal(BSTreeNode *bstRoot, CustomDataCallback callback);
+static void post_orderTraversal(BSTreeNode *bstRoot, CustomDataCallback callback);
+static void breadth_firstTraversal(BSTreeNode *bstRoot, CustomDataCallback callback);
+static void eulerTraversal(BSTreeNode *bstRoot, CustomDataCallback callback);
+
 
 BSTreeNode *insertNodeBSTree(BSTreeNode **bstRoot, unsigned long key, void *pData)
 {
@@ -77,7 +86,7 @@ void *deleteNodeBSTree(BSTreeNode **bstRoot, BSTreeNode *bstToDelete)
                 BSTreeNode *bstTmp;
                 BSTreeNode *bstFirstLeaf = bstToDelete->right;
 
-                while (bstFirstLeaf->left && bstFirstLeaf->right) {
+                while ( !isLeafNode(bstFirstLeaf) ) {
                     if (bstFirstLeaf->left)
                         bstFirstLeaf = bstFirstLeaf->left;
                     else
@@ -105,10 +114,10 @@ void *deleteNodeBSTree(BSTreeNode **bstRoot, BSTreeNode *bstToDelete)
                 //if the key of the node we want to delete, is bigger
                 //than the key of its parent, then it's a right node
                 if (bstToDelete->key > parent->key) {
-                    //so we change the right node of the parent so
+                    //and we change the right node of the parent so
                     //that it points to either the right node of the node we
-                    //want to delete, or the right node, depending on which one
-                    //is not NULL
+                    //want to delete, or the left node, depending on which one
+                    //is not NULL (if both are NULL then we point to NULL)
                     parent->right = (bstToDelete->right) ? bstToDelete->right : bstToDelete->left;
                 } else { //if the key of the parent is smaller, it's a left node
                     parent->left = (bstToDelete->right) ? bstToDelete->right : bstToDelete->left;
@@ -139,6 +148,7 @@ void *deleteNodeBSTree(BSTreeNode **bstRoot, BSTreeNode *bstToDelete)
 
 void *deleteByKeyBSTree(BSTreeNode **bstRoot, unsigned long key)
 {
+    //inefficient solution
     return deleteNodeBSTree(bstRoot, findNodeBSTree(*bstRoot, key));
 }
 
@@ -160,7 +170,7 @@ BSTreeNode *findNodeBSTree(BSTreeNode *bstRoot, unsigned long key)
     return curr;
 }
 
-void traverseBSTree(BSTreeNode *bstRoot, BSTreeTraversalMethod traversal, CustomDataCallback callback)
+void traverseBSTree(BSTreeNode *bstRoot, TreeTraversalMethod traversal, CustomDataCallback callback)
 {
     if (callback && bstRoot) {
         switch (traversal) {
@@ -228,5 +238,70 @@ void deleteBSTree(BSTreeNode **bstRoot, CustomDataCallback freeData)
         }
 
         *bstRoot = NULL;
+    }
+}
+
+
+//library internal functions to traverse binary tree data structures
+//no error checking required
+
+#include "FIFOqueue.h"
+
+void pre_orderTraversal(BSTreeNode *bstRoot, CustomDataCallback callback)
+{
+    if (bstRoot) {
+        callback(bstRoot);
+        pre_orderTraversal(bstRoot->left, callback);
+        pre_orderTraversal(bstRoot->right, callback);
+    }
+}
+
+void in_orderTraversal(BSTreeNode *bstRoot, CustomDataCallback callback)
+{
+    if (bstRoot) {
+        in_orderTraversal(bstRoot->left, callback);
+        callback(bstRoot);
+        in_orderTraversal(bstRoot->right, callback);
+    }
+}
+
+void post_orderTraversal(BSTreeNode *bstRoot, CustomDataCallback callback)
+{
+    if (bstRoot) {
+        post_orderTraversal(bstRoot->left, callback);
+        post_orderTraversal(bstRoot->right, callback);
+        callback(bstRoot);
+    }
+}
+
+void breadth_firstTraversal(BSTreeNode *bstRoot, CustomDataCallback callback)
+{
+    BSTreeNode *curr;
+    FIFOqueue *levelFIFO = newFIFO();
+
+    enqueueFIFO(levelFIFO, bstRoot);
+
+    while (levelFIFO->total_nodes) {
+        curr = (BSTreeNode *)dequeueFIFO(levelFIFO);
+        callback(curr);
+
+        if (curr->right)
+            enqueueFIFO(levelFIFO, curr->right);
+        if (curr->left)
+            enqueueFIFO(levelFIFO, curr->left);
+    }
+
+    deleteFIFO(&levelFIFO, NULL);
+}
+
+void eulerTraversal(BSTreeNode *bstRoot, CustomDataCallback callback)
+{
+    if (bstRoot) {
+        callback(bstRoot);
+
+        eulerTraversal(bstRoot->left, callback);
+        callback(bstRoot);
+        eulerTraversal(bstRoot->right, callback);
+        callback(bstRoot);
     }
 }

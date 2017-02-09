@@ -29,7 +29,7 @@ GiDS_API void *deleteNodeSLList(SLListNode **sllHead, SLListNode *sllToDelete);
 
 GiDS_API SLListNode *findNodeSLList(SLListNode *sllHead, void *pToFind);
 
-GiDS_API void printSLList(SLListNode *sllHead, CustomDataCallback printData);
+GiDS_API void traverseSLList(SLListNode *sllHead, CustomDataCallback handleData);
 
 GiDS_API void deleteSLList(SLListNode **sllHead, CustomDataCallback freeData);
 

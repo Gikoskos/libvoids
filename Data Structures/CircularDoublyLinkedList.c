@@ -101,13 +101,13 @@ CDLListNode *findNodeCDLList(CDLListNode *cdllHead, void *pToFind)
     return NULL;
 }
 
-void printCDLList(CDLListNode *cdllHead, CustomDataCallback printData)
+void traverseCDLList(CDLListNode *cdllHead, CustomDataCallback handleData)
 {
-    if (cdllHead) {
+    if (cdllHead && handleData) {
         CDLListNode *curr = cdllHead;
 
         do {
-            printData(curr->pData);
+            handleData(curr->pData);
             curr = curr->nxt;
         } while (curr != cdllHead);
     }

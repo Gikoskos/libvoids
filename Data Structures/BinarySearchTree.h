@@ -20,14 +20,6 @@ typedef struct _BSTreeNode {
     struct _BSTreeNode *left, *right, *parent;
 } BSTreeNode;
 
-typedef enum _BSTreeTraversalMethod {
-    PRE_ORDER,
-    IN_ORDER,
-    POST_ORDER,
-    BREADTH_FIRST, //level-order
-    EULER
-} BSTreeTraversalMethod;
-
 
 GiDS_API BSTreeNode *insertNodeBSTree(BSTreeNode **bstRoot, unsigned long key, void *pData);
 
@@ -37,7 +29,7 @@ GiDS_API void *deleteByKeyBSTree(BSTreeNode **bstRoot, unsigned long key);
 
 GiDS_API BSTreeNode *findNodeBSTree(BSTreeNode *bstRoot, unsigned long key);
 
-GiDS_API void traverseBSTree(BSTreeNode *bstRoot, BSTreeTraversalMethod traversal, CustomDataCallback callback);
+GiDS_API void traverseBSTree(BSTreeNode *bstRoot, TreeTraversalMethod traversal, CustomDataCallback callback);
 
 GiDS_API void deleteBSTree(BSTreeNode **bstRoot, CustomDataCallback freeData);
 

@@ -99,11 +99,11 @@ DLListNode *findNodeSDLList(SDLList *sdllList, void *pToFind)
     return curr;
 }
 
-void printSDLList(SDLList *sdllList, CustomDataCallback printData)
+void traverseSDLList(SDLList *sdllList, CustomDataCallback handleData)
 {
-    if (sdllList)
+    if (sdllList && handleData)
         for (DLListNode *curr = sdllList->head; curr != sdllList->sentinel; curr = curr->nxt)
-            printData(curr->pData);
+            handleData(curr->pData);
 }
 
 void deleteSDLList(SDLList **sdllList, CustomDataCallback freeData)

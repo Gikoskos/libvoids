@@ -34,7 +34,7 @@ GiDS_API void *popLIFO(LIFOstack *stack);
 
 GiDS_API void deleteLIFO(LIFOstack **stack, CustomDataCallback freeData);
 
-GiDS_API void printLIFO(LIFOstack *stack, CustomDataCallback printData);
+GiDS_API void traverseLIFO(LIFOstack *stack, CustomDataCallback handleData);
 
 #ifdef __cplusplus
 }

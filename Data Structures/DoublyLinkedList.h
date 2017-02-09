@@ -29,7 +29,7 @@ GiDS_API void *deleteNodeDLList(DLListNode **dllHead, DLListNode *dllToDelete);
 
 GiDS_API DLListNode *findNodeDLList(DLListNode *dllHead, void *pToFind);
 
-GiDS_API void printDLList(DLListNode *dllHead, CustomDataCallback printData);
+GiDS_API void traverseDLList(DLListNode *dllHead, CustomDataCallback handleData);
 
 GiDS_API void deleteDLList(DLListNode **dllHead, CustomDataCallback freeData);
 

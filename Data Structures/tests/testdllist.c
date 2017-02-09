@@ -20,22 +20,22 @@ int main(int argc, char *argv[])
             appendNodeDLList(&myList, &arr[i]);
     }
 
-    printDLList(myList, printIntData);
+    traverseDLList(myList, printIntData);
     putchar('\n');
 
     deleteNodeDLList(&myList, findNodeDLList(myList, &arr[6]));
-    printDLList(myList, printIntData);
+    traverseDLList(myList, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 10; i++) {
         if (deleteNodeDLList(&myList, findNodeDLList(myList, &arr[i]))) {
             printf("\nDeleted node %d successfully!\n", arr[i]);
-            printDLList(myList, printIntData);
+            traverseDLList(myList, printIntData);
             putchar('\n');
         }
     }
 
-    printDLList(myList, printIntData);
+    traverseDLList(myList, printIntData);
 
     deleteDLList(&myList, NULL);
     return 0;

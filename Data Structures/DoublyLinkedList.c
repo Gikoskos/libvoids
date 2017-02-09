@@ -87,10 +87,11 @@ DLListNode *findNodeDLList(DLListNode *dllHead, void *pToFind)
     return curr;
 }
 
-void printDLList(DLListNode *dllHead, CustomDataCallback printData)
+void traverseDLList(DLListNode *dllHead, CustomDataCallback handleData)
 {
-    for (DLListNode *curr = dllHead; curr; curr = curr->nxt)
-        printData(curr->pData);
+    if (handleData)
+        for (DLListNode *curr = dllHead; curr; curr = curr->nxt)
+            handleData(curr->pData);
 }
 
 void deleteDLList(DLListNode **dllHead, CustomDataCallback freeData)

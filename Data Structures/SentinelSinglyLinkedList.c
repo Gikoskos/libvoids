@@ -102,11 +102,11 @@ SLListNode *findNodeSSLList(SSLList *ssllList, void *pToFind)
     return curr;
 }
 
-void printSSLList(SSLList *ssllList, CustomDataCallback printData)
+void traverseSSLList(SSLList *ssllList, CustomDataCallback handleData)
 {
-    if (ssllList)
+    if (ssllList && handleData)
         for (SLListNode *curr = ssllList->head; curr != ssllList->sentinel; curr = curr->nxt)
-            printData(curr->pData);
+            handleData(curr->pData);
 }
 
 void deleteSSLList(SSLList **ssllList, CustomDataCallback freeData)

@@ -95,11 +95,9 @@ void deleteFIFO(FIFOqueue **queue, CustomDataCallback freeData)
     }
 }
 
-void printFIFO(FIFOqueue *queue, CustomDataCallback printData)
+void traverseFIFO(FIFOqueue *queue, CustomDataCallback handleData)
 {
-    if (queue) {
-        FIFOnode *curr;
-        for (curr = queue->head; curr; curr = curr->next)
-            printData(curr->data);
-    }
+    if (queue && handleData)
+        for (FIFOnode *curr = queue->head; curr; curr = curr->next)
+            handleData(curr->data);
 }

@@ -20,19 +20,19 @@ int main(int argc, char *argv[])
             appendNodeSLList(&myList, &arr[i]);
     }
 
-    printSLList(myList, printIntData);
+    traverseSLList(myList, printIntData);
     putchar('\n');
 
     deleteNodeSLList(&myList, findNodeSLList(myList, &arr[6]));
 
-    printSLList(myList, printIntData);
+    traverseSLList(myList, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 4; i++) {
         deleteNodeSLList(&myList, findNodeSLList(myList, &arr[i]));
     }
 
-    printSLList(myList, printIntData);
+    traverseSLList(myList, printIntData);
     putchar('\n');
 
     deleteSLList(&myList, NULL);

@@ -95,11 +95,9 @@ void deleteLIFO(LIFOstack **stack, CustomDataCallback freeData)
     }
 }
 
-void printLIFO(LIFOstack *stack, CustomDataCallback printData)
+void traverseLIFO(LIFOstack *stack, CustomDataCallback handleData)
 {
-    if (stack) {
-        LIFOnode *curr;
-        for (curr = stack->head; curr; curr = curr->next)
-            printData(curr->data);
-    }
+    if (stack && handleData)
+        for (LIFOnode *curr = stack->head; curr; curr = curr->next)
+            handleData(curr->data);
 }

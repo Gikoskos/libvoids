@@ -20,18 +20,18 @@ int main(int argc, char *argv[])
             appendNodeSDLList(myList, &arr[i]);
     }
 
-    printSDLList(myList, printIntData);
+    traverseSDLList(myList, printIntData);
     putchar('\n');
 
     //by this point the list is empty, so this line won't do anything
     deleteNodeSDLList(myList, &arr[6]);
-    printSDLList(myList, printIntData);
+    traverseSDLList(myList, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 10; i++) {
         if (deleteNodeSDLList(myList, &arr[i])) {
             printf("\nSuccessfully deleted node %d!\n", arr[i]);
-            printSDLList(myList, printIntData);
+            traverseSDLList(myList, printIntData);
             putchar('\n');
         }
     }

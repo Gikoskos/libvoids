@@ -21,18 +21,18 @@ int main(int argc, char *argv[])
         insertLastNodeCDLList(&myList, &arr[i]);
     }
 
-    printCDLList(myList, printIntData);
+    traverseCDLList(myList, printIntData);
 
     putchar('\n');
     deleteNodeCDLList(&myList, findNodeCDLList(myList, &arr[6]));
     printf("DELETED: %d, LIST = ", arr[6]);
-    printCDLList(myList, printIntData);
+    traverseCDLList(myList, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 10; i++) {
         deleteNodeCDLList(&myList, findNodeCDLList(myList, &arr[i]));
         printf("DELETED: %d, LIST = ", arr[i]);
-        printCDLList(myList, printIntData);
+        traverseCDLList(myList, printIntData);
         putchar('\n');
     }
 

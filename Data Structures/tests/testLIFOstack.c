@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
         pushLIFO(test, (void*)&a[i]);
     }
 
-    printLIFO(test, printIntData);
+    traverseLIFO(test, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 5; i++) {
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
         pushLIFO(test, (void*)&b[i]);
     }
 
-    printLIFO(test, printIntData);
+    traverseLIFO(test, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 2; i++) {

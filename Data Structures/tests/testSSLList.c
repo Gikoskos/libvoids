@@ -20,22 +20,22 @@ int main(int argc, char *argv[])
             appendNodeSSLList(myList, &arr[i]);
     }
 
-    printSSLList(myList, printIntData);
+    traverseSSLList(myList, printIntData);
     putchar('\n');
 
     //by this point the list is empty, so this line won't do anything
     deleteNodeSSLList(myList, &arr[6]);
-    printSSLList(myList, printIntData);
+    traverseSSLList(myList, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 4; i++) {
         deleteNodeSSLList(myList, &arr[i]);
-        printSSLList(myList, printIntData);
+        traverseSSLList(myList, printIntData);
         putchar('\n');
     }
 
     deleteNodeSSLList(myList, &arr[4]);
-    printSSLList(myList, printIntData);
+    traverseSSLList(myList, printIntData);
     putchar('\n');
 
     deleteSSLList(&myList, NULL);
