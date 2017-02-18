@@ -5,7 +5,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
 #include "AVLTree.h"
 
 #define isLeafNode(x) (!(x->right || x->left))
@@ -65,7 +64,7 @@ AVLTreeNode *insertNodeAVLTree(AVLTreeNode **avltRoot, unsigned long key, void *
 {
     AVLTreeNode *new_node = NULL;
 
-    if (avltRoot && key < ULONG_MAX) {
+    if (avltRoot) {
 
         new_node = calloc(1, sizeof(AVLTreeNode));
 
