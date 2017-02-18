@@ -21,9 +21,9 @@ typedef struct _CDLListNode {
 
 
 
-GiDS_API CDLListNode *insertFirstNodeCDLList(CDLListNode **cdllHead, void *pData);
+GiDS_API CDLListNode *insertNodeCDLList(CDLListNode **cdllHead, void *pData);
 
-GiDS_API CDLListNode *insertLastNodeCDLList(CDLListNode **cdllHead, void *pData);
+GiDS_API CDLListNode *appendNodeCDLList(CDLListNode **cdllHead, void *pData);
 
 GiDS_API void *deleteNodeCDLList(CDLListNode **cdllHead, CDLListNode *cdllToDelete);
 

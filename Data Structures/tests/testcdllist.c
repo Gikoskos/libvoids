@@ -14,11 +14,11 @@ int main(int argc, char *argv[])
     int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     for (int i = 0; i < 5; i++) {
-        insertFirstNodeCDLList(&myList, &arr[i]);
+        insertNodeCDLList(&myList, &arr[i]);
     }
 
     for (int i = 5; i < 10; i++) {
-        insertLastNodeCDLList(&myList, &arr[i]);
+        appendNodeCDLList(&myList, &arr[i]);
     }
 
     traverseCDLList(myList, printIntData);

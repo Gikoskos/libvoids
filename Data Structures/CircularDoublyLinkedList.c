@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "CircularDoublyLinkedList.h"
 
-CDLListNode *insertFirstNodeCDLList(CDLListNode **cdllHead, void *pData)
+CDLListNode *insertNodeCDLList(CDLListNode **cdllHead, void *pData)
 {
     CDLListNode *new_node = NULL;
 
@@ -30,7 +30,7 @@ CDLListNode *insertFirstNodeCDLList(CDLListNode **cdllHead, void *pData)
     return new_node;
 }
 
-CDLListNode *insertLastNodeCDLList(CDLListNode **cdllHead, void *pData)
+CDLListNode *appendNodeCDLList(CDLListNode **cdllHead, void *pData)
 {
     CDLListNode *new_node = NULL;
 
