@@ -10,7 +10,15 @@ void printIntData(void *param)
 
     for (int i = 0; i < treeNode->height; i++)
         putchar('\t');
-    printf("node %lu at height %lu has data %d\n", treeNode->key, treeNode->height, *(int*)(treeNode->pData));
+    printf("node %lu at height %d has data %d\n", treeNode->key, treeNode->height, *(int*)(treeNode->pData));
+}
+
+int *newRandInt(void)
+{
+    int *p = malloc(sizeof(int));
+
+    *p = (int)rand();
+    return p;
 }
 
 int main(int argc, char *argv[])
@@ -22,23 +30,22 @@ int main(int argc, char *argv[])
     //with pseudorandomly generated keys and data
     for (int i = 0; i < 10; i++) {
         unsigned long new_key = (unsigned long)rand()%100 + 1;
-        int *data = malloc(sizeof data);
-
-        *data = (int)rand();
+        int *data = newRandInt();
         printf("Trying to insert new node with key %lu and data %d!\n", new_key, *data);
 
         if (insertNodeAVLTree(&avltTest, new_key, (void*)data)) {
             printf("Node was successfully inserted!\n");
-            assert(isBST(avltTest));
-            printf("TREE IS BST!!!!\n");
         } else {
             printf("Node insertion failed!\n");
             free(data);
         }
     }
 
+    printf("\n----PRINTING AVL TREE BEFORE STARTING TO DELETE ELEMENTS----\n");
+    printf("in-order traversal (the node numbers should be in ascending order):\n");
+    traverseAVLTree(avltTest, IN_ORDER, printIntData);
     //testing traversals
-    /*printf("\npre-order traversal:\n");
+    printf("\npre-order traversal:\n");
     traverseAVLTree(avltTest, PRE_ORDER, printIntData);
 
     printf("\nin-order traversal:\n");
@@ -51,18 +58,16 @@ int main(int argc, char *argv[])
     traverseAVLTree(avltTest, BREADTH_FIRST, printIntData);
 
     printf("\neuler traversal:\n");
-    traverseAVLTree(avltTest, EULER, printIntData);*/
+    traverseAVLTree(avltTest, EULER, printIntData);
 
     for (unsigned long i = 0; i < 50; i++) {
         int *data = (int*) deleteByKeyAVLTree(&avltTest, i);
 
         if (data) {
-            printf("\nDeleted node %lu with data %d\n", i, *data);
+            printf("\n--------Deleted node %lu with data %d--------\n", i, *data);
             free(data);
             printf("in-order traversal (the node numbers should be in ascending order):\n");
             traverseAVLTree(avltTest, IN_ORDER, printIntData);
-            assert(isBST(avltTest));
-            printf("TREE IS BST!!!!\n");
         }
     }
     deleteAVLTree(&avltTest, free);

@@ -62,6 +62,7 @@ void pushCircularBuffer(CircularBuffer *cBuff, void *pData)
             cBuff->available++;
     }
 }
+
 void *popCircularBuffer(CircularBuffer *cBuff)
 {
     void *pData = NULL;

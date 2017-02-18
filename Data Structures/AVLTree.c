@@ -10,41 +10,56 @@
 
 #define isLeafNode(x) (!(x->right || x->left))
 
+#define RotateRight(x, y) \
+    do { \
+        if (x->right) \
+            x->right->parent = y; \
+\
+        y->left = x->right; \
+        x->right = y; \
+        x->parent = y->parent; \
+\
+        if (y->parent) { \
+            if (y == y->parent->left) \
+                y->parent->left = x; \
+            else \
+                y->parent->right = x; \
+        } \
+\
+        y->parent = x; \
+    } while (0)
+
+#define RotateLeft(x, y) \
+    do { \
+        if (x->left) \
+            x->left->parent = y; \
+\
+        y->right = x->left; \
+        x->left = y; \
+        x->parent = y->parent; \
+\
+        if (y->parent) { \
+            if (y == y->parent->left) \
+                y->parent->left = x; \
+            else \
+                y->parent->right = x; \
+        } \
+\
+        y->parent = x; \
+    } while (0)
+
+
+
 static void pre_orderTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback);
 static void in_orderTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback);
 static void post_orderTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback);
 static void breadth_firstTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback);
 static void eulerTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback);
 
-static long balanceFactor(AVLTreeNode *avltNode);
+static int balanceFactor(AVLTreeNode *avltNode);
 static void correctNodeHeight(AVLTreeNode *avltNode);
 static void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode);
 
-
-static int isBSTUtil(AVLTreeNode* node, unsigned long min, unsigned long max);
-
-
-int isBST(AVLTreeNode* node)
-{
-    return(isBSTUtil(node, 0, ULONG_MAX)); 
-}
-
-int isBSTUtil(AVLTreeNode* node, unsigned long min, unsigned long max) 
-{
-    /* an empty tree is BST */
-    if (node==NULL)
-        return 1;
-
-    /* false if this node violates the min/max constraint */
-    if (node->key < min || node->key > max)
-        return 0;
-
-    /* otherwise check the subtrees recursively,
-    tightening the min or max constraint */
-    return
-        isBSTUtil(node->left, min, node->key-1) &&  // Allow only distinct values
-        isBSTUtil(node->right, node->key+1, max);  // Allow only distinct values
-}
 
 AVLTreeNode *insertNodeAVLTree(AVLTreeNode **avltRoot, unsigned long key, void *pData)
 {
@@ -71,6 +86,7 @@ AVLTreeNode *insertNodeAVLTree(AVLTreeNode **avltRoot, unsigned long key, void *
                 if (key > curr->key) {
 
                     parent = curr;
+
                     curr = curr->right;
 
                     if (!curr) {
@@ -82,6 +98,7 @@ AVLTreeNode *insertNodeAVLTree(AVLTreeNode **avltRoot, unsigned long key, void *
                 } else if (key < curr->key) {
 
                     parent = curr;
+
                     curr = curr->left;
 
                     if (!curr) {
@@ -98,7 +115,7 @@ AVLTreeNode *insertNodeAVLTree(AVLTreeNode **avltRoot, unsigned long key, void *
 
             }
 
-            rebalanceAVLTree(avltRoot, new_node);
+            rebalanceAVLTree(avltRoot, parent);
 
         }
     }
@@ -106,15 +123,15 @@ AVLTreeNode *insertNodeAVLTree(AVLTreeNode **avltRoot, unsigned long key, void *
     return new_node;
 }
 
-long balanceFactor(AVLTreeNode *avltNode)
+int balanceFactor(AVLTreeNode *avltNode)
 {
-    long bf = 0;
+    int bf = 0;
 
     if (avltNode) {
 
-        unsigned long right_height, left_height;
+        int right_height, left_height;
 
-        right_height = left_height = (unsigned long)-1;
+        right_height = left_height = -1;
 
         if (avltNode->right)
             right_height = avltNode->right->height;
@@ -122,23 +139,42 @@ long balanceFactor(AVLTreeNode *avltNode)
         if (avltNode->left)
             left_height = avltNode->left->height;
 
-        bf = (long)(right_height - left_height);
+        bf = right_height - left_height;
     }
 
     return bf;
-} 
+}
+
+void correctNodeHeight(AVLTreeNode *avltNode)
+{
+    if (avltNode) {
+
+        int right_height, left_height;
+
+        right_height = left_height = -1;
+
+        if (avltNode->right)
+            right_height = avltNode->right->height;
+
+        if (avltNode->left)
+            left_height = avltNode->left->height;
+
+        avltNode->height = (right_height > left_height) ? (right_height + 1) : (left_height + 1);
+
+    }
+}
 
 void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
 {
     if (*avltRoot && avltStartNode) {
 
-        AVLTreeNode *curr = avltStartNode->parent;
+        AVLTreeNode *curr = avltStartNode;
 
         //climb the path up to the root
         while (curr) {
 
             correctNodeHeight(curr);
-            long bf = balanceFactor(curr);
+            int bf = balanceFactor(curr);
 
             //if the left subtree is heavier
             if (bf < -1) {
@@ -147,31 +183,23 @@ void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
                 if (balanceFactor(curr->left) > 0) {
                     /**************************************
                      perform left-right rotation
-                      a                a
-                     /                /                 c
-                    b         ->     c        ->       / \
-                     \              /                 b   a
-                      c            b               
+                      a               (a)
+                     /                /                 b
+                   (c)        ->     b        ->       / \
+                     \              /                 c   a
+                      b            c
                     ***************************************/
                     AVLTreeNode *a, *b, *c;
 
                     a = curr;
-                    b = a->left;
-                    c = b->right;
+                    c = a->left;
+                    b = c->right;
 
-                    //left rotation
-                    c->left = b;
-                    c->parent = a;
-                    b->parent = c;
-                    a->left = c;
-                    b->right = NULL;
+                    //rotate (c)-(b) to the left
+                    RotateLeft(b, c);
 
-                    //right rotation
-                    //a->left = c->right;
-                    c->right = a;
-                    a->left = c;
-                    a->parent = c;
-                    a->left = NULL;
+                    //rotate (a)-(b) to the right
+                    RotateRight(b, a);
 
                 } else {
                     /**********************
@@ -180,23 +208,26 @@ void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
                        /                b
                       b       ->       / \
                      /                c   a
-                    c   
+                    c
                     ***********************/
                     AVLTreeNode *a, *b;
 
                     a = curr;
                     b = a->left;
 
-                    //a->left = b->right;
-                    b->right = a;
-                    b->parent = a->parent;
-
-                    //b->parent->left = b;
-                    a->parent = b;
-
+                    RotateRight(b, a);
                 }
 
+                //if the root of the tree changed, we have to update
+                //the old root so that it points to the new root
+                if (curr == *avltRoot)
+                    *avltRoot = curr->parent;
+
+                correctNodeHeight(curr->parent->left);
+                correctNodeHeight(curr->parent->right);
+                correctNodeHeight(curr->parent);
                 break;
+
             //else if the right subtree is heavier
             } else if (bf > 1) {
 
@@ -204,30 +235,23 @@ void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
                 if (balanceFactor(curr->right) < 0) {
                     /***************************************
                      perform right-left rotation
-                    a                a
-                     \                \                  c
-                      b       ->       c       ->       / \
-                     /                  \              a   b
-                    c                    b
+                    a               (a)
+                     \                \                  b
+                     (c)      ->       b       ->       / \
+                     /                  \              a   c
+                    b                    c
                     ****************************************/
                     AVLTreeNode *a, *b, *c;
 
                     a = curr;
-                    b = a->right;
-                    c = b->left;
+                    c = a->right;
+                    b = c->left;
 
-                    //right rotation
-                    c->right = b;
-                    a->right = c;
-                    c->parent = a;
-                    b->parent = c;
+                    //rotate (c)-(b) to the right
+                    RotateRight(b, c);
 
-                    //left rotation
-                    a->right = c->left;
-                    c->left = a;
-                    c->parent = a->parent;
-                    c->parent->left = c;
-                    a->parent = c;
+                    //rotate (a)-(b) to the left
+                    RotateLeft(b, a);
 
                 } else {
                     /**********************
@@ -243,38 +267,21 @@ void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
                     a = curr;
                     b = a->right;
 
-                    a->right = b->left;
-                    b->left = a;
-                    b->parent = a->parent;
-                    b->parent->left = b;
-                    a->parent = b;
-
+                    RotateLeft(b, a);
                 }
 
+                //code duplication == bad engineering??
+                if (curr == *avltRoot)
+                    *avltRoot = curr->parent;
+
+                correctNodeHeight(curr->parent->left);
+                correctNodeHeight(curr->parent->right);
+                correctNodeHeight(curr->parent);
                 break;
             }
 
             curr = curr->parent;
         }
-
-    }
-}
-
-void correctNodeHeight(AVLTreeNode *avltNode)
-{
-    if (avltNode) {
-
-        unsigned long right_height, left_height;
-
-        right_height = left_height = (unsigned long)-1; //ULONG_MAX
-
-        if (avltNode->right)
-            right_height = avltNode->right->height;
-
-        if (avltNode->left)
-            left_height = avltNode->left->height;
-
-        avltNode->height = (right_height > left_height) ? right_height + 1 : left_height + 1;
 
     }
 }
@@ -354,6 +361,8 @@ void *deleteNodeAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltToDelete)
             //delete the node because we don't need it anymore
             //and no other nodes point to it
             free(avltToDelete);
+
+            rebalanceAVLTree(avltRoot, parent);
         }
     }
 

@@ -18,7 +18,7 @@ typedef struct _AVLTreeNode {
     unsigned long key;
     void *pData;
     struct _AVLTreeNode *left, *right, *parent;
-    unsigned long height; //count of edges (not nodes)
+    int height; //count of edges (not nodes)
 } AVLTreeNode;
 
 
@@ -33,8 +33,6 @@ GiDS_API AVLTreeNode *findNodeAVLTree(AVLTreeNode *avltRoot, unsigned long key);
 GiDS_API void traverseAVLTree(AVLTreeNode *avltRoot, TreeTraversalMethod traversal, CustomDataCallback callback);
 
 GiDS_API void deleteAVLTree(AVLTreeNode **avltRoot, CustomDataCallback freeData);
-
-GiDS_API int isBST(AVLTreeNode* node);
 
 #ifdef __cplusplus
 }

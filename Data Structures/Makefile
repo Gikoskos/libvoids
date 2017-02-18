@@ -33,4 +33,4 @@ $(DLL): $(DLLRESOBJ) $(OBJS)
 	@xcopy $@ tests /Y
 
 clean:
-	@rm *.o *.a *.dll *.def
+	@del *.o *.a *.dll *.def
