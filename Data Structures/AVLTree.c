@@ -169,6 +169,7 @@ void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
     if (*avltRoot && avltStartNode) {
 
         AVLTreeNode *curr = avltStartNode;
+        AVLTreeNode *a = NULL, *b = NULL, *c = NULL;
 
         //climb the path up to the root
         while (curr) {
@@ -189,8 +190,6 @@ void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
                      \              /                 c   a
                       b            c
                     ***************************************/
-                    AVLTreeNode *a, *b, *c;
-
                     a = curr;
                     c = a->left;
                     b = c->right;
@@ -210,22 +209,12 @@ void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
                      /                c   a
                     c
                     ***********************/
-                    AVLTreeNode *a, *b;
-
                     a = curr;
                     b = a->left;
 
                     RotateRight(b, a);
                 }
 
-                //if the root of the tree changed, we have to update
-                //the old root so that it points to the new root
-                if (curr == *avltRoot)
-                    *avltRoot = curr->parent;
-
-                correctNodeHeight(curr->parent->left);
-                correctNodeHeight(curr->parent->right);
-                correctNodeHeight(curr->parent);
                 break;
 
             //else if the right subtree is heavier
@@ -241,8 +230,6 @@ void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
                      /                  \              a   c
                     b                    c
                     ****************************************/
-                    AVLTreeNode *a, *b, *c;
-
                     a = curr;
                     c = a->right;
                     b = c->left;
@@ -262,27 +249,27 @@ void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
                        \              a   c
                         c
                     ***********************/
-                    AVLTreeNode *a, *b;
-
                     a = curr;
                     b = a->right;
 
                     RotateLeft(b, a);
                 }
 
-                //code duplication == bad engineering??
-                if (curr == *avltRoot)
-                    *avltRoot = curr->parent;
-
-                correctNodeHeight(curr->parent->left);
-                correctNodeHeight(curr->parent->right);
-                correctNodeHeight(curr->parent);
                 break;
             }
 
             curr = curr->parent;
         }
 
+        //if the root of the tree changed, we have to update
+        //the old root so that it points to the new root
+        if (curr == *avltRoot)
+            *avltRoot = curr->parent;
+
+        //fix the heights of the 3 nodes involved in the rotation
+        correctNodeHeight(a);
+        correctNodeHeight(c);
+        correctNodeHeight(b);
     }
 }
 
