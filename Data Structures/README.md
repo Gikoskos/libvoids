@@ -18,6 +18,7 @@ Build support for other systems coming soon...
 - [x] Doubly linked list with sentinel
 - [x] Circular singly linked list
 - [x] Circular doubly linked list
+- [x] Circular buffer
 - [x] FIFO
 - [x] Stack
 - [ ] Double ended queue (dequeue)
