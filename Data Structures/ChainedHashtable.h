@@ -3,8 +3,8 @@
 *           George Koskeridis (C) 2017          *
 \***********************************************/
 
-#ifndef __GiDS_CHAINEDHASHTABLE_H
-#define __GiDS_CHAINEDHASHTABLE_H
+#ifndef __EduDS_CHAINEDHASHTABLE_H
+#define __EduDS_CHAINEDHASHTABLE_H
 
 
 #ifdef __cplusplus
@@ -21,18 +21,18 @@ typedef struct _ChainedHashtable {
 } ChainedHashtable;
 
 
-GiDS_API ChainedHashtable *ChainedHash_init(size_t size);
-
-GiDS_API DictListNode *ChainedHash_insert(ChainedHashtable *table, void *pData, key_type key);
-
-GiDS_API void *ChainedHash_delete(ChainedHashtable *table, key_type key);
-
-GiDS_API DictListNode *ChainedHash_find(ChainedHashtable *table, key_type key);
-
-GiDS_API void ChainedHash_destroy(ChainedHashtable **table, CustomDataCallback freeData);
+EduDS_API ChainedHashtable *ChainedHash_init(size_t size);
+          
+EduDS_API DictListNode *ChainedHash_insert(ChainedHashtable *table, void *pData, key_type key);
+          
+EduDS_API void *ChainedHash_delete(ChainedHashtable *table, key_type key);
+          
+EduDS_API DictListNode *ChainedHash_find(ChainedHashtable *table, key_type key);
+          
+EduDS_API void ChainedHash_destroy(ChainedHashtable **table, CustomDataCallback freeData);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__GiDS_CHAINEDHASHTABLE_H
+#endif //__EduDS_CHAINEDHASHTABLE_H

@@ -1,6 +1,6 @@
-# GiDS
+# EduDS
 
-A collection of data structures I've implemented in C (GiDS = Gikoskos Data Structures).
+A collection of data structures I've implemented in C (EduDS = Educational Data Structures).
 
 ## Building
 
@@ -16,16 +16,18 @@ Build support for other systems coming soon...
 - [x] Singly linked list with sentinel
 - [x] Doubly linked list
 - [x] Doubly linked list with sentinel
-- [ ] Circular singly linked list
+- [x] Circular singly linked list
 - [x] Circular doubly linked list
 - [x] FIFO
 - [x] Stack
 - [ ] Double ended queue (dequeue)
 - [x] Binary search tree (unbalanced)
-- [ ] AVL tree
+- [x] AVL tree
 - [ ] \(a, b\) tree
 - [ ] B-tree
 - [ ] Red black tree
+- [x] Association List
+- [x] Hashing with chaining
 
 ## Libs used
 
@@ -35,4 +37,4 @@ C99 standard library
 
 See LICENSE.txt for details
 
-GiDS (C) 2016-2017 <georgekoskerid@outlook.com>
+EduDS (C) 2016-2017 <georgekoskerid@outlook.com>

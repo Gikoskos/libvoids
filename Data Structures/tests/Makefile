@@ -1,6 +1,6 @@
 CC = gcc
 CPP = -I./../
-LINKER = -L./../ -lGiDS
+LINKER = -L./../ -lEduDS
 CFLAGS = -Wall -ggdb -std=c99
 
 SRCS = $(wildcard *.c)

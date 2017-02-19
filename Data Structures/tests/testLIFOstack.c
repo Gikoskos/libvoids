@@ -1,6 +1,6 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
-#include <GiDS.h>
+#include <EduDS.h>
 
 void printIntData(void *dat)
 {

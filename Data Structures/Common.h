@@ -4,28 +4,28 @@
 \***********************************************/
 //LIBRARY INTERNAL HEADER. DO NOT INCLUDE THIS ANYWHERE ELSE.
 
-#ifndef __GiDS_COMMON_H
-#define __GiDS_COMMON_H
+#ifndef __EduDS_COMMON_H
+#define __EduDS_COMMON_H
 
 #ifdef _WIN32
-# ifdef EXPORT_API_GiDS_DLL
-#  define GiDS_API __declspec(dllexport)
+# ifdef EXPORT_API_EduDS_DLL
+#  define EduDS_API __declspec(dllexport)
 # else
-#  define GiDS_API __declspec(dllimport)
+#  define EduDS_API __declspec(dllimport)
 # endif
-# define GiDS_LOCAL
+# define EduDS_LOCAL
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
-#   define GiDS_API    __attribute__ ((visibility ("default")))
-#   define GiDS_LOCAL  __attribute__ ((visibility ("hidden")))
+#   define EduDS_API    __attribute__ ((visibility ("default")))
+#   define EduDS_LOCAL  __attribute__ ((visibility ("hidden")))
 #  else
-#   define GiDS_API
-#   define GiDS_LOCAL
+#   define EduDS_API
+#   define EduDS_LOCAL
 #  endif
 # else
-#  define GiDS_API
-#  define GiDS_LOCAL
+#  define EduDS_API
+#  define EduDS_LOCAL
 # endif
 #endif
 
@@ -41,4 +41,4 @@ typedef enum _TreeTraversalMethod {
 
 typedef unsigned int key_type;
 
-#endif //__GiDS_COMMON_H
+#endif //__EduDS_COMMON_H

@@ -1,11 +1,11 @@
 CC = gcc
 CFLAGS = -std=c99 -Wall -Wextra -pedantic -c
-CPP = -DEXPORT_API_GiDS_DLL
+CPP = -DEXPORT_API_EduDS_DLL
 
 SRCS = $(wildcard *.c)
 OBJS = $(patsubst %.c, %.o, $(SRCS))
 
-LIBNAME = GiDS
+LIBNAME = EduDS
 
 DLL = $(LIBNAME).dll
 DLLRES = $(LIBNAME)_DLLversion.rc

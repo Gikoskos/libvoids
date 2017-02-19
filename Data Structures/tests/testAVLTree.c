@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <assert.h>
-#include <GiDS.h>
+#include <EduDS.h>
 
 void printIntData(void *param)
 {

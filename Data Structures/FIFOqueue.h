@@ -3,8 +3,8 @@
 *           George Koskeridis (C) 2016          *
 \***********************************************/
 
-#ifndef __GiDS_FIFO_QUEUE_H
-#define __GiDS_FIFO_QUEUE_H
+#ifndef __EduDS_FIFO_QUEUE_H
+#define __EduDS_FIFO_QUEUE_H
 
 
 #ifdef __cplusplus
@@ -26,18 +26,18 @@ typedef struct _FIFOqueue {
 } FIFOqueue;
 
 
-GiDS_API FIFOqueue *FIFO_init(void);
+EduDS_API FIFOqueue *FIFO_init(void);
 
-GiDS_API void FIFO_enqueue(FIFOqueue *queue, void *node_data);
+EduDS_API void FIFO_enqueue(FIFOqueue *queue, void *node_data);
 
-GiDS_API void *FIFO_dequeue(FIFOqueue *queue);
+EduDS_API void *FIFO_dequeue(FIFOqueue *queue);
 
-GiDS_API void FIFO_destroy(FIFOqueue **queue, CustomDataCallback freeData);
+EduDS_API void FIFO_destroy(FIFOqueue **queue, CustomDataCallback freeData);
 
-GiDS_API void FIFO_traverse(FIFOqueue *queue, CustomDataCallback handleData);
+EduDS_API void FIFO_traverse(FIFOqueue *queue, CustomDataCallback handleData);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__GiDS_FIFO_QUEUE_H
+#endif //__EduDS_FIFO_QUEUE_H

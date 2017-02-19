@@ -3,8 +3,8 @@
 *           George Koskeridis (C) 2016          *
 \***********************************************/
 
-#ifndef __GiDS_SENT_DL_LIST_H
-#define __GiDS_SENT_DL_LIST_H
+#ifndef __EduDS_SENT_DL_LIST_H
+#define __EduDS_SENT_DL_LIST_H
 
 
 #ifdef __cplusplus
@@ -20,22 +20,22 @@ typedef struct _SDLList {
 } SDLList;
 
 
-GiDS_API SDLList *SDLList_init(void);
+EduDS_API SDLList *SDLList_init(void);
 
-GiDS_API DLListNode *SDLList_insert(SDLList *sdllList, void *pData);
+EduDS_API DLListNode *SDLList_insert(SDLList *sdllList, void *pData);
 
-GiDS_API DLListNode *SDLList_append(SDLList *sdllList, void *pData);
+EduDS_API DLListNode *SDLList_append(SDLList *sdllList, void *pData);
 
-GiDS_API void *SDLList_deleteNode(SDLList *sdllList, void *pToDelete);
+EduDS_API void *SDLList_deleteNode(SDLList *sdllList, void *pToDelete);
 
-GiDS_API DLListNode *SDLList_find(SDLList *sdllList, void *pToFind);
+EduDS_API DLListNode *SDLList_find(SDLList *sdllList, void *pToFind);
 
-GiDS_API void SDLList_traverse(SDLList *sdllList, CustomDataCallback handleData);
+EduDS_API void SDLList_traverse(SDLList *sdllList, CustomDataCallback handleData);
 
-GiDS_API void SDLList_destroy(SDLList **sdllList, CustomDataCallback freeData);
+EduDS_API void SDLList_destroy(SDLList **sdllList, CustomDataCallback freeData);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__GiDS_SENT_DL_LIST_H
+#endif //__EduDS_SENT_DL_LIST_H

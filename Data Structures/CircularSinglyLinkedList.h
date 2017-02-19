@@ -3,8 +3,8 @@
 *           George Koskeridis (C) 2017          *
 \***********************************************/
 
-#ifndef __GiDS_CSL_LIST_H
-#define __GiDS_CSL_LIST_H
+#ifndef __EduDS_CSL_LIST_H
+#define __EduDS_CSL_LIST_H
 
 
 #ifdef __cplusplus
@@ -21,22 +21,22 @@ typedef struct _CSLListNode {
 
 
 
-GiDS_API CSLListNode *CSLList_insert(CSLListNode **csllHead, void *pData);
+EduDS_API CSLListNode *CSLList_insert(CSLListNode **csllHead, void *pData);
 
-GiDS_API CSLListNode *CSLList_append(CSLListNode **csllHead, void *pData);
+EduDS_API CSLListNode *CSLList_append(CSLListNode **csllHead, void *pData);
 
-GiDS_API CSLListNode *CSLList_insertAfter(CSLListNode *csllPrev, void *pData);
+EduDS_API CSLListNode *CSLList_insertAfter(CSLListNode *csllPrev, void *pData);
 
-GiDS_API void *CSLList_deleteNode(CSLListNode **csllHead, CSLListNode *cdllToDelete);
+EduDS_API void *CSLList_deleteNode(CSLListNode **csllHead, CSLListNode *cdllToDelete);
 
-GiDS_API CSLListNode *CSLList_find(CSLListNode *csllHead, void *pToFind);
+EduDS_API CSLListNode *CSLList_find(CSLListNode *csllHead, void *pToFind);
 
-GiDS_API void CSLList_traverse(CSLListNode *csllHead, CustomDataCallback handleData);
+EduDS_API void CSLList_traverse(CSLListNode *csllHead, CustomDataCallback handleData);
 
-GiDS_API void CSLList_destroy(CSLListNode **csllHead, CustomDataCallback freeData);
+EduDS_API void CSLList_destroy(CSLListNode **csllHead, CustomDataCallback freeData);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__GiDS_CSL_LIST_H
+#endif //__EduDS_CSL_LIST_H
