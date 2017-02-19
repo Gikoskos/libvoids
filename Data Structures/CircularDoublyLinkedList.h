@@ -21,17 +21,19 @@ typedef struct _CDLListNode {
 
 
 
-GiDS_API CDLListNode *insertNodeCDLList(CDLListNode **cdllHead, void *pData);
+GiDS_API CDLListNode *CDLList_insert(CDLListNode **cdllHead, void *pData);
 
-GiDS_API CDLListNode *appendNodeCDLList(CDLListNode **cdllHead, void *pData);
+GiDS_API CDLListNode *CDLList_append(CDLListNode **cdllHead, void *pData);
 
-GiDS_API void *deleteNodeCDLList(CDLListNode **cdllHead, CDLListNode *cdllToDelete);
+GiDS_API CDLListNode *CDLList_insertAfter(CDLListNode *cdllPrev, void *pData);
 
-GiDS_API CDLListNode *findNodeCDLList(CDLListNode *cdllHead, void *pToFind);
+GiDS_API void *CDLList_deleteNode(CDLListNode **cdllHead, CDLListNode *cdllToDelete);
 
-GiDS_API void traverseCDLList(CDLListNode *cdllHead, CustomDataCallback handleData);
+GiDS_API CDLListNode *CDLList_find(CDLListNode *cdllHead, void *pToFind);
 
-GiDS_API void deleteCDLList(CDLListNode **cdllHead, CustomDataCallback freeData);
+GiDS_API void CDLList_traverse(CDLListNode *cdllHead, CustomDataCallback handleData);
+
+GiDS_API void CDLList_destroy(CDLListNode **cdllHead, CustomDataCallback freeData);
 
 #ifdef __cplusplus
 }

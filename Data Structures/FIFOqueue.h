@@ -26,15 +26,15 @@ typedef struct _FIFOqueue {
 } FIFOqueue;
 
 
-GiDS_API FIFOqueue *newFIFO(void);
+GiDS_API FIFOqueue *FIFO_init(void);
 
-GiDS_API void enqueueFIFO(FIFOqueue *queue, void *node_data);
+GiDS_API void FIFO_enqueue(FIFOqueue *queue, void *node_data);
 
-GiDS_API void *dequeueFIFO(FIFOqueue *queue);
+GiDS_API void *FIFO_dequeue(FIFOqueue *queue);
 
-GiDS_API void deleteFIFO(FIFOqueue **queue, CustomDataCallback freeData);
+GiDS_API void FIFO_destroy(FIFOqueue **queue, CustomDataCallback freeData);
 
-GiDS_API void traverseFIFO(FIFOqueue *queue, CustomDataCallback handleData);
+GiDS_API void FIFO_traverse(FIFOqueue *queue, CustomDataCallback handleData);
 
 #ifdef __cplusplus
 }

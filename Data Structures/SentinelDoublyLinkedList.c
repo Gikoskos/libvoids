@@ -7,7 +7,7 @@
 #include "SentinelDoublyLinkedList.h"
 
 
-SDLList *newSDLList(void)
+SDLList *SDLList_init(void)
 {
     SDLList *newList = calloc(1, sizeof(SDLList));
 
@@ -17,7 +17,7 @@ SDLList *newSDLList(void)
     return newList;
 }
 
-DLListNode *insertNodeSDLList(SDLList *sdllList, void *pData)
+DLListNode *SDLList_insert(SDLList *sdllList, void *pData)
 {
     DLListNode *new_node = NULL;
 
@@ -35,14 +35,14 @@ DLListNode *insertNodeSDLList(SDLList *sdllList, void *pData)
     return new_node;
 }
 
-DLListNode *appendNodeSDLList(SDLList *sdllList, void *pData)
+DLListNode *SDLList_append(SDLList *sdllList, void *pData)
 {
     DLListNode *new_node = NULL;
 
     if (sdllList) {
         if (sdllList->head == sdllList->sentinel) {
 
-            new_node = insertNodeSDLList(sdllList, pData);
+            new_node = SDLList_insert(sdllList, pData);
 
         } else {
             new_node = malloc(sizeof(DLListNode));
@@ -57,7 +57,7 @@ DLListNode *appendNodeSDLList(SDLList *sdllList, void *pData)
     return new_node;
 }
 
-void *deleteNodeSDLList(SDLList *sdllList, void *pToDelete)
+void *SDLList_deleteNode(SDLList *sdllList, void *pToDelete)
 {
     void *pRet = NULL;
 
@@ -84,7 +84,7 @@ void *deleteNodeSDLList(SDLList *sdllList, void *pToDelete)
     return pRet;
 }
 
-DLListNode *findNodeSDLList(SDLList *sdllList, void *pToFind)
+DLListNode *SDLList_find(SDLList *sdllList, void *pToFind)
 {
     DLListNode *curr;
 
@@ -99,16 +99,16 @@ DLListNode *findNodeSDLList(SDLList *sdllList, void *pToFind)
     return curr;
 }
 
-void traverseSDLList(SDLList *sdllList, CustomDataCallback handleData)
+void SDLList_traverse(SDLList *sdllList, CustomDataCallback handleData)
 {
     if (sdllList && handleData)
         for (DLListNode *curr = sdllList->head; curr != sdllList->sentinel; curr = curr->nxt)
             handleData(curr->pData);
 }
 
-void deleteSDLList(SDLList **sdllList, CustomDataCallback freeData)
+void SDLList_destroy(SDLList **sdllList, CustomDataCallback freeData)
 {
-    if (sdllList) {
+    if (sdllList && *sdllList) {
         DLListNode *curr, *tmp;
 
         for (curr = (*sdllList)->head; curr != (*sdllList)->sentinel;) {
@@ -120,10 +120,8 @@ void deleteSDLList(SDLList **sdllList, CustomDataCallback freeData)
             free(tmp);
         }
 
-        if (*sdllList) {
-            free((*sdllList)->sentinel);
-            free(*sdllList);
-            *sdllList = NULL;
-        }
+        free((*sdllList)->sentinel);
+        free(*sdllList);
+        *sdllList = NULL;
     }
 }

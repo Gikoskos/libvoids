@@ -5,7 +5,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
 #include "BinarySearchTree.h"
 #include "FIFOqueue.h"
 
@@ -19,11 +18,11 @@ static void breadth_firstTraversal(BSTreeNode *bstRoot, CustomDataCallback callb
 static void eulerTraversal(BSTreeNode *bstRoot, CustomDataCallback callback);
 
 
-BSTreeNode *insertNodeBSTree(BSTreeNode **bstRoot, unsigned long key, void *pData)
+BSTreeNode *BSTree_insert(BSTreeNode **bstRoot, key_type key, void *pData)
 {
     BSTreeNode *new_node = NULL;
 
-    if (bstRoot && key < ULONG_MAX) {
+    if (bstRoot) {
 
         new_node = calloc(1, sizeof(BSTreeNode));
 
@@ -72,7 +71,7 @@ BSTreeNode *insertNodeBSTree(BSTreeNode **bstRoot, unsigned long key, void *pDat
     return new_node;
 }
 
-void *deleteNodeBSTree(BSTreeNode **bstRoot, BSTreeNode *bstToDelete)
+void *BSTree_deleteNode(BSTreeNode **bstRoot, BSTreeNode *bstToDelete)
 {
     void *pData = NULL;
 
@@ -147,12 +146,12 @@ void *deleteNodeBSTree(BSTreeNode **bstRoot, BSTreeNode *bstToDelete)
     return pData;
 }
 
-void *deleteByKeyBSTree(BSTreeNode **bstRoot, unsigned long key)
+void *BSTree_deleteByKey(BSTreeNode **bstRoot, key_type key)
 {
-    return deleteNodeBSTree(bstRoot, findNodeBSTree(*bstRoot, key));
+    return BSTree_deleteNode(bstRoot, BSTree_find(*bstRoot, key));
 }
 
-BSTreeNode *findNodeBSTree(BSTreeNode *bstRoot, unsigned long key)
+BSTreeNode *BSTree_find(BSTreeNode *bstRoot, key_type key)
 {
     BSTreeNode *curr = bstRoot;
 
@@ -170,7 +169,7 @@ BSTreeNode *findNodeBSTree(BSTreeNode *bstRoot, unsigned long key)
     return curr;
 }
 
-void traverseBSTree(BSTreeNode *bstRoot, TreeTraversalMethod traversal, CustomDataCallback callback)
+void BSTree_traverse(BSTreeNode *bstRoot, TreeTraversalMethod traversal, CustomDataCallback callback)
 {
     if (callback && bstRoot) {
         switch (traversal) {
@@ -195,7 +194,7 @@ void traverseBSTree(BSTreeNode *bstRoot, TreeTraversalMethod traversal, CustomDa
     }
 }
 
-void deleteBSTree(BSTreeNode **bstRoot, CustomDataCallback freeData)
+void BSTree_destroy(BSTreeNode **bstRoot, CustomDataCallback freeData)
 {
     if (bstRoot) {
 
@@ -277,21 +276,21 @@ void post_orderTraversal(BSTreeNode *bstRoot, CustomDataCallback callback)
 void breadth_firstTraversal(BSTreeNode *bstRoot, CustomDataCallback callback)
 {
     BSTreeNode *curr;
-    FIFOqueue *levelFIFO = newFIFO();
+    FIFOqueue *levelFIFO = FIFO_init();
 
-    enqueueFIFO(levelFIFO, bstRoot);
+    FIFO_enqueue(levelFIFO, bstRoot);
 
     while (levelFIFO->total_nodes) {
-        curr = (BSTreeNode *)dequeueFIFO(levelFIFO);
+        curr = (BSTreeNode *)FIFO_dequeue(levelFIFO);
         callback(curr);
 
         if (curr->right)
-            enqueueFIFO(levelFIFO, curr->right);
+            FIFO_enqueue(levelFIFO, curr->right);
         if (curr->left)
-            enqueueFIFO(levelFIFO, curr->left);
+            FIFO_enqueue(levelFIFO, curr->left);
     }
 
-    deleteFIFO(&levelFIFO, NULL);
+    FIFO_destroy(&levelFIFO, NULL);
 }
 
 void eulerTraversal(BSTreeNode *bstRoot, CustomDataCallback callback)

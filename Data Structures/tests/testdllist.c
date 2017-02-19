@@ -15,28 +15,28 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < 10; i++) {
         if (i < 5)
-            insertNodeDLList(&myList, &arr[i]);
+            DLList_insert(&myList, &arr[i]);
         else
-            appendNodeDLList(&myList, &arr[i]);
+            DLList_append(&myList, &arr[i]);
     }
 
-    traverseDLList(myList, printIntData);
+    DLList_traverse(myList, printIntData);
     putchar('\n');
 
-    deleteNodeDLList(&myList, findNodeDLList(myList, &arr[6]));
-    traverseDLList(myList, printIntData);
+    DLList_deleteNode(&myList, DLList_find(myList, &arr[6]));
+    DLList_traverse(myList, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 10; i++) {
-        if (deleteNodeDLList(&myList, findNodeDLList(myList, &arr[i]))) {
+        if (DLList_deleteNode(&myList, DLList_find(myList, &arr[i]))) {
             printf("\nDeleted node %d successfully!\n", arr[i]);
-            traverseDLList(myList, printIntData);
+            DLList_traverse(myList, printIntData);
             putchar('\n');
         }
     }
 
-    traverseDLList(myList, printIntData);
+    DLList_traverse(myList, printIntData);
 
-    deleteDLList(&myList, NULL);
+    DLList_destroy(&myList, NULL);
     return 0;
 }

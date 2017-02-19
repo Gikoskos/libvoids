@@ -6,7 +6,8 @@
 #include <stdlib.h>
 #include "CircularDoublyLinkedList.h"
 
-CDLListNode *insertNodeCDLList(CDLListNode **cdllHead, void *pData)
+
+CDLListNode *CDLList_insert(CDLListNode **cdllHead, void *pData)
 {
     CDLListNode *new_node = NULL;
 
@@ -30,18 +31,18 @@ CDLListNode *insertNodeCDLList(CDLListNode **cdllHead, void *pData)
     return new_node;
 }
 
-CDLListNode *appendNodeCDLList(CDLListNode **cdllHead, void *pData)
+CDLListNode *CDLList_append(CDLListNode **cdllHead, void *pData)
 {
     CDLListNode *new_node = NULL;
 
     if (cdllHead) {
-        new_node = malloc(sizeof(CDLListNode));
-
-        new_node->pData = pData;
 
         if (!(*cdllHead)) {
-            new_node->nxt = new_node->prv = NULL;
+            new_node = CDLList_insert(cdllHead, pData);
         } else {
+            new_node = malloc(sizeof(CDLListNode));
+
+            new_node->pData = pData;
             new_node->prv = (*cdllHead)->prv;
             new_node->nxt = *cdllHead;
             (*cdllHead)->prv->nxt = new_node;
@@ -52,7 +53,24 @@ CDLListNode *appendNodeCDLList(CDLListNode **cdllHead, void *pData)
     return new_node;
 }
 
-void *deleteNodeCDLList(CDLListNode **cdllHead, CDLListNode *cdllToDelete)
+CDLListNode *CDLList_insertAfter(CDLListNode *cdllPrev, void *pData)
+{
+    CDLListNode *new_node = NULL;
+
+    if (cdllPrev) {
+        new_node = malloc(sizeof(CDLListNode));
+
+        new_node->pData = pData;
+        new_node->nxt = cdllPrev->nxt;
+        new_node->prv = cdllPrev;
+
+        cdllPrev->nxt = new_node;
+    }
+
+    return new_node;
+}
+
+void *CDLList_deleteNode(CDLListNode **cdllHead, CDLListNode *cdllToDelete)
 {
     void *pRet = NULL;
 
@@ -84,7 +102,7 @@ void *deleteNodeCDLList(CDLListNode **cdllHead, CDLListNode *cdllToDelete)
     return pRet;
 }
 
-CDLListNode *findNodeCDLList(CDLListNode *cdllHead, void *pToFind)
+CDLListNode *CDLList_find(CDLListNode *cdllHead, void *pToFind)
 {
     if (cdllHead) {
         CDLListNode *curr = cdllHead;
@@ -101,7 +119,7 @@ CDLListNode *findNodeCDLList(CDLListNode *cdllHead, void *pToFind)
     return NULL;
 }
 
-void traverseCDLList(CDLListNode *cdllHead, CustomDataCallback handleData)
+void CDLList_traverse(CDLListNode *cdllHead, CustomDataCallback handleData)
 {
     if (cdllHead && handleData) {
         CDLListNode *curr = cdllHead;
@@ -113,7 +131,7 @@ void traverseCDLList(CDLListNode *cdllHead, CustomDataCallback handleData)
     }
 }
 
-void deleteCDLList(CDLListNode **cdllHead, CustomDataCallback freeData)
+void CDLList_destroy(CDLListNode **cdllHead, CustomDataCallback freeData)
 {
     if (cdllHead && *cdllHead) {
         CDLListNode *curr, *tmp;

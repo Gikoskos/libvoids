@@ -21,17 +21,19 @@ typedef struct _DLListNode {
 
 
 
-GiDS_API DLListNode *insertNodeDLList(DLListNode **dllHead, void *pData);
+GiDS_API DLListNode *DLList_insert(DLListNode **dllHead, void *pData);
 
-GiDS_API DLListNode *appendNodeDLList(DLListNode **dllHead, void *pData);
+GiDS_API DLListNode *DLList_append(DLListNode **dllHead, void *pData);
 
-GiDS_API void *deleteNodeDLList(DLListNode **dllHead, DLListNode *dllToDelete);
+GiDS_API DLListNode *DLList_insertAfter(DLListNode *dllPrev, void *pData);
 
-GiDS_API DLListNode *findNodeDLList(DLListNode *dllHead, void *pToFind);
+GiDS_API void *DLList_deleteNode(DLListNode **dllHead, DLListNode *dllToDelete);
 
-GiDS_API void traverseDLList(DLListNode *dllHead, CustomDataCallback handleData);
+GiDS_API DLListNode *DLList_find(DLListNode *dllHead, void *pToFind);
 
-GiDS_API void deleteDLList(DLListNode **dllHead, CustomDataCallback freeData);
+GiDS_API void DLList_traverse(DLListNode *dllHead, CustomDataCallback handleData);
+
+GiDS_API void DLList_destroy(DLListNode **dllHead, CustomDataCallback freeData);
 
 #ifdef __cplusplus
 }

@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[])
 {
-    CircularBuffer *buff = newCircularBuffer(10);
+    CircularBuffer *buff = CircularBuffer_init(10);
 
     srand(time(NULL));
 
@@ -17,12 +17,12 @@ int main(int argc, char *argv[])
         *data = (int)rand();
         printf("Pushing data %d!\n", *data);
 
-        pushCircularBuffer(buff, data);
+        CircularBuffer_write(buff, data);
     }
 
     putchar('\n');
     for (int i = 0; i < 4; i++) {
-        int *data = popCircularBuffer(buff);
+        int *data = CircularBuffer_read(buff);
 
         if (data) {
             printf("Data %d popped!\n", *data);
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
     putchar('\n');
     for (int i = 0; i < 6; i++) {
-        int *data = popCircularBuffer(buff);
+        int *data = CircularBuffer_read(buff);
 
         if (data) {
             printf("Data %d popped!\n", *data);
@@ -40,23 +40,23 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (!popCircularBuffer(buff)) {
+    if (!CircularBuffer_read(buff)) {
         printf("No more data to read from the buffer!\n\n");
     }
 
-    resizeCircularBuffer(&buff, 20);
+    CircularBuffer_resize(&buff, 20);
     for (int i = 0; i < 15; i++) {
         int *data = malloc(sizeof data);
 
         *data = (int)rand();
         printf("Pushing data %d!\n", *data);
 
-        pushCircularBuffer(buff, data);
+        CircularBuffer_write(buff, data);
     }
 
     putchar('\n');
     for (int i = 0; i < 17; i++) {
-        int *data = popCircularBuffer(buff);
+        int *data = CircularBuffer_read(buff);
 
         if (data) {
             printf("Data %d popped!\n", *data);
@@ -64,6 +64,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    deleteCircularBuffer(&buff, NULL);
+    CircularBuffer_destroy(&buff, NULL);
     return 0;
 }

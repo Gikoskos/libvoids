@@ -15,26 +15,26 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < 10; i++) {
         if (i < 5)
-            insertNodeSLList(&myList, &arr[i]);
+            SLList_insert(&myList, &arr[i]);
         else
-            appendNodeSLList(&myList, &arr[i]);
+            SLList_append(&myList, &arr[i]);
     }
 
-    traverseSLList(myList, printIntData);
+    SLList_traverse(myList, printIntData);
     putchar('\n');
 
-    deleteNodeSLList(&myList, findNodeSLList(myList, &arr[6]));
+    SLList_deleteNode(&myList, SLList_find(myList, &arr[6]));
 
-    traverseSLList(myList, printIntData);
+    SLList_traverse(myList, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 4; i++) {
-        deleteNodeSLList(&myList, findNodeSLList(myList, &arr[i]));
+        SLList_deleteNode(&myList, SLList_find(myList, &arr[i]));
     }
 
-    traverseSLList(myList, printIntData);
+    SLList_traverse(myList, printIntData);
     putchar('\n');
 
-    deleteSLList(&myList, NULL);
+    SLList_destroy(&myList, NULL);
     return 0;
 }

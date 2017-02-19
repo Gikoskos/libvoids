@@ -10,34 +10,34 @@ void printIntData(void *pData)
 
 int main(int argc, char *argv[])
 {
-    SSLList *myList = newSSLList();
+    SSLList *myList = SSLList_init();
     int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     for (int i = 0; i < 10; i++) {
         if (i < 5)
-            insertNodeSSLList(myList, &arr[i]);
+            SSLList_insert(myList, &arr[i]);
         else
-            appendNodeSSLList(myList, &arr[i]);
+            SSLList_append(myList, &arr[i]);
     }
 
-    traverseSSLList(myList, printIntData);
+    SSLList_traverse(myList, printIntData);
     putchar('\n');
 
     //by this point the list is empty, so this line won't do anything
-    deleteNodeSSLList(myList, &arr[6]);
-    traverseSSLList(myList, printIntData);
+    SSLList_deleteNode(myList, &arr[6]);
+    SSLList_traverse(myList, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 4; i++) {
-        deleteNodeSSLList(myList, &arr[i]);
-        traverseSSLList(myList, printIntData);
+        SSLList_deleteNode(myList, &arr[i]);
+        SSLList_traverse(myList, printIntData);
         putchar('\n');
     }
 
-    deleteNodeSSLList(myList, &arr[4]);
-    traverseSSLList(myList, printIntData);
+    SSLList_deleteNode(myList, &arr[4]);
+    SSLList_traverse(myList, printIntData);
     putchar('\n');
 
-    deleteSSLList(&myList, NULL);
+    SSLList_destroy(&myList, NULL);
     return 0;
 }

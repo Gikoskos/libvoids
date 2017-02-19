@@ -11,30 +11,30 @@ int main(int argc, char *argv[])
 {
     int a[5] = {4442, 2224, 1321, 7820, 98};
     int b[3] = {6, 12, 18};
-    FIFOqueue *test = newFIFO();
+    FIFOqueue *test = FIFO_init();
 
     for (int i = 0; i < 5; i++) {
-        enqueueFIFO(test, (void*)&a[i]);
+        FIFO_enqueue(test, (void*)&a[i]);
     }
 
-    traverseFIFO(test, printIntData);
+    FIFO_traverse(test, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 5; i++) {
-        printf("dequeueFIFO = %d\n", *(int*)dequeueFIFO(test));
+        printf("FIFO_dequeue = %d\n", *(int*)FIFO_dequeue(test));
     }
 
     for (int i = 0; i < 3; i++) {
-        enqueueFIFO(test, (void*)&b[i]);
+        FIFO_enqueue(test, (void*)&b[i]);
     }
 
-    traverseFIFO(test, printIntData);
+    FIFO_traverse(test, printIntData);
     putchar('\n');
 
     for (int i = 0; i < 2; i++) {
-        printf("dequeueFIFO = %d\n", *(int*)dequeueFIFO(test));
+        printf("FIFO_dequeue = %d\n", *(int*)FIFO_dequeue(test));
     }
 
-    deleteFIFO(&test, NULL);
+    FIFO_destroy(&test, NULL);
     return 0;
 }

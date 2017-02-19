@@ -23,14 +23,14 @@ static LIFOnode *newLIFOnode(void *node_data)
     return newnode;
 }
 
-LIFOstack *newLIFO(void)
+LIFOstack *LIFO_init(void)
 {
     LIFOstack *newstack = calloc(1, sizeof(LIFOstack));
 
     return newstack;
 }
 
-void pushLIFO(LIFOstack *stack, void *node_data)
+void LIFO_push(LIFOstack *stack, void *node_data)
 {
     if (stack) {
         LIFOnode *to_push = newLIFOnode(node_data);
@@ -47,7 +47,7 @@ void pushLIFO(LIFOstack *stack, void *node_data)
     }
 }
 
-void *popLIFO(LIFOstack *stack)
+void *LIFO_pop(LIFOstack *stack)
 {
     void *pData = NULL;
 
@@ -71,7 +71,7 @@ void *popLIFO(LIFOstack *stack)
     return pData;
 }
 
-void deleteLIFO(LIFOstack **stack, CustomDataCallback freeData)
+void LIFO_destroy(LIFOstack **stack, CustomDataCallback freeData)
 {
     if (stack && *stack) {
 
@@ -95,7 +95,7 @@ void deleteLIFO(LIFOstack **stack, CustomDataCallback freeData)
     }
 }
 
-void traverseLIFO(LIFOstack *stack, CustomDataCallback handleData)
+void LIFO_traverse(LIFOstack *stack, CustomDataCallback handleData)
 {
     if (stack && handleData)
         for (LIFOnode *curr = stack->head; curr; curr = curr->next)

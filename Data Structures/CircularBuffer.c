@@ -7,7 +7,7 @@
 #include <stdint.h> //for SIZE_MAX
 #include "CircularBuffer.h"
 
-CircularBuffer *newCircularBuffer(size_t buff_size)
+CircularBuffer *CircularBuffer_init(size_t buff_size)
 {
     CircularBuffer *cBuffNew = NULL;
 
@@ -24,7 +24,7 @@ CircularBuffer *newCircularBuffer(size_t buff_size)
     return cBuffNew;
 }
 
-void resizeCircularBuffer(CircularBuffer **cBuff, size_t new_size)
+void CircularBuffer_resize(CircularBuffer **cBuff, size_t new_size)
 {
     if (new_size) {
 
@@ -39,7 +39,7 @@ void resizeCircularBuffer(CircularBuffer **cBuff, size_t new_size)
                 }
 
             } else {
-                *cBuff = newCircularBuffer(new_size);
+                *cBuff = CircularBuffer_init(new_size);
             }
 
         }
@@ -47,7 +47,7 @@ void resizeCircularBuffer(CircularBuffer **cBuff, size_t new_size)
     }
 }
 
-void pushCircularBuffer(CircularBuffer *cBuff, void *pData)
+void CircularBuffer_write(CircularBuffer *cBuff, void *pData)
 {
     if (cBuff) {
 
@@ -63,7 +63,7 @@ void pushCircularBuffer(CircularBuffer *cBuff, void *pData)
     }
 }
 
-void *popCircularBuffer(CircularBuffer *cBuff)
+void *CircularBuffer_read(CircularBuffer *cBuff)
 {
     void *pData = NULL;
 
@@ -83,7 +83,7 @@ void *popCircularBuffer(CircularBuffer *cBuff)
     return pData;
 }
 
-void deleteCircularBuffer(CircularBuffer **cBuff, CustomDataCallback freeData)
+void CircularBuffer_destroy(CircularBuffer **cBuff, CustomDataCallback freeData)
 {
     if (cBuff) {
 

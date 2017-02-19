@@ -57,10 +57,10 @@ static void eulerTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback);
 
 static int balanceFactor(AVLTreeNode *avltNode);
 static void correctNodeHeight(AVLTreeNode *avltNode);
-static void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode);
+static void AVLTree_rebalance(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode);
 
 
-AVLTreeNode *insertNodeAVLTree(AVLTreeNode **avltRoot, unsigned long key, void *pData)
+AVLTreeNode *AVLTree_insert(AVLTreeNode **avltRoot, key_type key, void *pData)
 {
     AVLTreeNode *new_node = NULL;
 
@@ -114,7 +114,7 @@ AVLTreeNode *insertNodeAVLTree(AVLTreeNode **avltRoot, unsigned long key, void *
 
             }
 
-            rebalanceAVLTree(avltRoot, parent);
+            AVLTree_rebalance(avltRoot, parent);
 
         }
     }
@@ -163,7 +163,7 @@ void correctNodeHeight(AVLTreeNode *avltNode)
     }
 }
 
-void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
+void AVLTree_rebalance(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
 {
     if (*avltRoot && avltStartNode) {
 
@@ -272,7 +272,7 @@ void rebalanceAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
     }
 }
 
-void *deleteNodeAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltToDelete)
+void *AVLTree_deleteNode(AVLTreeNode **avltRoot, AVLTreeNode *avltToDelete)
 {
     void *pData = NULL;
 
@@ -287,7 +287,7 @@ void *deleteNodeAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltToDelete)
                 AVLTreeNode *avltTmp;
                 AVLTreeNode *avltFirstLeaf = avltToDelete->right;
 
-                //@TODO: optimize swapped node choice
+                //@TODO: optimize swapped node choice (swap with smallest node from smaller child subtree)
                 while ( !isLeafNode(avltFirstLeaf) ) {
                     if (avltFirstLeaf->left)
                         avltFirstLeaf = avltFirstLeaf->left;
@@ -348,19 +348,19 @@ void *deleteNodeAVLTree(AVLTreeNode **avltRoot, AVLTreeNode *avltToDelete)
             //and no other nodes point to it
             free(avltToDelete);
 
-            rebalanceAVLTree(avltRoot, parent);
+            AVLTree_rebalance(avltRoot, parent);
         }
     }
 
     return pData;
 }
 
-void *deleteByKeyAVLTree(AVLTreeNode **avltRoot, unsigned long key)
+void *AVLTree_deleteByKey(AVLTreeNode **avltRoot, key_type key)
 {
-    return deleteNodeAVLTree(avltRoot, findNodeAVLTree(*avltRoot, key));
+    return AVLTree_deleteNode(avltRoot, AVLTree_find(*avltRoot, key));
 }
 
-AVLTreeNode *findNodeAVLTree(AVLTreeNode *avltRoot, unsigned long key)
+AVLTreeNode *AVLTree_find(AVLTreeNode *avltRoot, key_type key)
 {
     AVLTreeNode *curr = avltRoot;
 
@@ -378,7 +378,7 @@ AVLTreeNode *findNodeAVLTree(AVLTreeNode *avltRoot, unsigned long key)
     return curr;
 }
 
-void traverseAVLTree(AVLTreeNode *avltRoot, TreeTraversalMethod traversal, CustomDataCallback callback)
+void AVLTree_traverse(AVLTreeNode *avltRoot, TreeTraversalMethod traversal, CustomDataCallback callback)
 {
     if (callback && avltRoot) {
         switch (traversal) {
@@ -403,7 +403,7 @@ void traverseAVLTree(AVLTreeNode *avltRoot, TreeTraversalMethod traversal, Custo
     }
 }
 
-void deleteAVLTree(AVLTreeNode **avltRoot, CustomDataCallback freeData)
+void AVLTree_destroy(AVLTreeNode **avltRoot, CustomDataCallback freeData)
 {
     if (avltRoot) {
 
@@ -485,21 +485,21 @@ void post_orderTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback)
 void breadth_firstTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback)
 {
     AVLTreeNode *curr;
-    FIFOqueue *levelFIFO = newFIFO();
+    FIFOqueue *levelFIFO = FIFO_init();
 
-    enqueueFIFO(levelFIFO, avltRoot);
+    FIFO_enqueue(levelFIFO, avltRoot);
 
     while (levelFIFO->total_nodes) {
-        curr = (AVLTreeNode *)dequeueFIFO(levelFIFO);
+        curr = (AVLTreeNode *)FIFO_dequeue(levelFIFO);
         callback(curr);
 
         if (curr->right)
-            enqueueFIFO(levelFIFO, curr->right);
+            FIFO_enqueue(levelFIFO, curr->right);
         if (curr->left)
-            enqueueFIFO(levelFIFO, curr->left);
+            FIFO_enqueue(levelFIFO, curr->left);
     }
 
-    deleteFIFO(&levelFIFO, 0);
+    FIFO_destroy(&levelFIFO, NULL);
 }
 
 void eulerTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback)

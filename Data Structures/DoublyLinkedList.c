@@ -6,7 +6,8 @@
 #include <stdlib.h>
 #include "DoublyLinkedList.h"
 
-DLListNode *insertNodeDLList(DLListNode **dllHead, void *pData)
+
+DLListNode *DLList_insert(DLListNode **dllHead, void *pData)
 {
     DLListNode *new_node = NULL;
 
@@ -26,7 +27,7 @@ DLListNode *insertNodeDLList(DLListNode **dllHead, void *pData)
     return new_node;
 }
 
-DLListNode *appendNodeDLList(DLListNode **dllHead, void *pData)
+DLListNode *DLList_append(DLListNode **dllHead, void *pData)
 {
     DLListNode *new_node = NULL;
 
@@ -51,7 +52,24 @@ DLListNode *appendNodeDLList(DLListNode **dllHead, void *pData)
     return new_node;
 }
 
-void *deleteNodeDLList(DLListNode **dllHead, DLListNode *dllToDelete)
+DLListNode *DLList_insertAfter(DLListNode *dllPrev, void *pData)
+{
+    DLListNode *new_node = NULL;
+
+    if (dllPrev) {
+        new_node = malloc(sizeof(DLListNode));
+
+        new_node->pData = pData;
+        new_node->nxt = dllPrev->nxt;
+        new_node->prv = dllPrev;
+
+        dllPrev->nxt = new_node;
+    }
+
+    return new_node;
+}
+
+void *DLList_deleteNode(DLListNode **dllHead, DLListNode *dllToDelete)
 {
     void *pRet = NULL;
 
@@ -78,7 +96,7 @@ void *deleteNodeDLList(DLListNode **dllHead, DLListNode *dllToDelete)
     return pRet;
 }
 
-DLListNode *findNodeDLList(DLListNode *dllHead, void *pToFind)
+DLListNode *DLList_find(DLListNode *dllHead, void *pToFind)
 {
     DLListNode *curr;
 
@@ -87,14 +105,14 @@ DLListNode *findNodeDLList(DLListNode *dllHead, void *pToFind)
     return curr;
 }
 
-void traverseDLList(DLListNode *dllHead, CustomDataCallback handleData)
+void DLList_traverse(DLListNode *dllHead, CustomDataCallback handleData)
 {
     if (handleData)
         for (DLListNode *curr = dllHead; curr; curr = curr->nxt)
             handleData(curr->pData);
 }
 
-void deleteDLList(DLListNode **dllHead, CustomDataCallback freeData)
+void DLList_destroy(DLListNode **dllHead, CustomDataCallback freeData)
 {
     if (dllHead) {
         DLListNode *curr, *tmp;

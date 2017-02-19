@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "SinglyLinkedList.h"
 
-SLListNode *insertNodeSLList(SLListNode **sllHead, void *pData)
+SLListNode *SLList_insert(SLListNode **sllHead, void *pData)
 {
     SLListNode *new_node = NULL;
 
@@ -22,7 +22,7 @@ SLListNode *insertNodeSLList(SLListNode **sllHead, void *pData)
     return new_node;
 }
 
-SLListNode *appendNodeSLList(SLListNode **sllHead, void *pData)
+SLListNode *SLList_append(SLListNode **sllHead, void *pData)
 {
     SLListNode *new_node = NULL;
 
@@ -46,7 +46,23 @@ SLListNode *appendNodeSLList(SLListNode **sllHead, void *pData)
     return new_node;
 }
 
-void *deleteNodeSLList(SLListNode **sllHead, SLListNode *sllToDelete)
+SLListNode *SLList_insertAfter(SLListNode *sllPrev, void *pData)
+{
+    SLListNode *new_node = NULL;
+
+    if (sllPrev) {
+        new_node = malloc(sizeof(SLListNode));
+
+        new_node->pData = pData;
+        new_node->nxt = sllPrev->nxt;
+
+        sllPrev->nxt = new_node;
+    }
+
+    return new_node;
+}
+
+void *SLList_deleteNode(SLListNode **sllHead, SLListNode *sllToDelete)
 {
     void *pRet = NULL;
 
@@ -72,7 +88,7 @@ void *deleteNodeSLList(SLListNode **sllHead, SLListNode *sllToDelete)
     return pRet;
 }
 
-SLListNode *findNodeSLList(SLListNode *sllHead, void *pToFind)
+SLListNode *SLList_find(SLListNode *sllHead, void *pToFind)
 {
     SLListNode *curr;
 
@@ -81,14 +97,14 @@ SLListNode *findNodeSLList(SLListNode *sllHead, void *pToFind)
     return curr;
 }
 
-void traverseSLList(SLListNode *sllHead, CustomDataCallback handleData)
+void SLList_traverse(SLListNode *sllHead, CustomDataCallback handleData)
 {
     if (sllHead && handleData)
         for (SLListNode *curr = sllHead; curr; curr = curr->nxt)
             handleData(curr->pData);
 }
 
-void deleteSLList(SLListNode **sllHead, CustomDataCallback freeData)
+void SLList_destroy(SLListNode **sllHead, CustomDataCallback freeData)
 {
     if (sllHead) {
         SLListNode *curr, *tmp;

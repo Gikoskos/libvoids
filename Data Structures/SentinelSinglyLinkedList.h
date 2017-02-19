@@ -20,19 +20,19 @@ typedef struct _SSLList {
 } SSLList;
 
 
-GiDS_API SSLList *newSSLList(void);
+GiDS_API SSLList *SSLList_init(void);
 
-GiDS_API SLListNode *insertNodeSSLList(SSLList *ssllList, void *pData);
+GiDS_API SLListNode *SSLList_insert(SSLList *ssllList, void *pData);
 
-GiDS_API SLListNode *appendNodeSSLList(SSLList *ssllList, void *pData);
+GiDS_API SLListNode *SSLList_append(SSLList *ssllList, void *pData);
 
-GiDS_API void *deleteNodeSSLList(SSLList *ssllList, void *pData);
+GiDS_API void *SSLList_deleteNode(SSLList *ssllList, void *pData);
 
-GiDS_API SLListNode *findNodeSSLList(SSLList *ssllList, void *pToFind);
+GiDS_API SLListNode *SSLList_find(SSLList *ssllList, void *pToFind);
 
-GiDS_API void traverseSSLList(SSLList *ssllList, CustomDataCallback handleData);
+GiDS_API void SSLList_traverse(SSLList *ssllList, CustomDataCallback handleData);
 
-GiDS_API void deleteSSLList(SSLList **ssllList, CustomDataCallback freeData);
+GiDS_API void SSLList_destroy(SSLList **ssllList, CustomDataCallback freeData);
 
 #ifdef __cplusplus
 }

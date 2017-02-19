@@ -10,7 +10,6 @@
 /* Prototypes for functions with local scope */
 static FIFOnode *newFIFOnode(void *node_data);
 
-
 FIFOnode *newFIFOnode(void *node_data)
 {
     FIFOnode *newnode = (FIFOnode*)malloc(sizeof(FIFOnode));
@@ -23,7 +22,7 @@ FIFOnode *newFIFOnode(void *node_data)
     return (FIFOnode*)newnode;
 }
 
-FIFOqueue *newFIFO(void)
+FIFOqueue *FIFO_init(void)
 {
     FIFOqueue *newqueue = (FIFOqueue*)malloc(sizeof(FIFOqueue));
 
@@ -35,7 +34,7 @@ FIFOqueue *newFIFO(void)
     return newqueue;
 }
 
-void enqueueFIFO(FIFOqueue *queue, void *node_data)
+void FIFO_enqueue(FIFOqueue *queue, void *node_data)
 {
     if (queue) {
         FIFOnode *to_inject = newFIFOnode(node_data);
@@ -53,7 +52,7 @@ void enqueueFIFO(FIFOqueue *queue, void *node_data)
     }
 }
 
-void *dequeueFIFO(FIFOqueue *queue)
+void *FIFO_dequeue(FIFOqueue *queue)
 {
     void *pData = NULL;
 
@@ -70,7 +69,7 @@ void *dequeueFIFO(FIFOqueue *queue)
     return pData;
 }
 
-void deleteFIFO(FIFOqueue **queue, CustomDataCallback freeData)
+void FIFO_destroy(FIFOqueue **queue, CustomDataCallback freeData)
 {
     if (queue && (*queue)) {
 
@@ -95,7 +94,7 @@ void deleteFIFO(FIFOqueue **queue, CustomDataCallback freeData)
     }
 }
 
-void traverseFIFO(FIFOqueue *queue, CustomDataCallback handleData)
+void FIFO_traverse(FIFOqueue *queue, CustomDataCallback handleData)
 {
     if (queue && handleData)
         for (FIFOnode *curr = queue->head; curr; curr = curr->next)

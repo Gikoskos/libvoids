@@ -7,7 +7,7 @@
 #include "SentinelSinglyLinkedList.h"
 
 
-SSLList *newSSLList(void)
+SSLList *SSLList_init(void)
 {
     SSLList *newList = calloc(1, sizeof(SSLList));
 
@@ -17,7 +17,7 @@ SSLList *newSSLList(void)
     return newList;
 }
 
-SLListNode *insertNodeSSLList(SSLList *ssllList, void *pData)
+SLListNode *SSLList_insert(SSLList *ssllList, void *pData)
 {
     SLListNode *new_node = NULL;
 
@@ -35,14 +35,14 @@ SLListNode *insertNodeSSLList(SSLList *ssllList, void *pData)
     return new_node;
 }
 
-SLListNode *appendNodeSSLList(SSLList *ssllList, void *pData)
+SLListNode *SSLList_append(SSLList *ssllList, void *pData)
 {
     SLListNode *new_node = NULL;
 
     if (ssllList) {
         if (ssllList->sentinel == ssllList->head) {
 
-            new_node = insertNodeSSLList(ssllList, pData);
+            new_node = SSLList_insert(ssllList, pData);
             
         } else {
             SLListNode *curr;
@@ -61,7 +61,7 @@ SLListNode *appendNodeSSLList(SSLList *ssllList, void *pData)
     return new_node;
 }
 
-void *deleteNodeSSLList(SSLList *ssllList, void *pData)
+void *SSLList_deleteNode(SSLList *ssllList, void *pData)
 {
     void *pRet = NULL;
 
@@ -87,7 +87,7 @@ void *deleteNodeSSLList(SSLList *ssllList, void *pData)
     return pRet;
 }
 
-SLListNode *findNodeSSLList(SSLList *ssllList, void *pToFind)
+SLListNode *SSLList_find(SSLList *ssllList, void *pToFind)
 {
     SLListNode *curr = NULL;
 
@@ -102,16 +102,16 @@ SLListNode *findNodeSSLList(SSLList *ssllList, void *pToFind)
     return curr;
 }
 
-void traverseSSLList(SSLList *ssllList, CustomDataCallback handleData)
+void SSLList_traverse(SSLList *ssllList, CustomDataCallback handleData)
 {
     if (ssllList && handleData)
         for (SLListNode *curr = ssllList->head; curr != ssllList->sentinel; curr = curr->nxt)
             handleData(curr->pData);
 }
 
-void deleteSSLList(SSLList **ssllList, CustomDataCallback freeData)
+void SSLList_destroy(SSLList **ssllList, CustomDataCallback freeData)
 {
-    if (ssllList) {
+    if (ssllList && *ssllList) {
         SLListNode *curr, *tmp;
 
         for (curr = (*ssllList)->head; curr != (*ssllList)->sentinel;) {
@@ -123,10 +123,8 @@ void deleteSSLList(SSLList **ssllList, CustomDataCallback freeData)
             free(tmp);
         }
 
-        if (*ssllList) {
-            free((*ssllList)->sentinel);
-            free(*ssllList);
-            *ssllList = NULL;
-        }
+        free((*ssllList)->sentinel);
+        free(*ssllList);
+        *ssllList = NULL;
     }
 }

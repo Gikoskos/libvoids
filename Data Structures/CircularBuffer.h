@@ -21,15 +21,15 @@ typedef struct _CircularBuffer {
 
 
 
-GiDS_API CircularBuffer *newCircularBuffer(size_t buff_size);
+GiDS_API CircularBuffer *CircularBuffer_init(size_t buff_size);
 
-GiDS_API void resizeCircularBuffer(CircularBuffer **cBuff, size_t new_size);
+GiDS_API void CircularBuffer_resize(CircularBuffer **cBuff, size_t new_size);
 
-GiDS_API void pushCircularBuffer(CircularBuffer *cBuff, void *pData);
+GiDS_API void CircularBuffer_write(CircularBuffer *cBuff, void *pData);
 
-GiDS_API void *popCircularBuffer(CircularBuffer *cBuff);
+GiDS_API void *CircularBuffer_read(CircularBuffer *cBuff);
 
-GiDS_API void deleteCircularBuffer(CircularBuffer **cBuff, CustomDataCallback freeData);
+GiDS_API void CircularBuffer_destroy(CircularBuffer **cBuff, CustomDataCallback freeData);
 
 #ifdef __cplusplus
 }

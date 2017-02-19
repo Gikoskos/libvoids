@@ -14,24 +14,25 @@ extern "C" {
 #include "Common.h"
 #include "DoublyLinkedList.h"
 
+
 typedef struct _SDLList {
     DLListNode *head, *sentinel;
 } SDLList;
 
 
-GiDS_API SDLList *newSDLList(void);
+GiDS_API SDLList *SDLList_init(void);
 
-GiDS_API DLListNode *insertNodeSDLList(SDLList *sdllList, void *pData);
+GiDS_API DLListNode *SDLList_insert(SDLList *sdllList, void *pData);
 
-GiDS_API DLListNode *appendNodeSDLList(SDLList *sdllList, void *pData);
+GiDS_API DLListNode *SDLList_append(SDLList *sdllList, void *pData);
 
-GiDS_API void *deleteNodeSDLList(SDLList *sdllList, void *pToDelete);
+GiDS_API void *SDLList_deleteNode(SDLList *sdllList, void *pToDelete);
 
-GiDS_API DLListNode *findNodeSDLList(SDLList *sdllList, void *pToFind);
+GiDS_API DLListNode *SDLList_find(SDLList *sdllList, void *pToFind);
 
-GiDS_API void traverseSDLList(SDLList *sdllList, CustomDataCallback handleData);
+GiDS_API void SDLList_traverse(SDLList *sdllList, CustomDataCallback handleData);
 
-GiDS_API void deleteSDLList(SDLList **sdllList, CustomDataCallback freeData);
+GiDS_API void SDLList_destroy(SDLList **sdllList, CustomDataCallback freeData);
 
 #ifdef __cplusplus
 }

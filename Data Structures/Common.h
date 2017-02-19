@@ -39,5 +39,6 @@ typedef enum _TreeTraversalMethod {
     EULER
 } TreeTraversalMethod;
 
+typedef unsigned int key_type;
 
 #endif //__GiDS_COMMON_H
