@@ -2,15 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <GiDS.h>
-/*GiDS_API ChainedHashtable *ChainedHash_init(size_t size);
-
-GiDS_API DictListNode *ChainedHash_insert(ChainedHashtable *table, void *pData, key_type key);
-
-GiDS_API void *ChainedHash_delete(ChainedHashtable *table, key_type key);
-
-GiDS_API DictListNode *ChainedHash_find(ChainedHashtable *table, key_type key);
-
-GiDS_API void ChainedHash_destroy(ChainedHashtable **table, CustomDataCallback freeData);*/
 
 
 int *newRandInt(void)

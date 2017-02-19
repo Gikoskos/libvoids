@@ -3,7 +3,6 @@
 *           George Koskeridis (C) 2017          *
 \***********************************************/
 
-#include <stdio.h>
 #include <stdlib.h>
 #include "ChainedHashtable.h"
 

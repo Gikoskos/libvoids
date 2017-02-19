@@ -3,7 +3,6 @@
 *           George Koskeridis (C) 2016          *
 \***********************************************/
 
-#include <stdio.h>
 #include <stdlib.h>
 #include "BinarySearchTree.h"
 #include "FIFOqueue.h"

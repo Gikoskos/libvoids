@@ -7,6 +7,7 @@
 #include <stdint.h> //for SIZE_MAX
 #include "CircularBuffer.h"
 
+
 CircularBuffer *CircularBuffer_init(size_t buff_size)
 {
     CircularBuffer *cBuffNew = NULL;

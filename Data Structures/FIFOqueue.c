@@ -3,8 +3,8 @@
 *           George Koskeridis (C) 2016          *
 \***********************************************/
 
-#include "FIFOqueue.h"
 #include <stdlib.h>
+#include "FIFOqueue.h"
 
 
 /* Prototypes for functions with local scope */
