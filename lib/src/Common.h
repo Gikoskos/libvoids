@@ -10,6 +10,8 @@
 #ifdef _WIN32
 # ifdef EXPORT_API_EduDS_DLL
 #  define EduDS_API __declspec(dllexport)
+# elif EXPORT_API_EduDS_STATIC
+#  define EduDS_API
 # else
 #  define EduDS_API __declspec(dllimport)
 # endif
