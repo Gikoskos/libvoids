@@ -102,14 +102,14 @@ SLListNode *SSLList_find(SSLList *ssllList, void *pToFind)
     return curr;
 }
 
-void SSLList_traverse(SSLList *ssllList, CustomDataCallback handleData)
+void SSLList_traverse(SSLList *ssllList, UserDataCallback handleData)
 {
     if (ssllList && handleData)
         for (SLListNode *curr = ssllList->head; curr != ssllList->sentinel; curr = curr->nxt)
             handleData(curr->pData);
 }
 
-void SSLList_destroy(SSLList **ssllList, CustomDataCallback freeData)
+void SSLList_destroy(SSLList **ssllList, UserDataCallback freeData)
 {
     if (ssllList && *ssllList) {
         SLListNode *curr, *tmp;

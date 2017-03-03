@@ -31,9 +31,9 @@ EduDS_API void *DLList_deleteNode(DLListNode **dllHead, DLListNode *dllToDelete)
 
 EduDS_API DLListNode *DLList_find(DLListNode *dllHead, void *pToFind);
 
-EduDS_API void DLList_traverse(DLListNode *dllHead, CustomDataCallback handleData);
+EduDS_API void DLList_traverse(DLListNode *dllHead, UserDataCallback handleData);
 
-EduDS_API void DLList_destroy(DLListNode **dllHead, CustomDataCallback freeData);
+EduDS_API void DLList_destroy(DLListNode **dllHead, UserDataCallback freeData);
 
 #ifdef __cplusplus
 }

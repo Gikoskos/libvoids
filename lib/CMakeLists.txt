@@ -1,8 +1,9 @@
 
 #EduDS_SRC is all the .c modules
-file(GLOB EduDS_SRC src//*.c)
+file(GLOB_RECURSE EduDS_SRC src//*.c)
 #EduDS_INC is all the .h header files
-file(GLOB EduDS_INC src//*.h)
+file(GLOB_RECURSE EduDS_INC src//*.h)
+
 
 #if we're building a windows .dll, we add the resource file
 #with the DLL versioning information, to the EduDS_SRC modules
@@ -12,13 +13,20 @@ endif(BUILD_SHARED_LIBS AND WIN32)
 
 add_library(EduDS ${EduDS_SRC} ${EduDS_INC})
 
+#if we're building a dynamic library we want to export all symbols
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(EduDS PRIVATE EXPORT_API_EduDS_DLL)
-else(BUILD_SHARED_LIBS)
-    target_compile_definitions(EduDS PRIVATE EXPORT_API_EduDS_STATIC)
 endif(BUILD_SHARED_LIBS)
 
+#set maximum warning levels for gcc
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+    target_compile_options(EduDS PRIVATE -ggdb -Wall -Wextra -pedantic)
+endif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 
+#set maximum warning levels for cl.exe
+if(MSVC)
+    target_compile_options(EduDS PRIVATE /W4)
+endif(MSVC)
 
 
 set_property(TARGET EduDS PROPERTY C_STANDARD 99)

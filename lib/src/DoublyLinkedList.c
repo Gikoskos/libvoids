@@ -105,14 +105,14 @@ DLListNode *DLList_find(DLListNode *dllHead, void *pToFind)
     return curr;
 }
 
-void DLList_traverse(DLListNode *dllHead, CustomDataCallback handleData)
+void DLList_traverse(DLListNode *dllHead, UserDataCallback handleData)
 {
     if (handleData)
         for (DLListNode *curr = dllHead; curr; curr = curr->nxt)
             handleData(curr->pData);
 }
 
-void DLList_destroy(DLListNode **dllHead, CustomDataCallback freeData)
+void DLList_destroy(DLListNode **dllHead, UserDataCallback freeData)
 {
     if (dllHead) {
         DLListNode *curr, *tmp;

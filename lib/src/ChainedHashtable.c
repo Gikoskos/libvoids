@@ -5,57 +5,71 @@
 
 #include <stdlib.h>
 #include "ChainedHashtable.h"
+#include "HashFunctions.h"
 
 
-static size_t Hash(key_type key, size_t size);
-
-
-size_t Hash(key_type key, size_t size)
+ChainedHashtable *ChainedHash_init(size_t size, UserCompareCallback KeyCmp, UserHashFuncCallback Hash)
 {
-    return key % size;
-}
+    ChainedHashtable *chtable = NULL;
 
-ChainedHashtable *ChainedHash_init(size_t size)
-{
-    ChainedHashtable *chtable = malloc(sizeof(ChainedHashtable));
+    if (KeyCmp && size > 0) {
 
-    chtable->chains = calloc(size, sizeof(DictListNode*));
-    chtable->size = size;
+        chtable = malloc(sizeof(ChainedHashtable));
+
+        //if the user didn't give a custom hashing algorithm, we default to either
+        //the multiplication or division hashing methods
+        if (!Hash) {
+
+            //if the array size is a power of two
+            if ( !(size & (size - 1)) ) //we default to mult
+                chtable->Hash = HashMult;
+            else
+                chtable->Hash = HashDiv; //else we default to div which works better when the array size isn't a power of two
+
+        } else {
+            chtable->Hash = Hash;
+        }
+
+        chtable->KeyCmp = KeyCmp;
+        chtable->chains = calloc(size, sizeof(DictListNode*));
+        chtable->size = size;
+    }
+
 
     return chtable;
 }
 
-DictListNode *ChainedHash_insert(ChainedHashtable *table, void *pData, key_type key)
+DictListNode *ChainedHash_insert(ChainedHashtable *table, void *pData, void *pKey, size_t key_size)
 {
     DictListNode *new_node = NULL;
 
-    if (table)
-        new_node = DictList_insert(&table->chains[ Hash(key, table->size) ], pData, key);
+    if (table && pKey && key_size)
+        new_node = DictList_insert(&table->chains[ table->Hash(pKey, key_size, table->size) ], pData, pKey, table->KeyCmp);
 
     return new_node;
 }
 
-void *ChainedHash_delete(ChainedHashtable *table, key_type key)
+KeyValuePair ChainedHash_delete(ChainedHashtable *table, void *pKey, size_t key_size)
 {
-    void *pData = NULL;
+    KeyValuePair item = { 0 };
 
-    if (table)
-        pData = DictList_deleteByKey(&table->chains[ Hash(key, table->size) ], key);
+    if (table && pKey && key_size)
+        item = DictList_deleteByKey(&table->chains[ table->Hash(pKey, key_size, table->size) ], pKey, table->KeyCmp);
 
-    return pData;
+    return item;
 }
 
-DictListNode *ChainedHash_find(ChainedHashtable *table, key_type key)
+DictListNode *ChainedHash_find(ChainedHashtable *table, void *pKey, size_t key_size)
 {
     DictListNode *to_find = NULL;
 
-    if (table)
-        to_find = DictList_findByKey(table->chains[ Hash(key, table->size) ], key);
+    if (table && pKey && key_size)
+        to_find = DictList_findByKey(table->chains[ table->Hash(pKey, key_size, table->size) ], pKey, table->KeyCmp);
 
     return to_find;
 }
 
-void ChainedHash_destroy(ChainedHashtable **table, CustomDataCallback freeData)
+void ChainedHash_destroy(ChainedHashtable **table, UserDataCallback freeData)
 {
     if (table && *table) {
 

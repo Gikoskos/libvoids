@@ -32,9 +32,9 @@ EduDS_API void FIFO_enqueue(FIFOqueue *queue, void *node_data);
 
 EduDS_API void *FIFO_dequeue(FIFOqueue *queue);
 
-EduDS_API void FIFO_destroy(FIFOqueue **queue, CustomDataCallback freeData);
+EduDS_API void FIFO_destroy(FIFOqueue **queue, UserDataCallback freeData);
 
-EduDS_API void FIFO_traverse(FIFOqueue *queue, CustomDataCallback handleData);
+EduDS_API void FIFO_traverse(FIFOqueue *queue, UserDataCallback handleData);
 
 #ifdef __cplusplus
 }

@@ -119,7 +119,7 @@ CDLListNode *CDLList_find(CDLListNode *cdllHead, void *pToFind)
     return NULL;
 }
 
-void CDLList_traverse(CDLListNode *cdllHead, CustomDataCallback handleData)
+void CDLList_traverse(CDLListNode *cdllHead, UserDataCallback handleData)
 {
     if (cdllHead && handleData) {
         CDLListNode *curr = cdllHead;
@@ -131,7 +131,7 @@ void CDLList_traverse(CDLListNode *cdllHead, CustomDataCallback handleData)
     }
 }
 
-void CDLList_destroy(CDLListNode **cdllHead, CustomDataCallback freeData)
+void CDLList_destroy(CDLListNode **cdllHead, UserDataCallback freeData)
 {
     if (cdllHead && *cdllHead) {
         CDLListNode *curr, *tmp;

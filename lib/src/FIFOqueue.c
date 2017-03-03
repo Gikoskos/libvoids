@@ -69,7 +69,7 @@ void *FIFO_dequeue(FIFOqueue *queue)
     return pData;
 }
 
-void FIFO_destroy(FIFOqueue **queue, CustomDataCallback freeData)
+void FIFO_destroy(FIFOqueue **queue, UserDataCallback freeData)
 {
     if (queue && (*queue)) {
 
@@ -94,7 +94,7 @@ void FIFO_destroy(FIFOqueue **queue, CustomDataCallback freeData)
     }
 }
 
-void FIFO_traverse(FIFOqueue *queue, CustomDataCallback handleData)
+void FIFO_traverse(FIFOqueue *queue, UserDataCallback handleData)
 {
     if (queue && handleData)
         for (FIFOnode *curr = queue->head; curr; curr = curr->next)

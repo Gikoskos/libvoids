@@ -29,7 +29,7 @@ EduDS_API void CircularBuffer_write(CircularBuffer *cBuff, void *pData);
 
 EduDS_API void *CircularBuffer_read(CircularBuffer *cBuff);
 
-EduDS_API void CircularBuffer_destroy(CircularBuffer **cBuff, CustomDataCallback freeData);
+EduDS_API void CircularBuffer_destroy(CircularBuffer **cBuff, UserDataCallback freeData);
 
 #ifdef __cplusplus
 }

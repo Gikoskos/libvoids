@@ -3,7 +3,6 @@
 *           George Koskeridis (C) 2017          *
 \***********************************************/
 
-#include <stdio.h>
 #include <stdlib.h>
 #include "AVLTree.h"
 
@@ -49,40 +48,55 @@
 
 
 
-static void pre_orderTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback);
-static void in_orderTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback);
-static void post_orderTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback);
-static void breadth_firstTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback);
-static void eulerTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback);
+static void pre_orderTraversal(AVLTreeNode *avltNode, UserDataCallback callback);
+static void in_orderTraversal(AVLTreeNode *avltNode, UserDataCallback callback);
+static void post_orderTraversal(AVLTreeNode *avltNode, UserDataCallback callback);
+static void breadth_firstTraversal(AVLTreeNode *avltRoot, UserDataCallback callback);
+static void eulerTraversal(AVLTreeNode *avltNode, UserDataCallback callback);
 
 static int balanceFactor(AVLTreeNode *avltNode);
 static void correctNodeHeight(AVLTreeNode *avltNode);
 static void AVLTree_rebalance(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode);
 
 
-AVLTreeNode *AVLTree_insert(AVLTreeNode **avltRoot, key_type key, void *pData)
+AVLTree *AVLTree_init(UserCompareCallback KeyCmp)
+{
+    AVLTree *avlt = NULL;
+
+    if (KeyCmp) {
+        avlt = malloc(sizeof(AVLTree));
+        avlt->root = NULL;
+        avlt->KeyCmp = KeyCmp;
+    }
+
+    return avlt;
+}
+
+AVLTreeNode *AVLTree_insert(AVLTree *avlt, void *pKey, void *pData)
 {
     AVLTreeNode *new_node = NULL;
 
-    if (avltRoot) {
+    if (avlt) {
 
         new_node = calloc(1, sizeof(AVLTreeNode));
 
-        new_node->key = key;
-        new_node->pData = pData;
+        new_node->item.pData = pData;
+        new_node->item.pKey = pKey;
 
         //done by calloc
         //new_node->height = 0;
         //new_node->right = new_node->left = new_node->parent = NULL;
 
-        if (!(*avltRoot)) {
-            *avltRoot = new_node;
+        if (!avlt->root) {
+            avlt->root = new_node;
         } else {
-            AVLTreeNode *curr = *avltRoot, *parent = NULL;
+            AVLTreeNode *curr = avlt->root, *parent = NULL;
+            int cmp_res;
 
             while (1) {
+                cmp_res = avlt->KeyCmp(pKey, curr->item.pKey);
 
-                if (key > curr->key) {
+                if (cmp_res > 0) {
 
                     parent = curr;
 
@@ -94,7 +108,7 @@ AVLTreeNode *AVLTree_insert(AVLTreeNode **avltRoot, key_type key, void *pData)
                         break;
                     }
 
-                } else if (key < curr->key) {
+                } else if (cmp_res < 0) {
 
                     parent = curr;
 
@@ -108,13 +122,13 @@ AVLTreeNode *AVLTree_insert(AVLTreeNode **avltRoot, key_type key, void *pData)
 
                 } else { //if there's another node with the same key already on the tree
                     free(new_node); //return without doing anything
-                    new_node = NULL;
+                    parent = new_node = NULL; //nullify the parent so that the rebalancing call below won't do anything
                     break;
                 }
 
             }
 
-            AVLTree_rebalance(avltRoot, parent);
+            AVLTree_rebalance(&avlt->root, parent);
 
         }
     }
@@ -272,130 +286,134 @@ void AVLTree_rebalance(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
     }
 }
 
-void *AVLTree_deleteNode(AVLTreeNode **avltRoot, AVLTreeNode *avltToDelete)
+KeyValuePair AVLTree_deleteNode(AVLTree *avlt, AVLTreeNode *avltToDelete)
 {
-    void *pData = NULL;
+    KeyValuePair item = { 0 };
 
-    if (avltRoot) {
-        if (*avltRoot && avltToDelete) {
+    if (avlt && avlt->root && avltToDelete) {
 
-            //if the node we want to delete has two children nodes
-            //we switch it with the first leftmost leaf node from the right subtree
-            if (avltToDelete->right && avltToDelete->left) {
+        //if the node we want to delete has two children nodes
+        //we switch it with the first leftmost leaf node from the right subtree
+        if (avltToDelete->right && avltToDelete->left) {
 
-                //temporary value to store the parent node that is being swapped
-                AVLTreeNode *avltTmp;
-                AVLTreeNode *avltFirstLeaf = avltToDelete->right;
+            //temporary value to store the parent node that is being swapped
+            AVLTreeNode *avltTmp;
+            AVLTreeNode *avltFirstLeaf = avltToDelete->right;
 
-                //@TODO: optimize swapped node choice (swap with smallest node from smaller child subtree)
-                while ( !isLeafNode(avltFirstLeaf) ) {
-                    if (avltFirstLeaf->left)
-                        avltFirstLeaf = avltFirstLeaf->left;
-                    else
-                        avltFirstLeaf = avltFirstLeaf->right;
-                }
-
-                //swap the *parent pointers of the two nodes
-                avltTmp = avltToDelete->parent;
-                avltToDelete->parent = avltFirstLeaf->parent;
-                avltFirstLeaf->parent = avltTmp;
-
-                //the swapped leaf node inherits the height and the children of the node that is to be deleted
-                avltFirstLeaf->height = avltToDelete->height;
-                avltFirstLeaf->left = avltToDelete->left;
-                avltFirstLeaf->right = avltToDelete->right;
-
-                //since the node we want to delete, becomes a leaf now,
-                //its children and height are zero'd out
-                avltToDelete->height = 0;
-                avltToDelete->left = avltToDelete->right = NULL;
-
+            //@TODO: optimize swapped node choice (swap with smallest node from smaller child subtree)
+            while ( !isLeafNode(avltFirstLeaf) ) {
+                if (avltFirstLeaf->left)
+                    avltFirstLeaf = avltFirstLeaf->left;
+                else
+                    avltFirstLeaf = avltFirstLeaf->right;
             }
 
-            //now the node we want to delete has AT MOST one child node
+            //swap the *parent pointers of the two nodes
+            avltTmp = avltToDelete->parent;
+            avltToDelete->parent = avltFirstLeaf->parent;
+            avltFirstLeaf->parent = avltTmp;
 
-            AVLTreeNode *parent = avltToDelete->parent;
+            //the swapped leaf node inherits the height and the children of the node that is to be deleted
+            avltFirstLeaf->height = avltToDelete->height;
+            avltFirstLeaf->left = avltToDelete->left;
+            avltFirstLeaf->right = avltToDelete->right;
 
-            //if the node we want to delete ISN'T the root node
-            if (parent) {
-                //if the key of the node we want to delete, is bigger
-                //than the key of its parent, then it's a right node
-                if (avltToDelete->key > parent->key) {
-                    //and we change the right node of the parent so
-                    //that it points to either the right node of the node we
-                    //want to delete, or the left node, depending on which one
-                    //is not NULL (if both are NULL then we point to NULL)
-                    parent->right = (avltToDelete->right) ? avltToDelete->right : avltToDelete->left;
-                } else { //if the key of the parent is smaller, it's a left node
-                    parent->left = (avltToDelete->right) ? avltToDelete->right : avltToDelete->left;
-                }
-            //else if the node we want to delete IS the root node
-            } else {
-                //change avltRoot accordingly, so that it points to the new root (or NULL, if it's the only node in the tree)
-                *avltRoot = (avltToDelete->right) ? avltToDelete->right : avltToDelete->left;
-            }
+            //since the node we want to delete, becomes a leaf now,
+            //its children and height are zero'd out
+            avltToDelete->height = 0;
+            avltToDelete->left = avltToDelete->right = NULL;
 
-            //don't forget to change the parents of the children node too
-            //(if they exist)
-            if (avltToDelete->right)
-                avltToDelete->right->parent = parent;
-            else if (avltToDelete->left)
-                avltToDelete->left->parent = parent;
-
-            pData = avltToDelete->pData;
-
-            //delete the node because we don't need it anymore
-            //and no other nodes point to it
-            free(avltToDelete);
-
-            AVLTree_rebalance(avltRoot, parent);
         }
+
+        //now the node we want to delete has AT MOST one child node
+
+        AVLTreeNode *parent = avltToDelete->parent;
+
+        //if the node we want to delete ISN'T the root node
+        if (parent) {
+            //if the key of the node we want to delete, is bigger
+            //than the key of its parent, then it's a right node
+            if (avlt->KeyCmp(avltToDelete->item.pKey, parent->item.pKey) > 0) {
+                //and we change the right node of the parent so
+                //that it points to either the right node of the node we
+                //want to delete, or the left node, depending on which one
+                //is not NULL (if both are NULL then we point to NULL)
+                parent->right = (avltToDelete->right) ? avltToDelete->right : avltToDelete->left;
+            } else { //if the key of the parent is smaller, it's a left node
+                parent->left = (avltToDelete->right) ? avltToDelete->right : avltToDelete->left;
+            }
+        //else if the node we want to delete IS the root node
+        } else {
+            //change the tree root accordingly, so that it points to the new root (or NULL, if it's the only node in the tree)
+            avlt->root = (avltToDelete->right) ? avltToDelete->right : avltToDelete->left;
+        }
+
+        //don't forget to change the parents of the children node too
+        //(if they exist)
+        if (avltToDelete->right)
+            avltToDelete->right->parent = parent;
+        else if (avltToDelete->left)
+            avltToDelete->left->parent = parent;
+
+        item = avltToDelete->item;
+
+        //delete the node because we don't need it anymore
+        //and no other nodes point to it
+        free(avltToDelete);
+
+        AVLTree_rebalance(&avlt->root, parent);
     }
 
-    return pData;
+    return item;
 }
 
-void *AVLTree_deleteByKey(AVLTreeNode **avltRoot, key_type key)
+KeyValuePair AVLTree_deleteByKey(AVLTree *avlt, void *pKey)
 {
-    return AVLTree_deleteNode(avltRoot, AVLTree_find(*avltRoot, key));
+    return AVLTree_deleteNode(avlt, AVLTree_find(avlt, pKey));
 }
 
-AVLTreeNode *AVLTree_find(AVLTreeNode *avltRoot, key_type key)
+AVLTreeNode *AVLTree_find(AVLTree *avlt, void *pKey)
 {
-    AVLTreeNode *curr = avltRoot;
+    AVLTreeNode *curr = NULL;
 
-    while (curr) {
-        if (curr->key == key)
-            break;
+    if (avlt) {
+        curr = avlt->root;
+        int cmp_res;
 
-        if (key > curr->key)
-            curr = curr->right;
+        while (curr) {
+            cmp_res = avlt->KeyCmp(pKey, curr->item.pKey);
+            
+            if (!cmp_res)
+                break;
 
-        if (key < curr->key)
-            curr = curr->left;
+            if (cmp_res > 0)
+                curr = curr->right;
+            else /*if (cmp_res < 0)*/
+                curr = curr->left;
+        }
     }
 
     return curr;
 }
 
-void AVLTree_traverse(AVLTreeNode *avltRoot, TreeTraversalMethod traversal, CustomDataCallback callback)
+void AVLTree_traverse(AVLTree *avlt, TreeTraversalMethod traversal, UserDataCallback callback)
 {
-    if (callback && avltRoot) {
+    if (callback && avlt && avlt->root) {
         switch (traversal) {
         case PRE_ORDER:
-            pre_orderTraversal(avltRoot, callback);
+            pre_orderTraversal(avlt->root, callback);
             break;
         case IN_ORDER:
-            in_orderTraversal(avltRoot, callback);
+            in_orderTraversal(avlt->root, callback);
             break;
         case POST_ORDER:
-            post_orderTraversal(avltRoot, callback);
+            post_orderTraversal(avlt->root, callback);
             break;
         case BREADTH_FIRST:
-            breadth_firstTraversal(avltRoot, callback);
+            breadth_firstTraversal(avlt->root, callback);
             break;
         case EULER:
-            eulerTraversal(avltRoot, callback);
+            eulerTraversal(avlt->root, callback);
             break;
         default:
             break;
@@ -403,11 +421,11 @@ void AVLTree_traverse(AVLTreeNode *avltRoot, TreeTraversalMethod traversal, Cust
     }
 }
 
-void AVLTree_destroy(AVLTreeNode **avltRoot, CustomDataCallback freeData)
+void AVLTree_destroy(AVLTree **avlt, UserDataCallback freeData)
 {
-    if (avltRoot) {
+    if (avlt && *avlt) {
 
-        AVLTreeNode *curr = *avltRoot, *to_delete;
+        AVLTreeNode *curr = (*avlt)->root, *to_delete;
 
         //basically my iterative version of post-order
         while (curr) {
@@ -427,7 +445,7 @@ void AVLTree_destroy(AVLTreeNode **avltRoot, CustomDataCallback freeData)
                 curr = curr->parent;
 
                 if (freeData)
-                    freeData(to_delete->pData);
+                    freeData((void *)&to_delete->item);
 
                 if (curr) {
 
@@ -445,7 +463,8 @@ void AVLTree_destroy(AVLTreeNode **avltRoot, CustomDataCallback freeData)
             }
         }
 
-        *avltRoot = NULL;
+        free(*avlt);
+        *avlt = NULL;
     }
 }
 
@@ -455,43 +474,43 @@ void AVLTree_destroy(AVLTreeNode **avltRoot, CustomDataCallback freeData)
 
 #include "FIFOqueue.h"
 
-void pre_orderTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback)
+void pre_orderTraversal(AVLTreeNode *avltNode, UserDataCallback callback)
 {
-    if (avltRoot) {
-        callback(avltRoot);
-        pre_orderTraversal(avltRoot->left, callback);
-        pre_orderTraversal(avltRoot->right, callback);
+    if (avltNode) {
+        callback((void *)&avltNode->item);
+        pre_orderTraversal(avltNode->left, callback);
+        pre_orderTraversal(avltNode->right, callback);
     }
 }
 
-void in_orderTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback)
+void in_orderTraversal(AVLTreeNode *avltNode, UserDataCallback callback)
 {
-    if (avltRoot) {
-        in_orderTraversal(avltRoot->left, callback);
-        callback(avltRoot);
-        in_orderTraversal(avltRoot->right, callback);
+    if (avltNode) {
+        in_orderTraversal(avltNode->left, callback);
+        callback((void *)&avltNode->item);
+        in_orderTraversal(avltNode->right, callback);
     }
 }
 
-void post_orderTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback)
+void post_orderTraversal(AVLTreeNode *avltNode, UserDataCallback callback)
 {
-    if (avltRoot) {
-        post_orderTraversal(avltRoot->left, callback);
-        post_orderTraversal(avltRoot->right, callback);
-        callback(avltRoot);
+    if (avltNode) {
+        post_orderTraversal(avltNode->left, callback);
+        post_orderTraversal(avltNode->right, callback);
+        callback((void *)&avltNode->item);
     }
 }
 
-void breadth_firstTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback)
+void breadth_firstTraversal(AVLTreeNode *avltRoot, UserDataCallback callback)
 {
     AVLTreeNode *curr;
     FIFOqueue *levelFIFO = FIFO_init();
 
-    FIFO_enqueue(levelFIFO, avltRoot);
+    FIFO_enqueue(levelFIFO, (void *)&avltRoot->item);
 
     while (levelFIFO->total_nodes) {
         curr = (AVLTreeNode *)FIFO_dequeue(levelFIFO);
-        callback(curr);
+        callback((void *)&curr->item);
 
         if (curr->right)
             FIFO_enqueue(levelFIFO, curr->right);
@@ -502,14 +521,14 @@ void breadth_firstTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback)
     FIFO_destroy(&levelFIFO, NULL);
 }
 
-void eulerTraversal(AVLTreeNode *avltRoot, CustomDataCallback callback)
+void eulerTraversal(AVLTreeNode *avltNode, UserDataCallback callback)
 {
-    if (avltRoot) {
-        callback(avltRoot);
+    if (avltNode) {
+        callback((void *)&avltNode->item);
 
-        eulerTraversal(avltRoot->left, callback);
-        callback(avltRoot);
-        eulerTraversal(avltRoot->right, callback);
-        callback(avltRoot);
+        eulerTraversal(avltNode->left, callback);
+        callback((void *)&avltNode->item);
+        eulerTraversal(avltNode->right, callback);
+        callback((void *)&avltNode->item);
     }
 }

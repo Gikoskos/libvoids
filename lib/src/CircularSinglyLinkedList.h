@@ -31,9 +31,9 @@ EduDS_API void *CSLList_deleteNode(CSLListNode **csllHead, CSLListNode *cdllToDe
 
 EduDS_API CSLListNode *CSLList_find(CSLListNode *csllHead, void *pToFind);
 
-EduDS_API void CSLList_traverse(CSLListNode *csllHead, CustomDataCallback handleData);
+EduDS_API void CSLList_traverse(CSLListNode *csllHead, UserDataCallback handleData);
 
-EduDS_API void CSLList_destroy(CSLListNode **csllHead, CustomDataCallback freeData);
+EduDS_API void CSLList_destroy(CSLListNode **csllHead, UserDataCallback freeData);
 
 #ifdef __cplusplus
 }

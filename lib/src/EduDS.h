@@ -16,6 +16,7 @@
 #include "CircularSinglyLinkedList.h"
 #include "CircularDoublyLinkedList.h"
 #include "AssociationList.h"
+#include "HashFunctions.h"
 #include "ChainedHashtable.h"
 #include "BinarySearchTree.h"
 #include "AVLTree.h"

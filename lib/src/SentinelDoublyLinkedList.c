@@ -86,7 +86,7 @@ void *SDLList_deleteNode(SDLList *sdllList, void *pToDelete)
 
 DLListNode *SDLList_find(SDLList *sdllList, void *pToFind)
 {
-    DLListNode *curr;
+    DLListNode *curr = NULL;
 
     if (sdllList) {
         sdllList->sentinel->pData = pToFind;
@@ -99,14 +99,14 @@ DLListNode *SDLList_find(SDLList *sdllList, void *pToFind)
     return curr;
 }
 
-void SDLList_traverse(SDLList *sdllList, CustomDataCallback handleData)
+void SDLList_traverse(SDLList *sdllList, UserDataCallback handleData)
 {
     if (sdllList && handleData)
         for (DLListNode *curr = sdllList->head; curr != sdllList->sentinel; curr = curr->nxt)
             handleData(curr->pData);
 }
 
-void SDLList_destroy(SDLList **sdllList, CustomDataCallback freeData)
+void SDLList_destroy(SDLList **sdllList, UserDataCallback freeData)
 {
     if (sdllList && *sdllList) {
         DLListNode *curr, *tmp;

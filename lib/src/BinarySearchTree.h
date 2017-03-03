@@ -15,23 +15,30 @@ extern "C" {
 
 
 typedef struct _BSTreeNode {
-    key_type key;
-    void *pData;
+    KeyValuePair item;
     struct _BSTreeNode *left, *right, *parent;
 } BSTreeNode;
 
+typedef struct _BSTree {
+    BSTreeNode *root;
+    UserCompareCallback KeyCmp;
+} BSTree;
 
-EduDS_API BSTreeNode *BSTree_insert(BSTreeNode **bstRoot, key_type key, void *pData);
+
+EduDS_API BSTree *BSTree_init(UserCompareCallback KeyCmp);
+
+EduDS_API BSTreeNode *BSTree_insert(BSTree *bst, void *pData, void *pKey);
           
-EduDS_API void *BSTree_deleteNode(BSTreeNode **bstRoot,  BSTreeNode *bstToDelete);
+EduDS_API KeyValuePair BSTree_deleteNode(BSTree *bst, BSTreeNode *bstToDelete);
           
-EduDS_API void *BSTree_deleteByKey(BSTreeNode **bstRoot, key_type key);
+EduDS_API KeyValuePair BSTree_deleteByKey(BSTree *bst, void *pKey);
           
-EduDS_API BSTreeNode *BSTree_find(BSTreeNode *bstRoot, key_type key);
+EduDS_API BSTreeNode *BSTree_find(BSTree *bst, void *pKey);
           
-EduDS_API void BSTree_traverse(BSTreeNode *bstRoot, TreeTraversalMethod traversal, CustomDataCallback callback);
+EduDS_API void BSTree_traverse(BSTree *bst, TreeTraversalMethod traversal, UserDataCallback callback);
           
-EduDS_API void BSTree_destroy(BSTreeNode **bstRoot, CustomDataCallback freeData);
+EduDS_API void BSTree_destroy(BSTree **bst, UserDataCallback freeData);
+
 
 #ifdef __cplusplus
 }

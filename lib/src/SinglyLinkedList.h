@@ -31,9 +31,9 @@ EduDS_API void *SLList_deleteNode(SLListNode **sllHead, SLListNode *sllToDelete)
 
 EduDS_API SLListNode *SLList_find(SLListNode *sllHead, void *pToFind);
 
-EduDS_API void SLList_traverse(SLListNode *sllHead, CustomDataCallback handleData);
+EduDS_API void SLList_traverse(SLListNode *sllHead, UserDataCallback handleData);
 
-EduDS_API void SLList_destroy(SLListNode **sllHead, CustomDataCallback freeData);
+EduDS_API void SLList_destroy(SLListNode **sllHead, UserDataCallback freeData);
 
 #ifdef __cplusplus
 }

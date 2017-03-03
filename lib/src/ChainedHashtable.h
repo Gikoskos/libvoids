@@ -17,19 +17,21 @@ extern "C" {
 
 typedef struct _ChainedHashtable {
     DictListNode **chains;
+    UserCompareCallback KeyCmp;
+    UserHashFuncCallback Hash;
     size_t size;
 } ChainedHashtable;
 
 
-EduDS_API ChainedHashtable *ChainedHash_init(size_t size);
+EduDS_API ChainedHashtable *ChainedHash_init(size_t size, UserCompareCallback KeyCmp, UserHashFuncCallback Hash);
           
-EduDS_API DictListNode *ChainedHash_insert(ChainedHashtable *table, void *pData, key_type key);
+EduDS_API DictListNode *ChainedHash_insert(ChainedHashtable *table, void *pData, void *pKey, size_t key_size);
           
-EduDS_API void *ChainedHash_delete(ChainedHashtable *table, key_type key);
+EduDS_API KeyValuePair ChainedHash_delete(ChainedHashtable *table, void *pKey, size_t key_size);
           
-EduDS_API DictListNode *ChainedHash_find(ChainedHashtable *table, key_type key);
+EduDS_API DictListNode *ChainedHash_find(ChainedHashtable *table, void *pKey, size_t key_size);
           
-EduDS_API void ChainedHash_destroy(ChainedHashtable **table, CustomDataCallback freeData);
+EduDS_API void ChainedHash_destroy(ChainedHashtable **table, UserDataCallback freeData);
 
 #ifdef __cplusplus
 }

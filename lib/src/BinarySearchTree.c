@@ -5,41 +5,57 @@
 
 #include <stdlib.h>
 #include "BinarySearchTree.h"
-#include "FIFOqueue.h"
 
 #define isLeafNode(x) (!(x->right || x->left))
 
 
-static void pre_orderTraversal(BSTreeNode *bstRoot, CustomDataCallback callback);
-static void in_orderTraversal(BSTreeNode *bstRoot, CustomDataCallback callback);
-static void post_orderTraversal(BSTreeNode *bstRoot, CustomDataCallback callback);
-static void breadth_firstTraversal(BSTreeNode *bstRoot, CustomDataCallback callback);
-static void eulerTraversal(BSTreeNode *bstRoot, CustomDataCallback callback);
+static void pre_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback);
+static void in_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback);
+static void post_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback);
+static void breadth_firstTraversal(BSTreeNode *bstRoot, UserDataCallback callback);
+static void eulerTraversal(BSTreeNode *bstNode, UserDataCallback callback);
 
 
-BSTreeNode *BSTree_insert(BSTreeNode **bstRoot, key_type key, void *pData)
+
+BSTree *BSTree_init(UserCompareCallback KeyCmp)
+{
+    BSTree *bst = NULL;
+
+    if (KeyCmp) {
+        bst = malloc(sizeof(BSTree));
+        bst->root = NULL;
+        bst->KeyCmp = KeyCmp;
+    }
+
+    return bst;
+}
+
+BSTreeNode *BSTree_insert(BSTree *bst, void *pData, void *pKey)
 {
     BSTreeNode *new_node = NULL;
 
-    if (bstRoot) {
+    if (bst && pKey) {
 
         new_node = calloc(1, sizeof(BSTreeNode));
 
-        new_node->key = key;
-        new_node->pData = pData;
+        new_node->item.pData = pData;
+        new_node->item.pKey = pKey;
         //done by calloc
         //new_node->right = new_node->left = new_node->parent = NULL;
 
-        if (!(*bstRoot)) {
-            *bstRoot = new_node;
+        if (!bst->root) {
+            bst->root = new_node;
         } else {
-            BSTreeNode *curr = *bstRoot, *parent = NULL;
+            BSTreeNode *curr = bst->root, *parent = NULL;
+            int cmp_res;
 
             while (1) {
+                cmp_res = bst->KeyCmp(pKey, curr->item.pKey);
 
-                if (key > curr->key) {
+                if (cmp_res > 0) {
 
                     parent = curr;
+
                     curr = curr->right;
 
                     if (!curr) {
@@ -48,8 +64,10 @@ BSTreeNode *BSTree_insert(BSTreeNode **bstRoot, key_type key, void *pData)
                         break;
                     }
 
-                } else if (key < curr->key) {
+                } else if (cmp_res < 0) {
+
                     parent = curr;
+
                     curr = curr->left;
 
                     if (!curr) {
@@ -70,122 +88,128 @@ BSTreeNode *BSTree_insert(BSTreeNode **bstRoot, key_type key, void *pData)
     return new_node;
 }
 
-void *BSTree_deleteNode(BSTreeNode **bstRoot, BSTreeNode *bstToDelete)
+KeyValuePair BSTree_deleteNode(BSTree *bst, BSTreeNode *bstToDelete)
 {
-    void *pData = NULL;
+    KeyValuePair item = { 0 };
 
-    if (bstRoot) {
-        if (*bstRoot && bstToDelete) {
+    if (bst && bst->root && bstToDelete) {
 
-            //if the node we want to delete has two children nodes
-            //we switch it with the first leftmost leaf node from the right subtree
-            if (bstToDelete->right && bstToDelete->left) {
+        //if the node we want to delete has two children nodes
+        //we switch it with the first leftmost leaf node from the right subtree
+        if (bstToDelete->right && bstToDelete->left) {
 
-                //temporary value to store the data that is being swapped
-                BSTreeNode *bstTmp;
-                BSTreeNode *bstFirstLeaf = bstToDelete->right;
+            //temporary value to store the data that is being swapped
+            BSTreeNode *bstTmp;
+            BSTreeNode *bstFirstLeaf = bstToDelete->right;
 
-                while ( !isLeafNode(bstFirstLeaf) ) {
-                    if (bstFirstLeaf->left)
-                        bstFirstLeaf = bstFirstLeaf->left;
-                    else
-                        bstFirstLeaf = bstFirstLeaf->right;
-                }
-
-                //swap the *parent, *left and *right pointers of the two nodes
-                bstTmp = bstToDelete->parent;
-                bstToDelete->parent = bstFirstLeaf->parent;
-                bstFirstLeaf->parent = bstTmp;
-                bstFirstLeaf->left = bstToDelete->left;
-                bstFirstLeaf->right = bstToDelete->right;
-                //since the node we want to delete, becomes a leaf now,
-                //its children are NULLed
-                bstToDelete->left = bstToDelete->right = NULL;
-
+            while ( !isLeafNode(bstFirstLeaf) ) {
+                if (bstFirstLeaf->left)
+                    bstFirstLeaf = bstFirstLeaf->left;
+                else
+                    bstFirstLeaf = bstFirstLeaf->right;
             }
 
-            //now the node we want to delete has AT MOST one child node
+            //swap the *parent, *left and *right pointers of the two nodes
+            bstTmp = bstToDelete->parent;
+            bstToDelete->parent = bstFirstLeaf->parent;
+            bstFirstLeaf->parent = bstTmp;
+            bstFirstLeaf->left = bstToDelete->left;
+            bstFirstLeaf->right = bstToDelete->right;
+            //since the node we want to delete, becomes a leaf now,
+            //its children are NULLed
+            bstToDelete->left = bstToDelete->right = NULL;
 
-            BSTreeNode *parent = bstToDelete->parent;
-
-            //if the node we want to delete ISN'T the root node
-            if (parent) {
-                //if the key of the node we want to delete, is bigger
-                //than the key of its parent, then it's a right node
-                if (bstToDelete->key > parent->key) {
-                    //and we change the right node of the parent so
-                    //that it points to either the right node of the node we
-                    //want to delete, or the left node, depending on which one
-                    //is not NULL (if both are NULL then we point to NULL)
-                    parent->right = (bstToDelete->right) ? bstToDelete->right : bstToDelete->left;
-                } else { //if the key of the parent is smaller, it's a left node
-                    parent->left = (bstToDelete->right) ? bstToDelete->right : bstToDelete->left;
-                }
-            //else if the node we want to delete IS the root node
-            } else {
-                //change bstRoot accordingly, so that it points to the new root (or NULL, if it's the only node in the tree)
-                *bstRoot = (bstToDelete->right) ? bstToDelete->right : bstToDelete->left;
-            }
-
-            //don't forget to change the parents of the children node too
-            //(if they exist)
-            if (bstToDelete->right)
-                bstToDelete->right->parent = parent;
-            else if (bstToDelete->left)
-                bstToDelete->left->parent = parent;
-
-            pData = bstToDelete->pData;
-
-            //delete the node because we don't need it anymore
-            //and no other nodes point to it
-            free(bstToDelete);
         }
+
+        //now the node we want to delete has AT MOST one child node
+
+        BSTreeNode *parent = bstToDelete->parent;
+
+        //if the node we want to delete ISN'T the root node
+        if (parent) {
+            //if the key of the node we want to delete, is bigger
+            //than the key of its parent, then it's a right node
+            if (bst->KeyCmp(bstToDelete->item.pKey, parent->item.pKey) > 0) {
+                //and we change the right node of the parent so
+                //that it points to either the right node of the node we
+                //want to delete, or the left node, depending on which one
+                //is not NULL (if both are NULL then we point to NULL)
+                parent->right = (bstToDelete->right) ? bstToDelete->right : bstToDelete->left;
+            } else { //if the key of the parent is smaller, it's a left node
+                parent->left = (bstToDelete->right) ? bstToDelete->right : bstToDelete->left;
+            }
+        //else if the node we want to delete IS the root node
+        } else {
+            //change bst->root accordingly, so that it points to the new root (or NULL, if it's the only node in the tree)
+            bst->root = (bstToDelete->right) ? bstToDelete->right : bstToDelete->left;
+        }
+
+        //don't forget to change the parents of the children node too
+        //(if they exist)
+        if (bstToDelete->right)
+            bstToDelete->right->parent = parent;
+        else if (bstToDelete->left)
+            bstToDelete->left->parent = parent;
+
+        //copy the item of the node we are about to delete, to keep it as a return value
+        item = bstToDelete->item;
+
+        //delete the node because we don't need it anymore
+        //and no other nodes point to it
+        free(bstToDelete);
     }
 
-    return pData;
+    return item;
 }
 
-void *BSTree_deleteByKey(BSTreeNode **bstRoot, key_type key)
+KeyValuePair BSTree_deleteByKey(BSTree *bst, void *pKey)
 {
-    return BSTree_deleteNode(bstRoot, BSTree_find(*bstRoot, key));
+    return BSTree_deleteNode(bst, BSTree_find(bst, pKey));
 }
 
-BSTreeNode *BSTree_find(BSTreeNode *bstRoot, key_type key)
+BSTreeNode *BSTree_find(BSTree *bst, void *pKey)
 {
-    BSTreeNode *curr = bstRoot;
+    BSTreeNode *curr = bst->root;
 
-    while (curr) {
-        if (curr->key == key)
-            break;
+    if (bst) {
+        int cmp_res;
 
-        if (key > curr->key)
-            curr = curr->right;
+        curr = bst->root;
+        while (curr) {
+            cmp_res = bst->KeyCmp(curr->item.pKey, pKey);
 
-        if (key < curr->key)
-            curr = curr->left;
+            if (!cmp_res)
+                break;
+
+            if (cmp_res < 0)
+                curr = curr->right;
+
+            if (cmp_res > 0)
+                curr = curr->left;
+        }
     }
 
     return curr;
 }
 
-void BSTree_traverse(BSTreeNode *bstRoot, TreeTraversalMethod traversal, CustomDataCallback callback)
+void BSTree_traverse(BSTree *bst, TreeTraversalMethod traversal, UserDataCallback callback)
 {
-    if (callback && bstRoot) {
+    if (bst && bst->root && callback) {
         switch (traversal) {
         case PRE_ORDER:
-            pre_orderTraversal(bstRoot, callback);
+            pre_orderTraversal(bst->root, callback);
             break;
         case IN_ORDER:
-            in_orderTraversal(bstRoot, callback);
+            in_orderTraversal(bst->root, callback);
             break;
         case POST_ORDER:
-            post_orderTraversal(bstRoot, callback);
+            post_orderTraversal(bst->root, callback);
             break;
         case BREADTH_FIRST:
-            breadth_firstTraversal(bstRoot, callback);
+            breadth_firstTraversal(bst->root, callback);
             break;
         case EULER:
-            eulerTraversal(bstRoot, callback);
+            eulerTraversal(bst->root, callback);
             break;
         default:
             break;
@@ -193,11 +217,11 @@ void BSTree_traverse(BSTreeNode *bstRoot, TreeTraversalMethod traversal, CustomD
     }
 }
 
-void BSTree_destroy(BSTreeNode **bstRoot, CustomDataCallback freeData)
+void BSTree_destroy(BSTree **bst, UserDataCallback freeData)
 {
-    if (bstRoot) {
+    if (bst && *bst) {
 
-        BSTreeNode *curr = *bstRoot, *to_delete;
+        BSTreeNode *curr = (*bst)->root, *to_delete;
 
         //basically my iterative version of post-order
         while (curr) {
@@ -217,7 +241,7 @@ void BSTree_destroy(BSTreeNode **bstRoot, CustomDataCallback freeData)
                 curr = curr->parent;
 
                 if (freeData)
-                    freeData(to_delete->pData);
+                    freeData((void *)&to_delete->item);
 
                 if (curr) {
 
@@ -235,7 +259,9 @@ void BSTree_destroy(BSTreeNode **bstRoot, CustomDataCallback freeData)
             }
         }
 
-        *bstRoot = NULL;
+        free(*bst);
+        //this line is the reason for the double pointer parameter **
+        *bst = NULL;
     }
 }
 
@@ -245,34 +271,34 @@ void BSTree_destroy(BSTreeNode **bstRoot, CustomDataCallback freeData)
 
 #include "FIFOqueue.h"
 
-void pre_orderTraversal(BSTreeNode *bstRoot, CustomDataCallback callback)
+void pre_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback)
 {
-    if (bstRoot) {
-        callback(bstRoot);
-        pre_orderTraversal(bstRoot->left, callback);
-        pre_orderTraversal(bstRoot->right, callback);
+    if (bstNode) {
+        callback((void *)&bstNode->item);
+        pre_orderTraversal(bstNode->left, callback);
+        pre_orderTraversal(bstNode->right, callback);
     }
 }
 
-void in_orderTraversal(BSTreeNode *bstRoot, CustomDataCallback callback)
+void in_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback)
 {
-    if (bstRoot) {
-        in_orderTraversal(bstRoot->left, callback);
-        callback(bstRoot);
-        in_orderTraversal(bstRoot->right, callback);
+    if (bstNode) {
+        in_orderTraversal(bstNode->left, callback);
+        callback((void *)&bstNode->item);
+        in_orderTraversal(bstNode->right, callback);
     }
 }
 
-void post_orderTraversal(BSTreeNode *bstRoot, CustomDataCallback callback)
+void post_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback)
 {
-    if (bstRoot) {
-        post_orderTraversal(bstRoot->left, callback);
-        post_orderTraversal(bstRoot->right, callback);
-        callback(bstRoot);
+    if (bstNode) {
+        post_orderTraversal(bstNode->left, callback);
+        post_orderTraversal(bstNode->right, callback);
+        callback((void *)&bstNode->item);
     }
 }
 
-void breadth_firstTraversal(BSTreeNode *bstRoot, CustomDataCallback callback)
+void breadth_firstTraversal(BSTreeNode *bstRoot, UserDataCallback callback)
 {
     BSTreeNode *curr;
     FIFOqueue *levelFIFO = FIFO_init();
@@ -281,7 +307,7 @@ void breadth_firstTraversal(BSTreeNode *bstRoot, CustomDataCallback callback)
 
     while (levelFIFO->total_nodes) {
         curr = (BSTreeNode *)FIFO_dequeue(levelFIFO);
-        callback(curr);
+        callback((void *)&curr->item);
 
         if (curr->right)
             FIFO_enqueue(levelFIFO, curr->right);
@@ -292,14 +318,14 @@ void breadth_firstTraversal(BSTreeNode *bstRoot, CustomDataCallback callback)
     FIFO_destroy(&levelFIFO, NULL);
 }
 
-void eulerTraversal(BSTreeNode *bstRoot, CustomDataCallback callback)
+void eulerTraversal(BSTreeNode *bstNode, UserDataCallback callback)
 {
-    if (bstRoot) {
-        callback(bstRoot);
+    if (bstNode) {
+        callback((void *)&bstNode->item);
 
-        eulerTraversal(bstRoot->left, callback);
-        callback(bstRoot);
-        eulerTraversal(bstRoot->right, callback);
-        callback(bstRoot);
+        eulerTraversal(bstNode->left, callback);
+        callback((void *)&bstNode->item);
+        eulerTraversal(bstNode->right, callback);
+        callback((void *)&bstNode->item);
     }
 }

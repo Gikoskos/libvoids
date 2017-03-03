@@ -10,10 +10,10 @@
 #ifdef _WIN32
 # ifdef EXPORT_API_EduDS_DLL
 #  define EduDS_API __declspec(dllexport)
-# elif EXPORT_API_EduDS_STATIC
-#  define EduDS_API
-# else
+# elif IMPORT_API_EduDS_DLL
 #  define EduDS_API __declspec(dllimport)
+# else
+#  define EduDS_API
 # endif
 # define EduDS_LOCAL
 #else
@@ -31,7 +31,10 @@
 # endif
 #endif
 
-typedef void (*CustomDataCallback)(void*);
+
+typedef void (*UserDataCallback)(void *pData);
+typedef int (*UserCompareCallback)(const void *pKey1, const void *pKey2);
+typedef size_t (*UserHashFuncCallback)(void *pKey, size_t key_size, size_t array_len);
 
 typedef enum _TreeTraversalMethod {
     PRE_ORDER,
@@ -41,6 +44,12 @@ typedef enum _TreeTraversalMethod {
     EULER
 } TreeTraversalMethod;
 
-typedef unsigned int key_type;
+//Key-value pair type definition
+typedef struct _KeyValuePair {
+    void *pData;
+    void *pKey;
+} KeyValuePair;
+
+
 
 #endif //__EduDS_COMMON_H

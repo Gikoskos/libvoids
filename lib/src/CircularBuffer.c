@@ -84,7 +84,7 @@ void *CircularBuffer_read(CircularBuffer *cBuff)
     return pData;
 }
 
-void CircularBuffer_destroy(CircularBuffer **cBuff, CustomDataCallback freeData)
+void CircularBuffer_destroy(CircularBuffer **cBuff, UserDataCallback freeData)
 {
     if (cBuff) {
 

@@ -15,25 +15,30 @@ extern "C" {
 
 
 typedef struct _AVLTreeNode {
-    key_type key;
-    void *pData;
+    KeyValuePair item;
     struct _AVLTreeNode *left, *right, *parent;
     int height; //count of edges (not nodes)
 } AVLTreeNode;
 
+typedef struct _AVLTree {
+    AVLTreeNode *root;
+    UserCompareCallback KeyCmp;
+} AVLTree;
 
 
-EduDS_API AVLTreeNode *AVLTree_insert(AVLTreeNode **avltRoot, key_type key, void *pData);
+EduDS_API AVLTree *AVLTree_init(UserCompareCallback KeyCmp);
 
-EduDS_API void *AVLTree_deleteNode(AVLTreeNode **avltRoot, AVLTreeNode *avltToDelete);
+EduDS_API AVLTreeNode *AVLTree_insert(AVLTree *avlt, void *pKey, void *pData);
 
-EduDS_API void *AVLTree_deleteByKey(AVLTreeNode **avltRoot, key_type key);
+EduDS_API KeyValuePair AVLTree_deleteNode(AVLTree *avlt, AVLTreeNode *avltToDelete);
 
-EduDS_API AVLTreeNode *AVLTree_find(AVLTreeNode *avltRoot, key_type key);
+EduDS_API KeyValuePair AVLTree_deleteByKey(AVLTree *avlt, void *pKey);
 
-EduDS_API void AVLTree_traverse(AVLTreeNode *avltRoot, TreeTraversalMethod traversal, CustomDataCallback callback);
+EduDS_API AVLTreeNode *AVLTree_find(AVLTree *avlt, void *pKey);
 
-EduDS_API void AVLTree_destroy(AVLTreeNode **avltRoot, CustomDataCallback freeData);
+EduDS_API void AVLTree_traverse(AVLTree *avlt, TreeTraversalMethod traversal, UserDataCallback callback);
+
+EduDS_API void AVLTree_destroy(AVLTree **avlt, UserDataCallback freeData);
 
 #ifdef __cplusplus
 }

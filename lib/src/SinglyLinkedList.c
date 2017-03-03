@@ -98,14 +98,14 @@ SLListNode *SLList_find(SLListNode *sllHead, void *pToFind)
     return curr;
 }
 
-void SLList_traverse(SLListNode *sllHead, CustomDataCallback handleData)
+void SLList_traverse(SLListNode *sllHead, UserDataCallback handleData)
 {
     if (sllHead && handleData)
         for (SLListNode *curr = sllHead; curr; curr = curr->nxt)
             handleData(curr->pData);
 }
 
-void SLList_destroy(SLListNode **sllHead, CustomDataCallback freeData)
+void SLList_destroy(SLListNode **sllHead, UserDataCallback freeData)
 {
     if (sllHead) {
         SLListNode *curr, *tmp;

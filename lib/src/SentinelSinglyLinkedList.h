@@ -30,9 +30,9 @@ EduDS_API void *SSLList_deleteNode(SSLList *ssllList, void *pData);
 
 EduDS_API SLListNode *SSLList_find(SSLList *ssllList, void *pToFind);
 
-EduDS_API void SSLList_traverse(SSLList *ssllList, CustomDataCallback handleData);
+EduDS_API void SSLList_traverse(SSLList *ssllList, UserDataCallback handleData);
 
-EduDS_API void SSLList_destroy(SSLList **ssllList, CustomDataCallback freeData);
+EduDS_API void SSLList_destroy(SSLList **ssllList, UserDataCallback freeData);
 
 #ifdef __cplusplus
 }

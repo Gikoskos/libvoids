@@ -7,18 +7,18 @@
 #include "AssociationList.h"
 
 
-DictListNode *DictList_insert(DictListNode **dictListHead, void *pData, key_type key)
+DictListNode *DictList_insert(DictListNode **dictListHead, void *pData, void *pKey, UserCompareCallback KeyCmp)
 {
     DictListNode *new_node = NULL;
 
     if (dictListHead) {
 
         //insert the new node ONLY if a node with the same key doesn't exist already in the list
-        if (!DictList_findByKey(*dictListHead, key)) {
+        if (!DictList_findByKey(*dictListHead, pKey, KeyCmp)) {
             new_node = malloc(sizeof(DictListNode));
 
             new_node->item.pData = pData;
-            new_node->item.key = key;
+            new_node->item.pKey = pKey;
             new_node->nxt = *dictListHead;
 
             *dictListHead = new_node;
@@ -28,15 +28,15 @@ DictListNode *DictList_insert(DictListNode **dictListHead, void *pData, key_type
     return new_node;
 }
 
-DictListNode *DictList_append(DictListNode **dictListHead, void *pData, key_type key)
+DictListNode *DictList_append(DictListNode **dictListHead, void *pData, void *pKey, UserCompareCallback KeyCmp)
 {
     DictListNode *new_node = NULL;
 
-    if (dictListHead) {
+    if (dictListHead && !DictList_findByKey(*dictListHead, pKey, KeyCmp)) {
         new_node = malloc(sizeof(DictListNode));
 
         new_node->item.pData = pData;
-        new_node->item.key = key;
+        new_node->item.pKey = pKey;
         new_node->nxt = NULL;
 
         if (!(*dictListHead)) {
@@ -44,7 +44,12 @@ DictListNode *DictList_append(DictListNode **dictListHead, void *pData, key_type
         } else {
             DictListNode *curr;
 
-            for (curr = *dictListHead; curr->nxt; curr = curr->nxt);
+            for (curr = *dictListHead; curr->nxt; curr = curr->nxt)
+                if (!KeyCmp(curr->item.pKey, pKey)) { //if a node with the same key, already exists on the list
+                    free(new_node);                  //we don't add it
+                    new_node = NULL;
+                    break;
+                }
 
             curr->nxt = new_node;
         }
@@ -53,35 +58,35 @@ DictListNode *DictList_append(DictListNode **dictListHead, void *pData, key_type
     return new_node;
 }
 
-DictListNode *DictList_insertAfter(DictListNode *sllPrev, void *pData, key_type key)
+DictListNode *DictList_insertAfter(DictListNode *dictListPrev, void *pData, void *pKey)
 {
     DictListNode *new_node = NULL;
 
-    if (sllPrev) {
+    if (dictListPrev) {
         new_node = malloc(sizeof(DictListNode));
 
         new_node->item.pData = pData;
-        new_node->item.key = key;
-        new_node->nxt = sllPrev->nxt;
+        new_node->item.pKey = pKey;
+        new_node->nxt = dictListPrev->nxt;
 
-        sllPrev->nxt = new_node;
+        dictListPrev->nxt = new_node;
     }
 
     return new_node;
 }
 
-void *DictList_deleteByKey(DictListNode **dictListHead, key_type key)
+KeyValuePair DictList_deleteByKey(DictListNode **dictListHead, void *pKey, UserCompareCallback KeyCmp)
 {
-    void *pRet = NULL;
+    KeyValuePair item = { 0 };
 
-    if (dictListHead) {
+    if (dictListHead && KeyCmp) {
         DictListNode *curr, *prev = NULL;
 
-        for (curr = *dictListHead; curr && (curr->item.key != key); curr = curr->nxt)
+        for (curr = *dictListHead; curr && KeyCmp(curr->item.pKey, pKey); curr = curr->nxt)
             prev = curr;
 
         if (curr) {
-            pRet = curr->item.pData;
+            item = curr->item;
 
             if (prev) {
                 prev->nxt = curr->nxt;
@@ -93,33 +98,34 @@ void *DictList_deleteByKey(DictListNode **dictListHead, key_type key)
         }
     }
 
-    return pRet;
+    return item;
 }
 
-DictListNode *DictList_findByKey(DictListNode *dictListHead, key_type key)
+DictListNode *DictList_findByKey(DictListNode *dictListHead, void *pKey, UserCompareCallback KeyCmp)
 {
-    DictListNode *curr;
+    DictListNode *curr = dictListHead;
 
-    for (curr = dictListHead; curr && (curr->item.key != key); curr = curr->nxt);
+    if (KeyCmp)
+        for (; curr && KeyCmp(curr->item.pKey, pKey); curr = curr->nxt);
 
     return curr;
 }
 
-void DictList_traverse(DictListNode *dictListHead, CustomDataCallback handleData)
+void DictList_traverse(DictListNode *dictListHead, UserDataCallback handleData)
 {
     if (dictListHead && handleData)
         for (DictListNode *curr = dictListHead; curr; curr = curr->nxt)
             handleData((void *)&curr->item);
 }
 
-void DictList_destroy(DictListNode **dictListHead, CustomDataCallback freeData)
+void DictList_destroy(DictListNode **dictListHead, UserDataCallback freeData)
 {
     if (dictListHead) {
         DictListNode *curr, *tmp;
 
         for (curr = *dictListHead; curr;) {
             if (freeData)
-                freeData(curr->item.pData);
+                freeData((void *)&curr->item);
 
             tmp = curr;
             curr = curr->nxt;

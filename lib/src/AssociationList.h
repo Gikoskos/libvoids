@@ -14,31 +14,27 @@ extern "C" {
 #include "Common.h"
 
 
-typedef struct _DictListItem {
-    void *pData;
-    key_type key;
-} DictListItem;
 
 typedef struct _DictListNode {
-    DictListItem item;
+    KeyValuePair item;
     struct _DictListNode *nxt;
 } DictListNode;
 
 
 
-EduDS_API DictListNode *DictList_insert(DictListNode **dictListHead, void *pData, key_type key);
+EduDS_API DictListNode *DictList_insert(DictListNode **dictListHead, void *pData, void *pKey, UserCompareCallback KeyCmp);
 
-EduDS_API DictListNode *DictList_append(DictListNode **dictListHead, void *pData, key_type key);
+EduDS_API DictListNode *DictList_append(DictListNode **dictListHead, void *pData, void *pKey, UserCompareCallback KeyCmp);
 
-EduDS_API DictListNode *DictList_insertAfter(DictListNode *sllPrev, void *pData, key_type key);
+EduDS_API DictListNode *DictList_insertAfter(DictListNode *dictListPrev, void *pData, void *pKey);
 
-EduDS_API void *DictList_deleteByKey(DictListNode **dictListHead, key_type key);
+EduDS_API KeyValuePair DictList_deleteByKey(DictListNode **dictListHead, void *pKey, UserCompareCallback KeyCmp);
 
-EduDS_API DictListNode *DictList_findByKey(DictListNode *dictListHead, key_type key);
+EduDS_API DictListNode *DictList_findByKey(DictListNode *dictListHead, void *pKey, UserCompareCallback KeyCmp);
 
-EduDS_API void DictList_traverse(DictListNode *dictListHead, CustomDataCallback handleData);
+EduDS_API void DictList_traverse(DictListNode *dictListHead, UserDataCallback handleData);
 
-EduDS_API void DictList_destroy(DictListNode **dictListHead, CustomDataCallback freeData);
+EduDS_API void DictList_destroy(DictListNode **dictListHead, UserDataCallback freeData);
 
 #ifdef __cplusplus
 }

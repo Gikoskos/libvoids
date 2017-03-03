@@ -30,9 +30,9 @@ EduDS_API void *SDLList_deleteNode(SDLList *sdllList, void *pToDelete);
 
 EduDS_API DLListNode *SDLList_find(SDLList *sdllList, void *pToFind);
 
-EduDS_API void SDLList_traverse(SDLList *sdllList, CustomDataCallback handleData);
+EduDS_API void SDLList_traverse(SDLList *sdllList, UserDataCallback handleData);
 
-EduDS_API void SDLList_destroy(SDLList **sdllList, CustomDataCallback freeData);
+EduDS_API void SDLList_destroy(SDLList **sdllList, UserDataCallback freeData);
 
 #ifdef __cplusplus
 }

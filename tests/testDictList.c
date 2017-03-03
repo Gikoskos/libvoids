@@ -4,73 +4,88 @@
 #include <EduDS.h>
 
 
-int *newRandInt(void)
+int *newRandInt(int range)
 {
     int *p = malloc(sizeof(int));
 
-    *p = (int)rand();
+    if (range)
+        *p = rand()%range + 1;        
+    else
+        *p = rand();
+
     return p;
+}
+
+int compareInts(const void *key1, const void *key2)
+{
+    return *(int*)key1 - *(int*)key2;
+}
+
+void freeKeyValuePair(void *param)
+{
+    KeyValuePair *item = (KeyValuePair *)param;
+
+    free(item->pKey);
+    free(item->pData);
 }
 
 void printListItem(void *pData)
 {
-    DictListItem *x = (DictListItem *)pData;
-    printf("->(key=%u, data=%d) ", x->key, *(int*)x->pData);
+    KeyValuePair *item = (KeyValuePair *)pData;
+    printf("->(key=%d, data=%d) ", *(int*)item->pKey, *(int*)item->pData);
 }
 
 int main(int argc, char *argv[])
 {
     DictListNode *dict = NULL;
-    key_type keys[100];
+
     srand(time(NULL));
 
-    for (size_t i = 0; i < 100; i++)
-        keys[i] = (size_t)rand() % 100;
 
     printf("!! STARTING INSERTIONS !!\n");
     for (int i = 0; i < 6; i++) {
-        int *new_data = newRandInt();
+        int *new_data = newRandInt(0);
+        int *new_key = newRandInt(100);
 
-        if (!DictList_insert(&dict, (void *)new_data, keys[i])) {
-            printf("Failed inserting data %d with key %u\n", *new_data, keys[i]);
+        if (!DictList_insert(&dict, (void *)new_data, (void *)new_key, compareInts)) {
+            printf("\nFailed inserting node (key=%d, data=%d)\n", *new_key, *new_data);
             free(new_data);
+            free(new_key);
         } else {
-            printf("\n==== Printing list after inserting data %d with key %u ====\n", *new_data, keys[i]);
+            printf("\n==== Printing list after inserting node (key=%d, data=%d) ====\n", *new_key, *new_data);
             DictList_traverse(dict, printListItem);
             putchar('\n');
         }
     }
 
     printf("\n\n!! STARTING DELETIONS !!\n");
-    for (int i = 7; i >= 3; i--) {
-        int *ptr;
+    for (int i = 1; i < 41; i++) {
+        KeyValuePair deleted = DictList_deleteByKey(&dict, (void *)&i, compareInts);
 
-        ptr = (int*)DictList_deleteByKey(&dict, keys[i]);
-
-        if (!ptr) {
-            printf("Failed deleting node with key %u\n", keys[i]);
-        } else {
-            printf("\n==== Printing list after deleting data %d with key %u ====\n", *ptr, keys[i]);
+        if (deleted.pKey) {
+            printf("\n==== Printing list after deleting node (key=%d, data=%d) ====\n", *(int*)deleted.pKey, *(int*)deleted.pData);
             DictList_traverse(dict, printListItem);
             putchar('\n');
-            free(ptr);
+            freeKeyValuePair((void*)&deleted);
         }
     }
 
     printf("\n\n!! STARTING APPENDS !!\n");
-    for (int i = 42; i < 50; i++) {
-        int *new_data = newRandInt();
+    for (int i = 0; i < 6; i++) {
+        int *new_data = newRandInt(0);
+        int *new_key = newRandInt(100);
 
-        if (!DictList_append(&dict, (void *)new_data, keys[i])) {
-            printf("Failed appending data %d with key %u\n", *new_data, keys[i]);
+        if (!DictList_append(&dict, (void *)new_data, (void *)new_key, compareInts)) {
+            printf("Failed appending node (key=%d, data=%d)\n", *new_key, *new_data);
             free(new_data);
+            free(new_key);
         } else {
-            printf("\n==== Printing list after appending data %d with key %u ====\n", *new_data, keys[i]);
+            printf("\n==== Printing list after appending node (key=%d, data=%d) ====\n", *new_key, *new_data);
             DictList_traverse(dict, printListItem);
             putchar('\n');
         }
     }
 
-    DictList_destroy(&dict, free);
+    DictList_destroy(&dict, freeKeyValuePair);
     return 0;
 }

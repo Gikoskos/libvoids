@@ -132,7 +132,7 @@ CSLListNode *CSLList_find(CSLListNode *csllHead, void *pToFind)
     return NULL;
 }
 
-void CSLList_traverse(CSLListNode *csllHead, CustomDataCallback handleData)
+void CSLList_traverse(CSLListNode *csllHead, UserDataCallback handleData)
 {
     if (csllHead && handleData) {
         CSLListNode *curr = csllHead;
@@ -144,7 +144,7 @@ void CSLList_traverse(CSLListNode *csllHead, CustomDataCallback handleData)
     }
 }
 
-void CSLList_destroy(CSLListNode **csllHead, CustomDataCallback freeData)
+void CSLList_destroy(CSLListNode **csllHead, UserDataCallback freeData)
 {
     if (csllHead && *csllHead) {
         CSLListNode *curr, *tmp;

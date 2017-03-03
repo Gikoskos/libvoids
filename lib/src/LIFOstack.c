@@ -71,7 +71,7 @@ void *LIFO_pop(LIFOstack *stack)
     return pData;
 }
 
-void LIFO_destroy(LIFOstack **stack, CustomDataCallback freeData)
+void LIFO_destroy(LIFOstack **stack, UserDataCallback freeData)
 {
     if (stack && *stack) {
 
@@ -95,7 +95,7 @@ void LIFO_destroy(LIFOstack **stack, CustomDataCallback freeData)
     }
 }
 
-void LIFO_traverse(LIFOstack *stack, CustomDataCallback handleData)
+void LIFO_traverse(LIFOstack *stack, UserDataCallback handleData)
 {
     if (stack && handleData)
         for (LIFOnode *curr = stack->head; curr; curr = curr->next)
