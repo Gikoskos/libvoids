@@ -24,13 +24,13 @@ typedef struct _ChainedHashtable {
 
 
 EduDS_API ChainedHashtable *ChainedHash_init(size_t size, UserCompareCallback KeyCmp, UserHashFuncCallback Hash);
-          
+
 EduDS_API DictListNode *ChainedHash_insert(ChainedHashtable *table, void *pData, void *pKey, size_t key_size);
-          
+
 EduDS_API KeyValuePair ChainedHash_delete(ChainedHashtable *table, void *pKey, size_t key_size);
-          
+
 EduDS_API DictListNode *ChainedHash_find(ChainedHashtable *table, void *pKey, size_t key_size);
-          
+
 EduDS_API void ChainedHash_destroy(ChainedHashtable **table, UserDataCallback freeData);
 
 #ifdef __cplusplus
