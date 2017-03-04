@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <EduDS.h>
-
+//testQuadraticHashtable
 
 int *newRandInt(int range)
 {
@@ -37,7 +37,7 @@ void printListItem(void *param)
     printf("->(key=%d, data=%d) ", *(int*)item->pKey, *(int*)item->pData);
 }
 
-void printHashtable(LinHashtable *table)
+void printHashtable(QuadHashtable *table)
 {
     for (size_t i = 0; i < table->size; i++) {
 
@@ -57,7 +57,7 @@ void printHashtable(LinHashtable *table)
 
 int main(int argc, char *argv[])
 {
-    LinHashtable *table = LinHash_init(7, compareInts, NULL, 1);
+    QuadHashtable *table = QuadHash_init(7, compareInts, NULL);
 
     srand(time(NULL));
 
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
         int *new_data = newRandInt(0);
         int *new_key = newRandInt(10);
 
-        if (!LinHash_insert(table, (void *)new_data, (void *)new_key, sizeof(*new_key), freeKeyValuePair)) {
+        if (!QuadHash_insert(table, (void *)new_data, (void *)new_key, sizeof(*new_key), freeKeyValuePair)) {
             printf("\nFailed inserting data %d with key %d\n", *new_data, *new_key);
             free(new_data);
             free(new_key);
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     for (int i = 1; i <= 4; i++) {
         KeyValuePair item;
 
-        item = LinHash_delete(table, &i, sizeof i);
+        item = QuadHash_delete(table, &i, sizeof i);
 
         if (item.pKey) {
             printf("\n==== Printing linear hashtable after deleting node (key=%d, data= %d) ====\n", *(int*)item.pKey, *(int*)item.pData);
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
         int *new_data = newRandInt(0);
         int *new_key = newRandInt(10);
 
-        if (!LinHash_insert(table, (void *)new_data, (void *)new_key, sizeof(*new_key), freeKeyValuePair)) {
+        if (!QuadHash_insert(table, (void *)new_data, (void *)new_key, sizeof(*new_key), freeKeyValuePair)) {
             printf("\nFailed inserting data %d with key %d\n", *new_data, *new_key);
             free(new_data);
             free(new_key);
@@ -103,6 +103,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    LinHash_destroy(&table, freeKeyValuePair);
+    QuadHash_destroy(&table, freeKeyValuePair);
     return 0;
 }

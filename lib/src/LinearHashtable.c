@@ -106,7 +106,7 @@ void *LinHash_insert(LinHashtable *table, void *pData, void *pKey, size_t key_si
                 table->array[tmp_idx].item.pKey = pKey;
                 table->array[tmp_idx].occupied = 1;
                 table->array[tmp_idx].deleted = 0;
-                //saving the already
+                //saving the pre-computed hashcode
                 table->array[tmp_idx].key_hash = key_hash;
 
                 table->total_elements++; //successful insertion

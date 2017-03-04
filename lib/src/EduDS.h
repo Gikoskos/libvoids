@@ -19,6 +19,7 @@
 #include "HashFunctions.h"
 #include "ChainedHashtable.h"
 #include "LinearHashtable.h"
+#include "QuadraticHashtable.h"
 #include "BinarySearchTree.h"
 #include "AVLTree.h"
 #include "FIFOqueue.h"
