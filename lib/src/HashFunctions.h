@@ -14,10 +14,11 @@ extern "C" {
 #include "Common.h"
 #include "AssociationList.h"
 
+EduDS_API size_t HashCode(const void *pKey, size_t key_size, unsigned int seed);
 
-EduDS_API size_t HashDiv(void *pKey, size_t key_size, size_t array_len);
+EduDS_API size_t HashDiv(size_t key_hash, size_t array_len);
 
-EduDS_API size_t HashMult(void *pKey, size_t key_size, size_t array_len);
+EduDS_API size_t HashMult(size_t key_hash, size_t array_len);
 
 #ifdef __cplusplus
 }

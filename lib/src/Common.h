@@ -34,7 +34,7 @@
 
 typedef void (*UserDataCallback)(void *pData);
 typedef int (*UserCompareCallback)(const void *pKey1, const void *pKey2);
-typedef size_t (*UserHashFuncCallback)(void *pKey, size_t key_size, size_t array_len);
+typedef size_t (*UserHashFuncCallback)(size_t key_hash, size_t array_len);
 
 typedef enum _TreeTraversalMethod {
     PRE_ORDER,

@@ -52,6 +52,8 @@ cmake .. -G "MinGW Makefiles"
 - [ ] Red black tree
 - [x] Association List
 - [x] Hashing with chaining
+- [x] Hashing with linear probing and optional rehashing
+- [x] Hashing with quadratic probing and mandatory rehashing (in case load factor >= 0.5)
 
 ## Libs used
 

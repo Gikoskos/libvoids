@@ -11,23 +11,24 @@
 #include "external/xxHash/xxhash.h"
 
 
-//Cormen's division method
-size_t HashDiv(void *pKey, size_t key_size, size_t array_len)
+size_t HashCode(const void *pKey, size_t key_size, unsigned int seed)
 {
-    size_t hashcode = XXH32(pKey, key_size, array_len);
+    return (size_t)XXH32(pKey, key_size, seed);
+}
 
-    return hashcode % array_len;
+//Cormen's division method
+size_t HashDiv(size_t key_hash, size_t array_len)
+{
+    return key_hash % array_len;
 }
 
 //Cormen's multiplication method
-size_t HashMult(void *pKey, size_t key_size, size_t array_len)
+size_t HashMult(size_t key_hash, size_t array_len)
 {
    double A = 0.6180339887; //most optimal A as suggested by Knuth
    double hash;
 
-   size_t hashcode = XXH32(pKey, key_size, array_len);
-
-   hash = A*hashcode;
+   hash = A*key_hash;
    hash = modf(hash, &A);
    hash = floor(array_len * hash);
    return (size_t)hash;

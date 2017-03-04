@@ -1,23 +1,23 @@
 /***********************************************\
-*               LinearHashtable.c               *
+*              QuadraticHashtable.c             *
 *           George Koskeridis (C) 2017          *
 \***********************************************/
 
 #include <stdlib.h>
-#include "LinearHashtable.h"
+#include "QuadraticHashtable.h"
 #include "HashFunctions.h"
 
 
-static void LinHash_rehash(LinHashtable *table);
+static void QuadHash_rehash(QuadHashtable *table);
 
 
-LinHashtable *LinHash_init(size_t size, UserCompareCallback KeyCmp, UserHashFuncCallback Hash, int rehash)
+QuadHashtable *QuadHash_init(size_t size, UserCompareCallback KeyCmp, UserHashFuncCallback Hash)
 {
-    LinHashtable *lintable = NULL;
+    QuadHashtable *quadtable = NULL;
 
     if (KeyCmp && size > 3) {
 
-        lintable = malloc(sizeof(LinHashtable));
+        quadtable = malloc(sizeof(QuadHashtable));
 
         //if the user didn't give a custom hashing algorithm, we default to either
         //the multiplication or division hashing methods
@@ -25,26 +25,25 @@ LinHashtable *LinHash_init(size_t size, UserCompareCallback KeyCmp, UserHashFunc
 
             //if the array size is a power of two
             if ( !(size & (size - 1)) ) //we default to mult
-                lintable->Hash = HashMult;
+                quadtable->Hash = HashMult;
             else
-                lintable->Hash = HashDiv; //else we default to div which works better when the array size isn't a power of two
+                quadtable->Hash = HashDiv; //else we default to div which works better when the array size isn't a power of two
 
         } else {
-            lintable->Hash = Hash;
+            quadtable->Hash = Hash;
         }
 
-        lintable->KeyCmp = KeyCmp;
-        lintable->size = size;
-        lintable->array = calloc(lintable->size, sizeof(HashArrayElement));
-        lintable->rehash = rehash;
-        lintable->total_elements = 0;
+        quadtable->KeyCmp = KeyCmp;
+        quadtable->size = size;
+        quadtable->array = calloc(quadtable->size, sizeof(HashArrayElement));
+        quadtable->total_elements = 0;
     }
 
 
-    return lintable;
+    return quadtable;
 }
 
-void LinHash_rehash(LinHashtable *table)
+void QuadHash_rehash(QuadHashtable *table)
 {
     HashArrayElement *old_array = table->array; //save the old array
     size_t old_size = table->size;
@@ -81,7 +80,7 @@ void LinHash_rehash(LinHashtable *table)
     free(old_array);
 }
 
-void *LinHash_insert(LinHashtable *table, void *pData, void *pKey, size_t key_size, UserDataCallback freeData)
+void *QuadHash_insert(QuadHashtable *table, void *pData, void *pKey, size_t key_size, UserDataCallback freeData)
 {
     void *new_key = NULL;
 
@@ -124,16 +123,15 @@ void *LinHash_insert(LinHashtable *table, void *pData, void *pKey, size_t key_si
 
         } while (item_idx != hash_idx);
 
-        if (table->rehash) //if the load factor is greater than 0.5 we rehash the table
-            if ( ((float)table->total_elements / table->size) >= 0.5 )
-                LinHash_rehash(table);
+        if ( ((float)table->total_elements / table->size) >= 0.5 )
+            QuadHash_rehash(table);
     }
         
 
     return new_key;
 }
 
-KeyValuePair LinHash_delete(LinHashtable *table, void *pKey, size_t key_size)
+KeyValuePair QuadHash_delete(QuadHashtable *table, void *pKey, size_t key_size)
 {
     KeyValuePair item = { 0 };
 
@@ -161,7 +159,7 @@ KeyValuePair LinHash_delete(LinHashtable *table, void *pKey, size_t key_size)
     return item;
 }
 
-HashArrayElement *LinHash_find(LinHashtable *table, void *pKey, size_t key_size)
+HashArrayElement *QuadHash_find(QuadHashtable *table, void *pKey, size_t key_size)
 {
     HashArrayElement *to_find = NULL;
 
@@ -190,7 +188,7 @@ HashArrayElement *LinHash_find(LinHashtable *table, void *pKey, size_t key_size)
     return to_find;
 }
 
-void LinHash_destroy(LinHashtable **table, UserDataCallback freeData)
+void QuadHash_destroy(QuadHashtable **table, UserDataCallback freeData)
 {
     if (table && *table) {
 
