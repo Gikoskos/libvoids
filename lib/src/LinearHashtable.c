@@ -85,7 +85,7 @@ void *LinHash_insert(LinHashtable *table, void *pData, void *pKey, size_t key_si
 {
     void *new_key = NULL;
 
-    if (table && pKey && key_size) {
+    if (table && pKey && key_size && (table->total_elements < table->size)) {
 
         size_t key_hash = HashCode(pKey, key_size, table->size);
         size_t hash_idx = table->Hash(key_hash, table->size);

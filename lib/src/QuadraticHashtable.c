@@ -55,8 +55,8 @@ void QuadHash_rehash(QuadHashtable *table)
 
         if (old_array[i].occupied) {
 
-            size_t new_hash_idx = table->Hash(old_array[i].key_hash, table->size);
-            size_t item_idx = new_hash_idx;
+            size_t item_idx = table->Hash(old_array[i].key_hash, table->size);
+            size_t offset = 1;
 
             do {
 
@@ -67,11 +67,10 @@ void QuadHash_rehash(QuadHashtable *table)
                     break;
                 }
 
-                item_idx++;
-                if (item_idx >= table->size)
-                    item_idx = 0;
+                item_idx += (offset * offset) % table->size;
+                offset++;
 
-            } while (item_idx != new_hash_idx);
+            } while (offset < table->size);
 
         }
 
@@ -87,8 +86,8 @@ void *QuadHash_insert(QuadHashtable *table, void *pData, void *pKey, size_t key_
     if (table && pKey && key_size) {
 
         size_t key_hash = HashCode(pKey, key_size, table->size);
-        size_t hash_idx = table->Hash(key_hash, table->size);
-        size_t item_idx = hash_idx;
+        size_t item_idx = table->Hash(key_hash, table->size);
+        size_t offset = 1;
 
         do {
             //if we found an available position on the array, during linear probing, we store
@@ -116,12 +115,11 @@ void *QuadHash_insert(QuadHashtable *table, void *pData, void *pKey, size_t key_
                 break;
             }
 
-            //if we hit the last element of the array, during the linear probe, item_idx starts from 0
-            item_idx++;
-            if (item_idx >= table->size)
-                item_idx = 0;
+            item_idx += (offset * offset) % table->size;
+            offset++;
 
-        } while (item_idx != hash_idx);
+        } while (offset < table->size);
+
 
         if ( ((float)table->total_elements / table->size) >= 0.5 )
             QuadHash_rehash(table);
@@ -136,8 +134,8 @@ KeyValuePair QuadHash_delete(QuadHashtable *table, void *pKey, size_t key_size)
     KeyValuePair item = { 0 };
 
     if (table && pKey && key_size) {
-        size_t hash_idx = table->Hash(HashCode(pKey, key_size, table->size), table->size);
-        size_t item_idx = hash_idx;
+        size_t item_idx = table->Hash(HashCode(pKey, key_size, table->size), table->size);
+        size_t offset = 1;
 
         do {
 
@@ -150,10 +148,11 @@ KeyValuePair QuadHash_delete(QuadHashtable *table, void *pKey, size_t key_size)
                 break;
             }
 
-            item_idx++;
-            if (item_idx >= table->size)
-                item_idx = 0;
-        } while (item_idx != hash_idx);
+            item_idx += (offset * offset) % table->size;
+            offset++;
+
+        } while (offset < table->size);
+
     }
 
     return item;
@@ -164,8 +163,8 @@ HashArrayElement *QuadHash_find(QuadHashtable *table, void *pKey, size_t key_siz
     HashArrayElement *to_find = NULL;
 
     if (table && pKey && key_size) {
-        size_t hash_idx = table->Hash(HashCode(pKey, key_size, table->size), table->size);
-        size_t item_idx = hash_idx;
+        size_t item_idx = table->Hash(HashCode(pKey, key_size, table->size), table->size);
+        size_t offset = 1;
 
         do {
 
@@ -178,10 +177,10 @@ HashArrayElement *QuadHash_find(QuadHashtable *table, void *pKey, size_t key_siz
 
             }
 
-            item_idx++;
-            if (item_idx >= table->size)
-                item_idx = 0;
-        } while (item_idx != hash_idx);
+            item_idx += (offset * offset) % table->size;
+            offset++;
+
+        } while (offset < table->size);
 
     }
 
