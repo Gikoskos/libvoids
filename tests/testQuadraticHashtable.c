@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     srand(time(NULL));
 
     printf("!! STARTING INSERTIONS !!");
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 8; i++) {
         int *new_data = newRandInt(0);
         int *new_key = newRandInt(10);
 
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
             free(new_data);
             free(new_key);
         } else {
-            printf("\n==== Printing linear hashtable after inserting node (key=%d, data= %d) ====\n", *new_key, *new_data);
+            printf("\n==== Printing quadratic hashtable after inserting node (key=%d, data= %d) ====\n", *new_key, *new_data);
             printHashtable(table);
         }
     }
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
         item = QuadHash_delete(table, &i, sizeof i);
 
         if (item.pKey) {
-            printf("\n==== Printing linear hashtable after deleting node (key=%d, data= %d) ====\n", *(int*)item.pKey, *(int*)item.pData);
+            printf("\n==== Printing quadratic hashtable after deleting node (key=%d, data= %d) ====\n", *(int*)item.pKey, *(int*)item.pData);
             printHashtable(table);
         }
     }
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
             free(new_data);
             free(new_key);
         } else {
-            printf("\n==== Printing linear hashtable after inserting node (key=%d, data= %d) ====\n", *new_key, *new_data);
+            printf("\n==== Printing quadratic hashtable after inserting node (key=%d, data= %d) ====\n", *new_key, *new_data);
             printHashtable(table);
         }
     }

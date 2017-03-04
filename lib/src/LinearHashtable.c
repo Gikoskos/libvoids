@@ -8,7 +8,7 @@
 #include "HashFunctions.h"
 
 
-static void LinHash_rehash(LinHashtable *table);
+static void LinHash_rehash(LinHashtable *table, UserDataCallback freeData);
 
 
 LinHashtable *LinHash_init(size_t size, UserCompareCallback KeyCmp, UserHashFuncCallback Hash, int rehash)
@@ -44,7 +44,7 @@ LinHashtable *LinHash_init(size_t size, UserCompareCallback KeyCmp, UserHashFunc
     return lintable;
 }
 
-void LinHash_rehash(LinHashtable *table)
+void LinHash_rehash(LinHashtable *table, UserDataCallback freeData)
 {
     HashArrayElement *old_array = table->array; //save the old array
     size_t old_size = table->size;
@@ -74,6 +74,9 @@ void LinHash_rehash(LinHashtable *table)
             } while (offset < table->size);
 
         }
+
+        if (old_array[i].occupied && freeData)
+            freeData((void*)&old_array[i].item);
 
     }
 
@@ -124,7 +127,7 @@ void *LinHash_insert(LinHashtable *table, void *pData, void *pKey, size_t key_si
 
         if (table->rehash) //if the load factor is greater than 0.5 we rehash the table
             if ( ((float)table->total_elements / table->size) >= 0.5 )
-                LinHash_rehash(table);
+                LinHash_rehash(table, freeData);
     }
         
 
