@@ -57,12 +57,12 @@ void printHashtable(LinHashtable *table)
 
 int main(int argc, char *argv[])
 {
-    LinHashtable *table = LinHash_init(7, compareInts, NULL, 1);
+    LinHashtable *table = LinHash_init(8, compareInts, NULL, 1);
 
     srand(time(NULL));
 
     printf("!! STARTING INSERTIONS !!");
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         int *new_data = newRandInt(0);
         int *new_key = newRandInt(10);
 
@@ -100,6 +100,16 @@ int main(int argc, char *argv[])
         } else {
             printf("\n==== Printing linear hashtable after inserting node (key=%d, data= %d) ====\n", *new_key, *new_data);
             printHashtable(table);
+        }
+    }
+
+    printf("\n\n!! TESTING FIND !!");
+    for (int i = 1; i <= 10; i++) {
+
+        if (!LinHash_find(table, (void *)&i, sizeof(i))) {
+            printf("\nFind failed on key %d\n", i);
+        } else {
+            printf("\nFind was successful on key %d\n", i);
         }
     }
 

@@ -73,9 +73,10 @@ void LinHash_rehash(LinHashtable *table, UserDataCallback freeData)
 
             } while (offset < table->size);
 
+            continue;
         }
 
-        if (old_array[i].occupied && freeData)
+        if (old_array[i].deleted && freeData)
             freeData((void*)&old_array[i].item);
 
     }
@@ -89,7 +90,7 @@ void *LinHash_insert(LinHashtable *table, void *pData, void *pKey, size_t key_si
 
     if (table && pKey && key_size && (table->total_elements < table->size)) {
 
-        size_t key_hash = HashCode(pKey, key_size, table->size);
+        size_t key_hash = HashCode(pKey, key_size);
         size_t hash_idx = table->Hash(key_hash, table->size);
         size_t offset = 0, tmp_idx;
 
@@ -139,7 +140,7 @@ KeyValuePair LinHash_delete(LinHashtable *table, void *pKey, size_t key_size)
     KeyValuePair item = { 0 };
 
     if (table && pKey && key_size) {
-        size_t hash_idx = table->Hash(HashCode(pKey, key_size, table->size), table->size);
+        size_t hash_idx = table->Hash(HashCode(pKey, key_size), table->size);
         size_t offset = 0, tmp_idx;
 
         do {
@@ -167,7 +168,7 @@ HashArrayElement *LinHash_find(LinHashtable *table, void *pKey, size_t key_size)
     HashArrayElement *to_find = NULL;
 
     if (table && pKey && key_size) {
-        size_t hash_idx = table->Hash(HashCode(pKey, key_size, table->size), table->size);
+        size_t hash_idx = table->Hash(HashCode(pKey, key_size), table->size);
         size_t offset = 0, tmp_idx;
 
         do {

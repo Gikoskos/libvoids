@@ -103,6 +103,17 @@ int main(int argc, char *argv[])
         }
     }
 
+    printf("\n\n!! TESTING FIND !!");
+    for (int i = 1; i <= 10; i++) {
+
+        if (!QuadHash_find(table, (void *)&i, sizeof(i))) {
+            printf("\nFind failed on key %d\n", i);
+        } else {
+            printf("\nFind was successful on key %d\n", i);
+        }
+    }
+
+
     QuadHash_destroy(&table, freeKeyValuePair);
     return 0;
 }

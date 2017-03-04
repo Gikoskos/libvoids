@@ -14,7 +14,7 @@ extern "C" {
 #include "Common.h"
 #include "AssociationList.h"
 
-EduDS_API size_t HashCode(const void *pKey, size_t key_size, unsigned int seed);
+EduDS_API size_t HashCode(const void *pKey, size_t key_size);
 
 EduDS_API size_t HashDiv(size_t key_hash, size_t array_len);
 

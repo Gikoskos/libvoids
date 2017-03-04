@@ -11,9 +11,12 @@
 #include "external/xxHash/xxhash.h"
 
 
-size_t HashCode(const void *pKey, size_t key_size, unsigned int seed)
+#define EDUDS_SALT 8999 //using a prime number as seed for xxhash
+
+
+size_t HashCode(const void *pKey, size_t key_size)
 {
-    return (size_t)XXH32(pKey, key_size, seed);
+    return (size_t)XXH32(pKey, key_size, EDUDS_SALT);
 }
 
 //Cormen's division method

@@ -75,7 +75,7 @@ void QuadHash_rehash(QuadHashtable *table, UserDataCallback freeData)
             continue;
         }
 
-        if (old_array[i].occupied && freeData)
+        if (old_array[i].deleted && freeData)
             freeData((void*)&old_array[i].item);
 
     }
@@ -89,7 +89,7 @@ void *QuadHash_insert(QuadHashtable *table, void *pData, void *pKey, size_t key_
 
     if (table && pKey && key_size) {
 
-        size_t key_hash = HashCode(pKey, key_size, table->size);
+        size_t key_hash = HashCode(pKey, key_size);
         size_t hash_idx = table->Hash(key_hash, table->size);
         size_t offset = 0, tmp_idx;
 
@@ -136,7 +136,7 @@ KeyValuePair QuadHash_delete(QuadHashtable *table, void *pKey, size_t key_size)
     KeyValuePair item = { 0 };
 
     if (table && pKey && key_size) {
-        size_t hash_idx = table->Hash(HashCode(pKey, key_size, table->size), table->size);
+        size_t hash_idx = table->Hash(HashCode(pKey, key_size), table->size);
         size_t offset = 0, tmp_idx;
 
         do {
@@ -165,7 +165,7 @@ HashArrayElement *QuadHash_find(QuadHashtable *table, void *pKey, size_t key_siz
     HashArrayElement *to_find = NULL;
 
     if (table && pKey && key_size) {
-        size_t hash_idx = table->Hash(HashCode(pKey, key_size, table->size), table->size);
+        size_t hash_idx = table->Hash(HashCode(pKey, key_size), table->size);
         size_t offset = 0, tmp_idx;
 
         do {

@@ -44,7 +44,7 @@ DictListNode *ChainedHash_insert(ChainedHashtable *table, void *pData, void *pKe
     DictListNode *new_node = NULL;
 
     if (table && pKey && key_size)
-        new_node = DictList_insert(&table->chains[ table->Hash(HashCode(pKey, key_size, table->size), table->size) ], pData, pKey, table->KeyCmp);
+        new_node = DictList_insert(&table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pData, pKey, table->KeyCmp);
 
     return new_node;
 }
@@ -54,7 +54,7 @@ KeyValuePair ChainedHash_delete(ChainedHashtable *table, void *pKey, size_t key_
     KeyValuePair item = { 0 };
 
     if (table && pKey && key_size)
-        item = DictList_deleteByKey(&table->chains[ table->Hash(HashCode(pKey, key_size, table->size), table->size) ], pKey, table->KeyCmp);
+        item = DictList_deleteByKey(&table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pKey, table->KeyCmp);
 
     return item;
 }
@@ -64,7 +64,7 @@ DictListNode *ChainedHash_find(ChainedHashtable *table, void *pKey, size_t key_s
     DictListNode *to_find = NULL;
 
     if (table && pKey && key_size)
-        to_find = DictList_findByKey(table->chains[ table->Hash(HashCode(pKey, key_size, table->size), table->size) ], pKey, table->KeyCmp);
+        to_find = DictList_findByKey(table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pKey, table->KeyCmp);
 
     return to_find;
 }
