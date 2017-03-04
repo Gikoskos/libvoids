@@ -56,23 +56,22 @@ void LinHash_rehash(LinHashtable *table)
 
         if (old_array[i].occupied) {
 
-            size_t new_hash_idx = table->Hash(old_array[i].key_hash, table->size);
-            size_t item_idx = new_hash_idx;
+            size_t hash_idx = table->Hash(old_array[i].key_hash, table->size);
+            size_t offset = 0, tmp_idx;
 
             do {
+                tmp_idx = (hash_idx + offset) % table->size;
 
-                if (!table->array[item_idx].occupied) {
+                if (!table->array[tmp_idx].occupied) {
 
-                    table->array[item_idx] = old_array[i];
+                    table->array[tmp_idx] = old_array[i];
 
                     break;
                 }
 
-                item_idx++;
-                if (item_idx >= table->size)
-                    item_idx = 0;
+                offset++;
 
-            } while (item_idx != new_hash_idx);
+            } while (offset < table->size);
 
         }
 
@@ -89,40 +88,39 @@ void *LinHash_insert(LinHashtable *table, void *pData, void *pKey, size_t key_si
 
         size_t key_hash = HashCode(pKey, key_size, table->size);
         size_t hash_idx = table->Hash(key_hash, table->size);
-        size_t item_idx = hash_idx;
+        size_t offset = 0, tmp_idx;
 
         do {
+            tmp_idx = (hash_idx + offset) % table->size;
+
             //if we found an available position on the array, during linear probing, we store
             //our new key and data there, and save the pointer to that position to return it
-            if (!table->array[item_idx].occupied) {
+            if (!table->array[tmp_idx].occupied) {
 
                 //in case there is already a deleted element in the position that we're about to add
                 //the new element to the array, we have to cleanup with the user-supplied cleanup function
-                if (table->array[item_idx].deleted && freeData)
-                    freeData((void *)&table->array[item_idx].item);
+                if (table->array[tmp_idx].deleted && freeData)
+                    freeData((void *)&table->array[tmp_idx].item);
 
-                table->array[item_idx].item.pData = pData;
-                table->array[item_idx].item.pKey = pKey;
-                table->array[item_idx].occupied = 1;
-                table->array[item_idx].deleted = 0;
+                table->array[tmp_idx].item.pData = pData;
+                table->array[tmp_idx].item.pKey = pKey;
+                table->array[tmp_idx].occupied = 1;
+                table->array[tmp_idx].deleted = 0;
                 //saving the already
-                table->array[item_idx].key_hash = key_hash;
+                table->array[tmp_idx].key_hash = key_hash;
 
                 table->total_elements++; //successful insertion
                 new_key = pKey;
                 break;
 
-            } else if (!table->KeyCmp(table->array[item_idx].item.pKey, pKey)) {
+            } else if (!table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
                 //if the same key is already in the table then the insertion has failed
                 break;
             }
 
-            //if we hit the last element of the array, during the linear probe, item_idx starts from 0
-            item_idx++;
-            if (item_idx >= table->size)
-                item_idx = 0;
+            offset++;
 
-        } while (item_idx != hash_idx);
+        } while (offset < table->size);
 
         if (table->rehash) //if the load factor is greater than 0.5 we rehash the table
             if ( ((float)table->total_elements / table->size) >= 0.5 )
@@ -139,23 +137,23 @@ KeyValuePair LinHash_delete(LinHashtable *table, void *pKey, size_t key_size)
 
     if (table && pKey && key_size) {
         size_t hash_idx = table->Hash(HashCode(pKey, key_size, table->size), table->size);
-        size_t item_idx = hash_idx;
+        size_t offset = 0, tmp_idx;
 
         do {
+            tmp_idx = (hash_idx + offset) % table->size;
 
-            if (table->array[item_idx].occupied && table->KeyCmp(table->array[item_idx].item.pKey, pKey)) {
-                table->array[item_idx].occupied = 0;
-                table->array[item_idx].deleted = 1;
-                item = table->array[item_idx].item;
+            if (table->array[tmp_idx].occupied && table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
+                table->array[tmp_idx].occupied = 0;
+                table->array[tmp_idx].deleted = 1;
+                item = table->array[tmp_idx].item;
 
                 table->total_elements--; //successful deletion
                 break;
             }
 
-            item_idx++;
-            if (item_idx >= table->size)
-                item_idx = 0;
-        } while (item_idx != hash_idx);
+            offset++;
+
+        } while (offset < table->size);
     }
 
     return item;
@@ -167,23 +165,23 @@ HashArrayElement *LinHash_find(LinHashtable *table, void *pKey, size_t key_size)
 
     if (table && pKey && key_size) {
         size_t hash_idx = table->Hash(HashCode(pKey, key_size, table->size), table->size);
-        size_t item_idx = hash_idx;
+        size_t offset = 0, tmp_idx;
 
         do {
+            tmp_idx = (hash_idx + offset) % table->size;
 
-            if (!table->array[item_idx].deleted && 
-                table->array[item_idx].occupied &&
-                !table->KeyCmp(table->array[item_idx].item.pKey, pKey)) {
+            if (!table->array[tmp_idx].deleted && 
+                table->array[tmp_idx].occupied &&
+                !table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
 
-                to_find = &table->array[item_idx];
+                to_find = &table->array[tmp_idx];
                 break;
 
             }
 
-            item_idx++;
-            if (item_idx >= table->size)
-                item_idx = 0;
-        } while (item_idx != hash_idx);
+            offset++;
+
+        } while (offset < table->size);
 
     }
 
