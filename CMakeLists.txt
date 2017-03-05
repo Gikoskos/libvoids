@@ -4,7 +4,9 @@ project(EduDS)
 
 enable_testing()
 
-#set(BUILD_SHARED_LIBS ON)
+
+option(BUILD_SHARED_LIBS "Build shared libs" OFF)
+
 if(NOT CMAKE_BUILD_TYPE)
    set(CMAKE_BUILD_TYPE Release)
 endif(NOT CMAKE_BUILD_TYPE)

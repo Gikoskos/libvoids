@@ -2,12 +2,15 @@
 *                   Common.h                    *
 *           George Koskeridis (C) 2016          *
 \***********************************************/
-//LIBRARY INTERNAL HEADER. DO NOT INCLUDE THIS ANYWHERE ELSE.
+//LIBRARY INTERNAL HEADER. DO NOT INCLUDE THIS SEPARATELY.
 
 #ifndef __EduDS_COMMON_H
 #define __EduDS_COMMON_H
 
 #ifdef _WIN32
+# ifdef _MSC_VER //disable compiler bug on MSVC where it warns about
+#  pragma warning(disable : 4127) //do{}while(0) macros
+# endif
 # ifdef EXPORT_API_EduDS_DLL
 #  define EduDS_API __declspec(dllexport)
 # elif IMPORT_API_EduDS_DLL

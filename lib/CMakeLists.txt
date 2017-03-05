@@ -18,15 +18,23 @@ if(BUILD_SHARED_LIBS)
     target_compile_definitions(EduDS PRIVATE EXPORT_API_EduDS_DLL)
 endif(BUILD_SHARED_LIBS)
 
-#set maximum warning levels for gcc
+#set gcc specific flags
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+    #maximum gcc warnings
     target_compile_options(EduDS PRIVATE -ggdb -Wall -Wextra -pedantic)
+    #add debugging flags for GCC if we're building the debug build
+    if(CMAKE_BUILD_TYPE EQUAL Debug)
+        target_compile_options(EduDS BEFORE PRIVATE -ggdb)
+    endif(CMAKE_BUILD_TYPE EQUAL Debug)
+#set cl.exe specific flags
+elseif(MSVC)
+    #set maximum warning levels for cl.exe
+    target_compile_options(EduDS PRIVATE /W4)
+    #no need to enable explicitly debugging symbols on the visual studio debug build
 endif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 
-#set maximum warning levels for cl.exe
-if(MSVC)
-    target_compile_options(EduDS PRIVATE /W4)
-endif(MSVC)
+
+
 
 
 set_property(TARGET EduDS PROPERTY C_STANDARD 99)

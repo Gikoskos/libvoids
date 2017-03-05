@@ -171,7 +171,7 @@ BSTreeNode *BSTree_find(BSTree *bst, void *pKey)
 {
     BSTreeNode *curr = bst->root;
 
-    if (bst) {
+    if (bst && pKey) {
         int cmp_res;
 
         curr = bst->root;

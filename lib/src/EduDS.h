@@ -10,11 +10,11 @@
 
 #include "SinglyLinkedList.h"
 #include "DoublyLinkedList.h"
-#include "CircularBuffer.h"
 #include "SentinelSinglyLinkedList.h"
 #include "SentinelDoublyLinkedList.h"
 #include "CircularSinglyLinkedList.h"
 #include "CircularDoublyLinkedList.h"
+#include "CircularBuffer.h"
 #include "AssociationList.h"
 #include "HashFunctions.h"
 #include "ChainedHashtable.h"
@@ -22,6 +22,7 @@
 #include "QuadraticHashtable.h"
 #include "BinarySearchTree.h"
 #include "AVLTree.h"
+#include "RedBlackTree.h"
 #include "FIFOqueue.h"
 #include "LIFOstack.h"
 

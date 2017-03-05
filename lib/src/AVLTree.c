@@ -76,7 +76,7 @@ AVLTreeNode *AVLTree_insert(AVLTree *avlt, void *pKey, void *pData)
 {
     AVLTreeNode *new_node = NULL;
 
-    if (avlt) {
+    if (avlt && pKey) {
 
         new_node = calloc(1, sizeof(AVLTreeNode));
 
@@ -376,7 +376,7 @@ AVLTreeNode *AVLTree_find(AVLTree *avlt, void *pKey)
 {
     AVLTreeNode *curr = NULL;
 
-    if (avlt) {
+    if (avlt && pKey) {
         curr = avlt->root;
         int cmp_res;
 

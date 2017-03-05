@@ -62,7 +62,7 @@ DictListNode *DictList_insertAfter(DictListNode *dictListPrev, void *pData, void
 {
     DictListNode *new_node = NULL;
 
-    if (dictListPrev) {
+    if (dictListPrev && pKey) {
         new_node = malloc(sizeof(DictListNode));
 
         new_node->item.pData = pData;
@@ -79,7 +79,7 @@ KeyValuePair DictList_deleteByKey(DictListNode **dictListHead, void *pKey, UserC
 {
     KeyValuePair item = { 0 };
 
-    if (dictListHead && KeyCmp) {
+    if (dictListHead && KeyCmp && pKey) {
         DictListNode *curr, *prev = NULL;
 
         for (curr = *dictListHead; curr && KeyCmp(curr->item.pKey, pKey); curr = curr->nxt)
@@ -105,7 +105,7 @@ DictListNode *DictList_findByKey(DictListNode *dictListHead, void *pKey, UserCom
 {
     DictListNode *curr = dictListHead;
 
-    if (KeyCmp)
+    if (KeyCmp && pKey)
         for (; curr && KeyCmp(curr->item.pKey, pKey); curr = curr->nxt);
 
     return curr;
