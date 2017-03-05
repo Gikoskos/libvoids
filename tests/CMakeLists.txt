@@ -2,12 +2,12 @@
 function(new_EduDS_test target_name)
     #if we're building the Release build then it's not necessary to
     #compile the tests, together with the library
-    if(CMAKE_BUILD_TYPE EQUAL Release)
+    if(CMAKE_BUILD_TYPE MATCHES Release)
         add_executable(${target_name} EXCLUDE_FROM_ALL ${target_name}.c)
-    else(CMAKE_BUILD_TYPE EQUAL Release)
+    else(CMAKE_BUILD_TYPE MATCHES Release)
     #on the debug build, the tests are compiled with the library
         add_executable(${target_name} ${target_name}.c)
-    endif(CMAKE_BUILD_TYPE EQUAL Release)
+    endif(CMAKE_BUILD_TYPE MATCHES Release)
 
     target_include_directories(${target_name} PUBLIC "${PROJECT_SOURCE_DIR}/lib/src")
     target_link_libraries(${target_name} EduDS)
