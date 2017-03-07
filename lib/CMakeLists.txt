@@ -21,10 +21,10 @@ endif(BUILD_SHARED_LIBS)
 #set gcc specific flags
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     #maximum gcc warnings
-    target_compile_options(EduDS PRIVATE -ggdb -Wall -Wextra -pedantic)
+    target_compile_options(EduDS PRIVATE -Wall -Wextra -pedantic)
     #add debugging flags for GCC if we're building the debug build
     if(CMAKE_BUILD_TYPE MATCHES Debug)
-        target_compile_options(EduDS BEFORE PRIVATE -ggdb)
+        target_compile_options(EduDS BEFORE PRIVATE -gdwarf)
     endif(CMAKE_BUILD_TYPE MATCHES Debug)
 #set cl.exe specific flags
 elseif(MSVC)

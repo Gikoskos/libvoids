@@ -6,44 +6,45 @@
 #include <stdlib.h>
 #include "AVLTree.h"
 
-#define isLeafNode(x) (!(x->right || x->left))
+#define isLeafNode(x) ( !((x)->right || (x)->left) )
+#define isLeftNode(x) ( (x) == (x)->parent->left )
 
 #define RotateRight(x, y) \
     do { \
-        if (x->right) \
-            x->right->parent = y; \
+        if ((x)->right) \
+            (x)->right->parent = y; \
 \
-        y->left = x->right; \
-        x->right = y; \
-        x->parent = y->parent; \
+        (y)->left = (x)->right; \
+        (x)->right = y; \
+        (x)->parent = (y)->parent; \
 \
-        if (y->parent) { \
-            if (y == y->parent->left) \
-                y->parent->left = x; \
+        if ((y)->parent) { \
+            if (y == (y)->parent->left) \
+                (y)->parent->left = x; \
             else \
-                y->parent->right = x; \
+                (y)->parent->right = x; \
         } \
 \
-        y->parent = x; \
+        (y)->parent = x; \
     } while (0)
 
 #define RotateLeft(x, y) \
     do { \
-        if (x->left) \
-            x->left->parent = y; \
+        if ((x)->left) \
+            (x)->left->parent = y; \
 \
-        y->right = x->left; \
-        x->left = y; \
-        x->parent = y->parent; \
+        (y)->right = (x)->left; \
+        (x)->left = y; \
+        (x)->parent = (y)->parent; \
 \
-        if (y->parent) { \
-            if (y == y->parent->left) \
-                y->parent->left = x; \
+        if ((y)->parent) { \
+            if (y == (y)->parent->left) \
+                (y)->parent->left = x; \
             else \
-                y->parent->right = x; \
+                (y)->parent->right = x; \
         } \
 \
-        y->parent = x; \
+        (y)->parent = x; \
     } while (0)
 
 
@@ -293,36 +294,21 @@ KeyValuePair AVLTree_deleteNode(AVLTree *avlt, AVLTreeNode *avltToDelete)
     if (avlt && avlt->root && avltToDelete) {
 
         //if the node we want to delete has two children nodes
-        //we switch it with the first leftmost leaf node from the right subtree
+        //we switch it with its inorder successor from the right subtree
         if (avltToDelete->right && avltToDelete->left) {
+            //temporary value to store the data that is being swapped
+            KeyValuePair swapped_item;
+            AVLTreeNode *avltSuccessor = avltToDelete->right;
 
-            //temporary value to store the parent node that is being swapped
-            AVLTreeNode *avltTmp;
-            AVLTreeNode *avltFirstLeaf = avltToDelete->right;
+            while (avltSuccessor->left)
+                avltSuccessor = avltSuccessor->left;
 
-            //@TODO: optimize swapped node choice (swap with smallest node from smaller child subtree)
-            while ( !isLeafNode(avltFirstLeaf) ) {
-                if (avltFirstLeaf->left)
-                    avltFirstLeaf = avltFirstLeaf->left;
-                else
-                    avltFirstLeaf = avltFirstLeaf->right;
-            }
+            //swap the data (key and value) of the two nodes
+            swapped_item = avltToDelete->item;
+            avltToDelete->item = avltSuccessor->item;
+            avltSuccessor->item = swapped_item;
 
-            //swap the *parent pointers of the two nodes
-            avltTmp = avltToDelete->parent;
-            avltToDelete->parent = avltFirstLeaf->parent;
-            avltFirstLeaf->parent = avltTmp;
-
-            //the swapped leaf node inherits the height and the children of the node that is to be deleted
-            avltFirstLeaf->height = avltToDelete->height;
-            avltFirstLeaf->left = avltToDelete->left;
-            avltFirstLeaf->right = avltToDelete->right;
-
-            //since the node we want to delete, becomes a leaf now,
-            //its children and height are zero'd out
-            avltToDelete->height = 0;
-            avltToDelete->left = avltToDelete->right = NULL;
-
+            avltToDelete = avltSuccessor;
         }
 
         //now the node we want to delete has AT MOST one child node
@@ -331,9 +317,8 @@ KeyValuePair AVLTree_deleteNode(AVLTree *avlt, AVLTreeNode *avltToDelete)
 
         //if the node we want to delete ISN'T the root node
         if (parent) {
-            //if the key of the node we want to delete, is bigger
-            //than the key of its parent, then it's a right node
-            if (avlt->KeyCmp(avltToDelete->item.pKey, parent->item.pKey) > 0) {
+            //if the node we want to delete is a right node
+            if (!isLeftNode(avltToDelete)) {
                 //and we change the right node of the parent so
                 //that it points to either the right node of the node we
                 //want to delete, or the left node, depending on which one

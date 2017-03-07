@@ -6,8 +6,8 @@
 #include <stdlib.h>
 #include "BinarySearchTree.h"
 
-#define isLeafNode(x) (!(x->right || x->left))
-
+#define isLeafNode(x) ( !(x->right || x->left) )
+#define isLeftNode(x) ( (x) == (x)->parent->left )
 
 static void pre_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback);
 static void in_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback);
@@ -95,30 +95,20 @@ KeyValuePair BSTree_deleteNode(BSTree *bst, BSTreeNode *bstToDelete)
     if (bst && bst->root && bstToDelete) {
 
         //if the node we want to delete has two children nodes
-        //we switch it with the first leftmost leaf node from the right subtree
+        //we switch it with its inorder successor from the right subtree
         if (bstToDelete->right && bstToDelete->left) {
+            KeyValuePair swapped_item;
+            BSTreeNode *bstSuccessor = bstToDelete->right;
 
-            //temporary value to store the data that is being swapped
-            BSTreeNode *bstTmp;
-            BSTreeNode *bstFirstLeaf = bstToDelete->right;
+            while (bstSuccessor->left)
+                bstSuccessor = bstSuccessor->left;
 
-            while ( !isLeafNode(bstFirstLeaf) ) {
-                if (bstFirstLeaf->left)
-                    bstFirstLeaf = bstFirstLeaf->left;
-                else
-                    bstFirstLeaf = bstFirstLeaf->right;
-            }
+            //swap the data (key and value) of the two nodes
+            swapped_item = bstToDelete->item;
+            bstToDelete->item = bstSuccessor->item;
+            bstSuccessor->item = swapped_item;
 
-            //swap the *parent, *left and *right pointers of the two nodes
-            bstTmp = bstToDelete->parent;
-            bstToDelete->parent = bstFirstLeaf->parent;
-            bstFirstLeaf->parent = bstTmp;
-            bstFirstLeaf->left = bstToDelete->left;
-            bstFirstLeaf->right = bstToDelete->right;
-            //since the node we want to delete, becomes a leaf now,
-            //its children are NULLed
-            bstToDelete->left = bstToDelete->right = NULL;
-
+            bstToDelete = bstSuccessor;
         }
 
         //now the node we want to delete has AT MOST one child node
@@ -127,9 +117,8 @@ KeyValuePair BSTree_deleteNode(BSTree *bst, BSTreeNode *bstToDelete)
 
         //if the node we want to delete ISN'T the root node
         if (parent) {
-            //if the key of the node we want to delete, is bigger
-            //than the key of its parent, then it's a right node
-            if (bst->KeyCmp(bstToDelete->item.pKey, parent->item.pKey) > 0) {
+            //if the node we want to delete is a right node
+            if (!isLeftNode(bstToDelete)) {
                 //and we change the right node of the parent so
                 //that it points to either the right node of the node we
                 //want to delete, or the left node, depending on which one

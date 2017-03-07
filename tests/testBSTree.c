@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
 
     //trying to add 10 nodes to a binary search tree
     //with pseudorandomly generated keys and data
+    printf("\n----STARTING INSERTIONS----\n");
     for (int i = 0; i < 10; i++) {
 
         int *new_key = newRandInt(100);
@@ -51,24 +52,24 @@ int main(int argc, char *argv[])
 
         printf("Trying to insert new node with key %d and data %d!\n", *new_key, *new_data);
 
-        if (BSTree_insert(bst, (void*)new_key, (void*)new_data)) {
+        if (BSTree_insert(bst, (void*)new_data, (void*)new_key)) {
             printf("Node was successfully inserted!\n");
+            printf("in-order traversal (the node numbers should be in ascending order):\n");
+            BSTree_traverse(bst, IN_ORDER, printIntData);
         } else {
-            printf("Node insertion failed!\n");
+            printf("Node insertion failed!\n\n");
             free(new_key);
             free(new_data);
         }
     }
 
-    printf("\n----PRINTING AVL TREE BEFORE STARTING TO DELETE ELEMENTS----\n");
+    printf("\n----PRINTING BS TREE BEFORE STARTING TO DELETE ELEMENTS----\n");
+    //testing traversals
     printf("in-order traversal (the node numbers should be in ascending order):\n");
     BSTree_traverse(bst, IN_ORDER, printIntData);
-    //testing traversals
+
     printf("\npre-order traversal:\n");
     BSTree_traverse(bst, PRE_ORDER, printIntData);
-
-    printf("\nin-order traversal:\n");
-    BSTree_traverse(bst, IN_ORDER, printIntData);
 
     printf("\npost-order traversal:\n");
     BSTree_traverse(bst, POST_ORDER, printIntData);
@@ -79,7 +80,8 @@ int main(int argc, char *argv[])
     printf("\neuler traversal:\n");
     BSTree_traverse(bst, EULER, printIntData);
 
-    for (int i = 0; i < 50; i++) {
+    printf("\n----STARTING DELETIONS----\n");
+    for (int i = 80; i >= 30; i--) {
         KeyValuePair deleted = BSTree_deleteByKey(bst, (void*)&i);
 
         //if we deleted a valid node

@@ -2,12 +2,21 @@
 #include <stdlib.h>
 #include <time.h>
 #include <EduDS.h>
-
+RedBlackTree *rbt;
 void printIntData(void *param)
 {
-    KeyValuePair *item = (KeyValuePair *)param;
+    RedBlackTreeNode *node = (RedBlackTreeNode*)param;
+    //KeyValuePair *item = (KeyValuePair *)param;
 
-    printf("node %d has data %d\n", *(int*)item->pKey, *(int*)item->pData);
+    //printf("node %d has data %d\n", *(int*)item->pKey, *(int*)item->pData);
+    
+    printf("node 0x%p %s\t= (key = %d\tcolor = %s\tleft child = 0x%p %s\tright child = 0x%p %s\tparent = 0x%p %s)\n",
+           node, (node == rbt->root) ? "ROOT" : ((node->right == rbt->nil && node->left == rbt->nil) ? "LEAF" : ""),
+           *(int*)node->item.pKey,
+           (node->color == BLACK_NODE) ? "BLACK" : "RED",
+           node->left, (node->left == rbt->nil) ? "nil" : "", 
+           node->right, (node->right == rbt->nil) ? "nil" : "",
+           node->parent, (node->parent == rbt->nil) ? "nil" : "");
 }
 
 int *newRandInt(int range)
@@ -38,12 +47,9 @@ void freeKeyValuePair(void *param)
 
 int main(int argc, char *argv[])
 {
-    AVLTree *avlt = AVLTree_init(compareInts);
+    rbt = RBTree_init(compareInts);
 
     srand(time(NULL));
-
-    //trying to add 10 nodes to a binary search tree
-    //with pseudorandomly generated keys and data
     printf("\n----STARTING INSERTIONS----\n");
     for (int i = 0; i < 10; i++) {
 
@@ -52,8 +58,12 @@ int main(int argc, char *argv[])
 
         printf("Trying to insert new node with key %d and data %d!\n", *new_key, *new_data);
 
-        if (AVLTree_insert(avlt, (void*)new_key, (void*)new_data)) {
+        if (RBTree_insert(rbt, (void*)new_key, (void*)new_data)) {
             printf("Node was successfully inserted!\n");
+            printf("in-order traversal (the node numbers should be in ascending order):\n");
+            RBTree_traverse(rbt, IN_ORDER, printIntData);
+            putchar('\n');
+
         } else {
             printf("Node insertion failed!\n\n");
             free(new_key);
@@ -61,13 +71,14 @@ int main(int argc, char *argv[])
         }
     }
 
-    printf("\n----PRINTING AVL TREE BEFORE STARTING TO DELETE ELEMENTS----\n");
+    
+    printf("\n----PRINTING RB TREE BEFORE STARTING TO DELETE ELEMENTS----\n");
     printf("in-order traversal (the node numbers should be in ascending order):\n");
-    AVLTree_traverse(avlt, IN_ORDER, printIntData);
+    RBTree_traverse(rbt, IN_ORDER, printIntData);
 
     printf("\n----STARTING DELETIONS----\n");
     for (int i = 80; i >= 30; i--) {
-        KeyValuePair deleted = AVLTree_deleteByKey(avlt, (void*)&i);
+        KeyValuePair deleted = RBTree_deleteByKey(rbt, (void*)&i);
 
         //if we deleted a valid node
         if (deleted.pKey) {
@@ -75,9 +86,10 @@ int main(int argc, char *argv[])
             free(deleted.pKey);
             free(deleted.pData);
             printf("in-order traversal (the node numbers should be in ascending order):\n");
-            AVLTree_traverse(avlt, IN_ORDER, printIntData);
+            RBTree_traverse(rbt, IN_ORDER, printIntData);
         }
     }
-    AVLTree_destroy(&avlt, freeKeyValuePair);
+
+    RBTree_destroy(&rbt, freeKeyValuePair);
     return 0;
 }

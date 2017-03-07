@@ -6,7 +6,7 @@ function(new_EduDS_test target_name)
         add_executable(${target_name} EXCLUDE_FROM_ALL ${target_name}.c)
     else(CMAKE_BUILD_TYPE MATCHES Release)
     #on the debug build, the tests are compiled with the library
-        add_executable(${target_name} ${target_name}.c)
+        add_executable(${target_name}  ${target_name}.c)
     endif(CMAKE_BUILD_TYPE MATCHES Release)
 
     target_include_directories(${target_name} PUBLIC "${PROJECT_SOURCE_DIR}/lib/src")
