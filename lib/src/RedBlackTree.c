@@ -314,10 +314,6 @@ KeyValuePair RBTree_deleteNode(RedBlackTree *rbt, RedBlackTreeNode *rbtToDelete)
 
     if (rbt && rbt->root && rbtToDelete) {
 
-        //temporarily store the color of the node that is about to be deleted OR the color of the node
-        //that replaces the node that is about to be deleted
-        RedBlackTreeColor clr;
-
         //null the key of the sentinel node, to use on conditionals
         rbt->nil->item.pKey = NULL;
 
@@ -328,7 +324,7 @@ KeyValuePair RBTree_deleteNode(RedBlackTree *rbt, RedBlackTreeNode *rbtToDelete)
             KeyValuePair swapped_item;
             RedBlackTreeNode *rbtSuccessor = rbtToDelete->right;
 
-            while (rbtSuccessor->left)
+            while (rbtSuccessor->left->item.pKey)
                 rbtSuccessor = rbtSuccessor->left;
 
             //swap the data (key and value) of the two nodes
@@ -373,8 +369,8 @@ KeyValuePair RBTree_deleteNode(RedBlackTree *rbt, RedBlackTreeNode *rbtToDelete)
         child->parent = parent;
 
         /* Balance the RBTree after the deletion */
-        //if the child is a red node (and the deleted node was black), then we paint it black
-        //since we can't have two consecutive red nodes in the tree, so this is the easiest case
+        //if the child is a red node (and the deleted node was black), then we paint it black.
+        //this is the easiest case, since we can't have two consecutive red nodes in the tree
         if (child->color == RED_NODE) {
             //we have to paint black the child node in order to preserve the rule:
             //"every path from the root to a null link has the same number of black links"
@@ -383,8 +379,8 @@ KeyValuePair RBTree_deleteNode(RedBlackTree *rbt, RedBlackTreeNode *rbtToDelete)
         //else if both the child of the deleted node, and the deleted node itself, are black nodes
         } else if (child->color == BLACK_NODE && rbtToDelete->color == BLACK_NODE) {
 
-            //we call the fixup function with, with the child of the deleted node, as argument.
-            //Even if the child is the nil, its parent is still set to point to the node above it
+            //we call the fixup function with the child of the deleted node, as argument.
+            //Even if the child is the nil, nil's parent is still set to point to the node above it
             rebalance_deletion(rbt, child);
         }
         /* Balancing is over */
@@ -395,7 +391,7 @@ KeyValuePair RBTree_deleteNode(RedBlackTree *rbt, RedBlackTreeNode *rbtToDelete)
         //delete the node because we don't need it anymore
         //and no other nodes point to it
         free(rbtToDelete);
-        
+
     }
 
     return item;
@@ -403,7 +399,93 @@ KeyValuePair RBTree_deleteNode(RedBlackTree *rbt, RedBlackTreeNode *rbtToDelete)
 
 void rebalance_deletion(RedBlackTree *rbt, RedBlackTreeNode *curr)
 {
-    
+    //this loop will execute as long as curr is black and isn't root
+    while (curr->color == BLACK_NODE && curr != rbt->root) {
+        RedBlackTreeNode *rbtTmp, *p = curr->parent;
+
+        //rbtTmp holds the sibling of our node, after this line
+        rbtTmp = (isLeftNode(curr)) ? p->right : p->left;
+
+        //if sibling is red
+        if (rbtTmp->color == RED_NODE) {
+            //flip the sibling's color
+            rbtTmp->color = BLACK_NODE;
+            p->color = RED_NODE;
+
+            if (!isLeftNode(rbtTmp)) {
+                RotateLeft(rbt, rbtTmp, p);
+                rbtTmp = rbtTmp->right;
+            } else {
+                RotateRight(rbt, rbtTmp, p);
+                rbtTmp = rbtTmp->left;
+            }
+            curr = p;
+        }
+
+        //if sibling is black
+        if (rbtTmp->color == BLACK_NODE) {
+
+
+            //if the sibling has two black children
+            if (rbtTmp->left->color == BLACK_NODE && rbtTmp->right->color == BLACK_NODE) {
+
+                //if the parent of rbtTmp and curr, is red
+                if (p->color == RED_NODE) {
+                    //recolor the parent
+                    p->color = BLACK_NODE;
+                    //and double black is gone
+                    break;
+                } else {
+                    //else recolor the sibling and keep going up from the parent
+                    rbtTmp->color = RED_NODE;
+                    curr = p;
+                    continue;
+                }
+
+            }
+
+            //if the sibling has at least one red child
+            //if it's a right node
+            if (!isLeftNode(rbtTmp)) {
+
+                if (rbtTmp->right->color == RED_NODE) {
+                    //@BUG: THERE'S A BUG HERE FIND IT
+                    p->color = rbtTmp->right->color = BLACK_NODE;
+                    RotateLeft(rbt, rbtTmp, p);
+                } else {
+                    //@BUG: THERE'S A BUG HERE
+                    //using p to store temporarily the left child, in order to perform the rotations
+                    p = rbtTmp->left;
+                    p->color = BLACK_NODE;
+                    RotateRight(rbt, p, rbtTmp);
+
+                    rbtTmp = p->parent;
+                    RotateLeft(rbt, p, rbtTmp);
+                }
+
+            //if it's a left node
+            } else {
+
+                if (rbtTmp->left->color == RED_NODE) {
+                    //@BUG: THERE'S A BUG HERE
+                    p->color = rbtTmp->left->color = BLACK_NODE;
+                    RotateRight(rbt, rbtTmp, p);
+                } else {
+                    //@BUG: THERE'S A BUG HERE
+                    //using p to store temporarily the left child, in order to perform the rotations
+                    p = rbtTmp->right;
+                    p->color = BLACK_NODE;
+                    RotateLeft(rbt, p, rbtTmp);
+
+                    rbtTmp = p->parent;
+                    RotateRight(rbt, p, rbtTmp);
+                }
+
+            }
+
+            break;
+        }
+    }
 }
 
 KeyValuePair RBTree_deleteByKey(RedBlackTree *rbt, void *pKey)

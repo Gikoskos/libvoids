@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <EduDS.h>
+
 RedBlackTree *rbt;
+
 void printIntData(void *param)
 {
     RedBlackTreeNode *node = (RedBlackTreeNode*)param;
@@ -41,17 +43,34 @@ void freeKeyValuePair(void *param)
 {
     KeyValuePair *item = (KeyValuePair *)param;
 
-    free(item->pKey);
+    //free(item->pKey);
     free(item->pData);
 }
 
 int main(int argc, char *argv[])
 {
     rbt = RBTree_init(compareInts);
+    int arr[] = {18, 37, 49, 80, 55, 2, 1, 48, 75, 95};
 
     srand(time(NULL));
     printf("\n----STARTING INSERTIONS----\n");
-    for (int i = 0; i < 10; i++) {
+    for (size_t i = 0; i < sizeof arr / sizeof *arr; i++) {
+        int *new_data = newRandInt(0);
+
+        printf("Trying to insert new node with key %d and data %d!\n", arr[i], *new_data);
+
+        if (RBTree_insert(rbt, (void*)&arr[i], (void*)new_data)) {
+            printf("Node was successfully inserted!\n");
+            //printf("in-order traversal (the node numbers should be in ascending order):\n");
+            //RBTree_traverse(rbt, IN_ORDER, printIntData);
+            putchar('\n');
+
+        } else {
+            printf("Node insertion failed!\n\n");
+            free(new_data);
+        }
+    }
+    /*for (int i = 0; i < 10; i++) {
 
         int *new_key = newRandInt(100);
         int *new_data = newRandInt(0);
@@ -69,7 +88,7 @@ int main(int argc, char *argv[])
             free(new_key);
             free(new_data);
         }
-    }
+    }*/
 
     
     printf("\n----PRINTING RB TREE BEFORE STARTING TO DELETE ELEMENTS----\n");
@@ -83,7 +102,7 @@ int main(int argc, char *argv[])
         //if we deleted a valid node
         if (deleted.pKey) {
             printf("\n--------Deleted node %d with data %d--------\n", *(int*)deleted.pKey, *(int*)deleted.pData);
-            free(deleted.pKey);
+            //free(deleted.pKey);
             free(deleted.pData);
             printf("in-order traversal (the node numbers should be in ascending order):\n");
             RBTree_traverse(rbt, IN_ORDER, printIntData);
