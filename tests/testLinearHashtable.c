@@ -9,7 +9,7 @@ int *newRandInt(int range)
     int *p = malloc(sizeof(int));
 
     if (range) {
-        *p = rand()%range + 1;        
+        *p = rand()%range + 1;
     } else {
         *p = rand();
     }

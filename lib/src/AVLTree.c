@@ -57,7 +57,7 @@ static void eulerTraversal(AVLTreeNode *avltNode, UserDataCallback callback);
 
 static int balanceFactor(AVLTreeNode *avltNode);
 static void correctNodeHeight(AVLTreeNode *avltNode);
-static void AVLTree_rebalance(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode);
+static void rebalance(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode);
 
 
 AVLTree *AVLTree_init(UserCompareCallback KeyCmp)
@@ -129,7 +129,7 @@ AVLTreeNode *AVLTree_insert(AVLTree *avlt, void *pKey, void *pData)
 
             }
 
-            AVLTree_rebalance(&avlt->root, parent);
+            rebalance(&avlt->root, parent);
 
         }
     }
@@ -178,7 +178,7 @@ void correctNodeHeight(AVLTreeNode *avltNode)
     }
 }
 
-void AVLTree_rebalance(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
+void rebalance(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
 {
     if (*avltRoot && avltStartNode) {
 
@@ -346,7 +346,7 @@ KeyValuePair AVLTree_deleteNode(AVLTree *avlt, AVLTreeNode *avltToDelete)
         //and no other nodes point to it
         free(avltToDelete);
 
-        AVLTree_rebalance(&avlt->root, parent);
+        rebalance(&avlt->root, parent);
     }
 
     return item;

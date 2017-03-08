@@ -8,7 +8,7 @@
 #include "HashFunctions.h"
 
 
-static void QuadHash_rehash(QuadHashtable *table, UserDataCallback freeData);
+static void rehash(QuadHashtable *table, UserDataCallback freeData);
 
 
 QuadHashtable *QuadHash_init(size_t size, UserCompareCallback KeyCmp, UserHashFuncCallback Hash)
@@ -43,7 +43,7 @@ QuadHashtable *QuadHash_init(size_t size, UserCompareCallback KeyCmp, UserHashFu
     return quadtable;
 }
 
-void QuadHash_rehash(QuadHashtable *table, UserDataCallback freeData)
+void rehash(QuadHashtable *table, UserDataCallback freeData)
 {
     HashArrayElement *old_array = table->array; //save the old array
     size_t old_size = table->size;
@@ -124,7 +124,7 @@ void *QuadHash_insert(QuadHashtable *table, void *pData, void *pKey, size_t key_
 
 
         if ( ((float)table->total_elements / table->size) >= 0.5 )
-            QuadHash_rehash(table, freeData);
+            rehash(table, freeData);
     }
         
 

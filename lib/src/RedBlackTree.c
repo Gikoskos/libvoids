@@ -353,13 +353,13 @@ KeyValuePair RBTree_deleteNode(RedBlackTree *rbt, RedBlackTreeNode *rbtToDelete)
                 //that it points to either the right node of the node we
                 //want to delete, or the left node, depending on which one
                 //is not nil (if both are nil then we point to nil)
-                parent->right = (rbtToDelete->right->item.pKey) ? rbtToDelete->right : rbtToDelete->left;
+                parent->right = child;
             } else { //if the key of the parent is smaller, it's a left node
-                parent->left = (rbtToDelete->right->item.pKey) ? rbtToDelete->right : rbtToDelete->left;
+                parent->left = child;
             }
         //else if the node we want to delete IS the root node
         } else {
-            //change the tree root accordingly, so that it points to the new root (or NULL, if it's the only node in the tree)
+            //change the tree root accordingly, so that it points to the new root (or to nil, if it's the only node in the tree)
             rbt->root = (rbtToDelete->right->item.pKey) ? rbtToDelete->right : rbtToDelete->left;
         }
 
@@ -388,6 +388,9 @@ KeyValuePair RBTree_deleteNode(RedBlackTree *rbt, RedBlackTreeNode *rbtToDelete)
         //store the node's item to return it
         item = rbtToDelete->item;
 
+        if (rbt->nil == rbt->root)
+            rbt->root = NULL;
+
         //delete the node because we don't need it anymore
         //and no other nodes point to it
         free(rbtToDelete);
@@ -406,22 +409,6 @@ void rebalance_deletion(RedBlackTree *rbt, RedBlackTreeNode *curr)
         //rbtTmp holds the sibling of our node, after this line
         rbtTmp = (isLeftNode(curr)) ? p->right : p->left;
 
-        //if sibling is red
-        if (rbtTmp->color == RED_NODE) {
-            //flip the sibling's color
-            rbtTmp->color = BLACK_NODE;
-            p->color = RED_NODE;
-
-            if (!isLeftNode(rbtTmp)) {
-                RotateLeft(rbt, rbtTmp, p);
-                rbtTmp = rbtTmp->right;
-            } else {
-                RotateRight(rbt, rbtTmp, p);
-                rbtTmp = rbtTmp->left;
-            }
-            curr = p;
-        }
-
         //if sibling is black
         if (rbtTmp->color == BLACK_NODE) {
 
@@ -433,6 +420,8 @@ void rebalance_deletion(RedBlackTree *rbt, RedBlackTreeNode *curr)
                 if (p->color == RED_NODE) {
                     //recolor the parent
                     p->color = BLACK_NODE;
+                    //and the sibling
+                    rbtTmp->color = RED_NODE;
                     //and double black is gone
                     break;
                 } else {
@@ -449,11 +438,14 @@ void rebalance_deletion(RedBlackTree *rbt, RedBlackTreeNode *curr)
             if (!isLeftNode(rbtTmp)) {
 
                 if (rbtTmp->right->color == RED_NODE) {
-                    //@BUG: THERE'S A BUG HERE FIND IT
                     p->color = rbtTmp->right->color = BLACK_NODE;
+                    rbtTmp->color = RED_NODE;
                     RotateLeft(rbt, rbtTmp, p);
+                    if (p == rbt->root) {
+                        rbtTmp->color = BLACK_NODE;
+                        rbt->root = rbtTmp;
+                    }
                 } else {
-                    //@BUG: THERE'S A BUG HERE
                     //using p to store temporarily the left child, in order to perform the rotations
                     p = rbtTmp->left;
                     p->color = BLACK_NODE;
@@ -461,29 +453,61 @@ void rebalance_deletion(RedBlackTree *rbt, RedBlackTreeNode *curr)
 
                     rbtTmp = p->parent;
                     RotateLeft(rbt, p, rbtTmp);
+                    p->color = RED_NODE;
+                    p->left->color = BLACK_NODE;
+                    p->right->color = BLACK_NODE;
+                    if (rbtTmp == rbt->root) {
+                        p->color = BLACK_NODE;
+                        rbt->root = p;
+                    }
                 }
 
             //if it's a left node
             } else {
 
                 if (rbtTmp->left->color == RED_NODE) {
-                    //@BUG: THERE'S A BUG HERE
                     p->color = rbtTmp->left->color = BLACK_NODE;
+                    rbtTmp->color = RED_NODE;
                     RotateRight(rbt, rbtTmp, p);
+                    if (p == rbt->root) {
+                        rbtTmp->color = BLACK_NODE;
+                        rbt->root = rbtTmp;
+                    }
                 } else {
-                    //@BUG: THERE'S A BUG HERE
                     //using p to store temporarily the left child, in order to perform the rotations
                     p = rbtTmp->right;
-                    p->color = BLACK_NODE;
                     RotateLeft(rbt, p, rbtTmp);
 
                     rbtTmp = p->parent;
                     RotateRight(rbt, p, rbtTmp);
+                    p->color = RED_NODE;
+                    p->left->color = BLACK_NODE;
+                    p->right->color = BLACK_NODE;
+                    if (rbtTmp == rbt->root) {
+                        p->color = BLACK_NODE;
+                        rbt->root = p;
+                    }
                 }
-
             }
 
             break;
+        //if sibling is red
+        } else {
+            //flip the sibling's color
+            rbtTmp->color = BLACK_NODE;
+            p->color = RED_NODE;
+
+            if (!isLeftNode(rbtTmp)) {
+                RotateLeft(rbt, rbtTmp, p);
+                //rbtTmp = rbtTmp->right;
+            } else {
+                RotateRight(rbt, rbtTmp, p);
+                //rbtTmp = rbtTmp->left;
+            }
+
+            if (p == rbt->root) {
+                rbt->root = rbtTmp;
+            }
         }
     }
 }
@@ -621,7 +645,7 @@ void in_orderTraversal(RedBlackTreeNode *rbtNode, UserDataCallback callback)
 {
     if (rbtNode->item.pKey) {
         in_orderTraversal(rbtNode->left, callback);
-        callback((void *)rbtNode);
+        callback((void *)&rbtNode->item);
         in_orderTraversal(rbtNode->right, callback);
     }
 }
