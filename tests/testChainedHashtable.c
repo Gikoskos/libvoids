@@ -39,7 +39,7 @@ void printListItem(void *param)
 
 void printChainedHashtable(ChainedHashtable *table)
 {
-    for (size_t i = 0; i < table->size; i++) {
+    for (unsigned int i = 0; i < table->size; i++) {
         printf("List[%u] ", i);
         DictList_traverse(table->chains[i], printListItem);
         putchar('\n');

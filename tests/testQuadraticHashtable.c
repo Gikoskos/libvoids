@@ -39,7 +39,7 @@ void printListItem(void *param)
 
 void printHashtable(QuadHashtable *table)
 {
-    for (size_t i = 0; i < table->size; i++) {
+    for (unsigned int i = 0; i < table->size; i++) {
 
         if (table->array[i].occupied) {
             printf("[%u] = (key=%d, data=%d) ", i, *(int*)table->array[i].item.pKey, *(int*)table->array[i].item.pData);

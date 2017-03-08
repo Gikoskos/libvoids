@@ -26,6 +26,8 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     if(CMAKE_BUILD_TYPE MATCHES Debug)
         target_compile_options(EduDS BEFORE PRIVATE -gdwarf)
     endif(CMAKE_BUILD_TYPE MATCHES Debug)
+    #link to math library (for gcc on linux mostly)
+    target_link_libraries(EduDS m)
 #set cl.exe specific flags
 elseif(MSVC)
     #set maximum warning levels for cl.exe
