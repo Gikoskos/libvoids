@@ -51,9 +51,12 @@ cmake .. -DCMAKE_BUILD_TYPE=Debug
 - [ ] Double ended queue (dequeue)
 - [x] Binary search tree (unbalanced)
 - [x] AVL tree
-- [ ] \(a, b\) tree
+- [ ] Treap
+- [ ] Trie
+- [ ] Heap
+- [ ] Binomial heap
 - [ ] B-tree
-- [ ] Red black tree
+- [x] Red black tree
 - [x] Association List
 - [x] Hashing with chaining
 - [x] Hashing with linear probing and optional rehashing
