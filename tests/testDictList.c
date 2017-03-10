@@ -47,24 +47,24 @@ int main(int argc, char *argv[])
         int *new_data = newRandInt(0);
         int *new_key = newRandInt(100);
 
-        if (!DictList_insert(&dict, (void *)new_data, (void *)new_key, compareInts)) {
+        if (!DictList_insert(&dict, (void *)new_data, (void *)new_key, compareInts, NULL)) {
             printf("\nFailed inserting node (key=%d, data=%d)\n", *new_key, *new_data);
             free(new_data);
             free(new_key);
         } else {
             printf("\n==== Printing list after inserting node (key=%d, data=%d) ====\n", *new_key, *new_data);
-            DictList_traverse(dict, printListItem);
+            DictList_traverse(dict, printListItem, NULL);
             putchar('\n');
         }
     }
 
     printf("\n\n!! STARTING DELETIONS !!\n");
     for (int i = 1; i < 41; i++) {
-        KeyValuePair deleted = DictList_deleteByKey(&dict, (void *)&i, compareInts);
+        KeyValuePair deleted = DictList_deleteByKey(&dict, (void *)&i, compareInts, NULL);
 
         if (deleted.pKey) {
             printf("\n==== Printing list after deleting node (key=%d, data=%d) ====\n", *(int*)deleted.pKey, *(int*)deleted.pData);
-            DictList_traverse(dict, printListItem);
+            DictList_traverse(dict, printListItem, NULL);
             putchar('\n');
             freeKeyValuePair((void*)&deleted);
         }
@@ -75,17 +75,17 @@ int main(int argc, char *argv[])
         int *new_data = newRandInt(0);
         int *new_key = newRandInt(100);
 
-        if (!DictList_append(&dict, (void *)new_data, (void *)new_key, compareInts)) {
+        if (!DictList_append(&dict, (void *)new_data, (void *)new_key, compareInts, NULL)) {
             printf("Failed appending node (key=%d, data=%d)\n", *new_key, *new_data);
             free(new_data);
             free(new_key);
         } else {
             printf("\n==== Printing list after appending node (key=%d, data=%d) ====\n", *new_key, *new_data);
-            DictList_traverse(dict, printListItem);
+            DictList_traverse(dict, printListItem, NULL);
             putchar('\n');
         }
     }
 
-    DictList_destroy(&dict, freeKeyValuePair);
+    DictList_destroy(&dict, freeKeyValuePair, NULL);
     return 0;
 }

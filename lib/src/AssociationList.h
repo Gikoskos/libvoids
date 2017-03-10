@@ -22,19 +22,40 @@ typedef struct _DictListNode {
 
 
 
-EduDS_API DictListNode *DictList_insert(DictListNode **dictListHead, void *pData, void *pKey, UserCompareCallback KeyCmp);
+EduDS_API DictListNode *DictList_insert(DictListNode **dictListHead,
+                                        void *pData,
+                                        void *pKey,
+                                        UserCompareCallback KeyCmp,
+                                        EduDSErrCode *err);
 
-EduDS_API DictListNode *DictList_append(DictListNode **dictListHead, void *pData, void *pKey, UserCompareCallback KeyCmp);
+EduDS_API DictListNode *DictList_append(DictListNode **dictListHead,
+                                        void *pData,
+                                        void *pKey,
+                                        UserCompareCallback KeyCmp,
+                                        EduDSErrCode *err);
 
-EduDS_API DictListNode *DictList_insertAfter(DictListNode *dictListPrev, void *pData, void *pKey);
+EduDS_API DictListNode *DictList_insertAfter(DictListNode *dictListPrev,
+                                             void *pData,
+                                             void *pKey,
+                                             EduDSErrCode *err);
 
-EduDS_API KeyValuePair DictList_deleteByKey(DictListNode **dictListHead, void *pKey, UserCompareCallback KeyCmp);
+EduDS_API KeyValuePair DictList_deleteByKey(DictListNode **dictListHead,
+                                            void *pKey,
+                                            UserCompareCallback KeyCmp,
+                                            EduDSErrCode *err);
 
-EduDS_API DictListNode *DictList_findByKey(DictListNode *dictListHead, void *pKey, UserCompareCallback KeyCmp);
+EduDS_API DictListNode *DictList_findByKey(DictListNode *dictListHead,
+                                           void *pKey,
+                                           UserCompareCallback KeyCmp,
+                                           EduDSErrCode *err);
 
-EduDS_API void DictList_traverse(DictListNode *dictListHead, UserDataCallback handleData);
+EduDS_API void DictList_traverse(DictListNode *dictListHead,
+                                 UserDataCallback handleData,
+                                 EduDSErrCode *err);
 
-EduDS_API void DictList_destroy(DictListNode **dictListHead, UserDataCallback freeData);
+EduDS_API void DictList_destroy(DictListNode **dictListHead,
+                                UserDataCallback freeData,
+                                EduDSErrCode *err);
 
 #ifdef __cplusplus
 }

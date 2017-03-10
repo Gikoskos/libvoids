@@ -26,15 +26,22 @@ typedef struct _LIFOstack {
 } LIFOstack;
 
 
-EduDS_API LIFOstack *LIFO_init(void);
+EduDS_API LIFOstack *LIFO_init(EduDSErrCode *err);
 
-EduDS_API void LIFO_push(LIFOstack *stack, void *node_data);
+EduDS_API void LIFO_push(LIFOstack *stack,
+                         void *node_data,
+                         EduDSErrCode *err);
 
-EduDS_API void *LIFO_pop(LIFOstack *stack);
+EduDS_API void *LIFO_pop(LIFOstack *stack,
+                         EduDSErrCode *err);
 
-EduDS_API void LIFO_destroy(LIFOstack **stack, UserDataCallback freeData);
+EduDS_API void LIFO_destroy(LIFOstack **stack,
+                            UserDataCallback freeData,
+                            EduDSErrCode *err);
 
-EduDS_API void LIFO_traverse(LIFOstack *stack, UserDataCallback handleData);
+EduDS_API void LIFO_traverse(LIFOstack *stack,
+                             UserDataCallback handleData,
+                             EduDSErrCode *err);
 
 #ifdef __cplusplus
 }

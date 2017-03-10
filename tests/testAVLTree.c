@@ -3,6 +3,7 @@
 #include <time.h>
 #include <EduDS.h>
 
+
 void printIntData(void *param)
 {
     KeyValuePair *item = (KeyValuePair *)param;
@@ -38,7 +39,7 @@ void freeKeyValuePair(void *param)
 
 int main(int argc, char *argv[])
 {
-    AVLTree *avlt = AVLTree_init(compareInts);
+    AVLTree *avlt = AVLTree_init(compareInts, NULL);
 
     srand(time(NULL));
 
@@ -52,7 +53,7 @@ int main(int argc, char *argv[])
 
         printf("Trying to insert new node with key %d and data %d!\n", *new_key, *new_data);
 
-        if (AVLTree_insert(avlt, (void*)new_key, (void*)new_data)) {
+        if (AVLTree_insert(avlt, (void*)new_key, (void*)new_data, NULL)) {
             printf("Node was successfully inserted!\n");
         } else {
             printf("Node insertion failed!\n\n");
@@ -63,11 +64,11 @@ int main(int argc, char *argv[])
 
     printf("\n----PRINTING AVL TREE BEFORE STARTING TO DELETE ELEMENTS----\n");
     printf("in-order traversal (the node numbers should be in ascending order):\n");
-    AVLTree_traverse(avlt, IN_ORDER, printIntData);
+    AVLTree_traverse(avlt, IN_ORDER, printIntData, NULL);
 
     printf("\n----STARTING DELETIONS----\n");
     for (int i = 80; i >= 30; i--) {
-        KeyValuePair deleted = AVLTree_deleteByKey(avlt, (void*)&i);
+        KeyValuePair deleted = AVLTree_deleteByKey(avlt, (void*)&i, NULL);
 
         //if we deleted a valid node
         if (deleted.pKey) {
@@ -75,9 +76,9 @@ int main(int argc, char *argv[])
             free(deleted.pKey);
             free(deleted.pData);
             printf("in-order traversal (the node numbers should be in ascending order):\n");
-            AVLTree_traverse(avlt, IN_ORDER, printIntData);
+            AVLTree_traverse(avlt, IN_ORDER, printIntData, NULL);
         }
     }
-    AVLTree_destroy(&avlt, freeKeyValuePair);
+    AVLTree_destroy(&avlt, freeKeyValuePair, NULL);
     return 0;
 }

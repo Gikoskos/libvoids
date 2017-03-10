@@ -23,15 +23,30 @@ typedef struct _ChainedHashtable {
 } ChainedHashtable;
 
 
-EduDS_API ChainedHashtable *ChainedHash_init(size_t size, UserCompareCallback KeyCmp, UserHashFuncCallback Hash);
+EduDS_API ChainedHashtable *ChainedHash_init(size_t size,
+                                             UserCompareCallback KeyCmp,
+                                             UserHashFuncCallback Hash,
+                                             EduDSErrCode *err);
 
-EduDS_API DictListNode *ChainedHash_insert(ChainedHashtable *table, void *pData, void *pKey, size_t key_size);
+EduDS_API DictListNode *ChainedHash_insert(ChainedHashtable *table,
+                                           void *pData,
+                                           void *pKey,
+                                           size_t key_size,
+                                           EduDSErrCode *err);
 
-EduDS_API KeyValuePair ChainedHash_delete(ChainedHashtable *table, void *pKey, size_t key_size);
+EduDS_API KeyValuePair ChainedHash_delete(ChainedHashtable *table,
+                                          void *pKey,
+                                          size_t key_size,
+                                          EduDSErrCode *err);
 
-EduDS_API DictListNode *ChainedHash_find(ChainedHashtable *table, void *pKey, size_t key_size);
+EduDS_API DictListNode *ChainedHash_find(ChainedHashtable *table,
+                                         void *pKey,
+                                         size_t key_size,
+                                         EduDSErrCode *err);
 
-EduDS_API void ChainedHash_destroy(ChainedHashtable **table, UserDataCallback freeData);
+EduDS_API void ChainedHash_destroy(ChainedHashtable **table,
+                                   UserDataCallback freeData,
+                                   EduDSErrCode *err);
 
 #ifdef __cplusplus
 }

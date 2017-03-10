@@ -30,19 +30,34 @@ typedef struct _RedBlackTree {
 } RedBlackTree;
 
 
-EduDS_API RedBlackTree *RBTree_init(UserCompareCallback KeyCmp);
+EduDS_API RedBlackTree *RBTree_init(UserCompareCallback KeyCmp,
+                                    EduDSErrCode *err);
 
-EduDS_API RedBlackTreeNode *RBTree_insert(RedBlackTree *rbt, void *pKey, void *pData);
+EduDS_API RedBlackTreeNode *RBTree_insert(RedBlackTree *rbt,
+                                          void *pKey,
+                                          void *pData,
+                                          EduDSErrCode *err);
 
-EduDS_API KeyValuePair RBTree_deleteNode(RedBlackTree *rbt, RedBlackTreeNode *avltToDelete);
+EduDS_API KeyValuePair RBTree_deleteNode(RedBlackTree *rbt,
+                                         RedBlackTreeNode *rbtToDelete,
+                                         EduDSErrCode *err);
 
-EduDS_API KeyValuePair RBTree_deleteByKey(RedBlackTree *rbt, void *pKey);
+EduDS_API KeyValuePair RBTree_deleteByKey(RedBlackTree *rbt,
+                                          void *pKey,
+                                          EduDSErrCode *err);
 
-EduDS_API RedBlackTreeNode *RBTree_find(RedBlackTree *rbt, void *pKey);
+EduDS_API RedBlackTreeNode *RBTree_find(RedBlackTree *rbt,
+                                        void *pKey,
+                                        EduDSErrCode *err);
 
-EduDS_API void RBTree_traverse(RedBlackTree *rbt, TreeTraversalMethod traversal, UserDataCallback callback);
+EduDS_API void RBTree_traverse(RedBlackTree *rbt,
+                               TreeTraversalMethod traversal,
+                               UserDataCallback callback,
+                               EduDSErrCode *err);
 
-EduDS_API void RBTree_destroy(RedBlackTree **rbt, UserDataCallback freeData);
+EduDS_API void RBTree_destroy(RedBlackTree **rbt,
+                              UserDataCallback freeData,
+                              EduDSErrCode *err);
 
 #ifdef __cplusplus
 }

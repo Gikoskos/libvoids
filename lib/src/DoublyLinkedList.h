@@ -21,19 +21,38 @@ typedef struct _DLListNode {
 
 
 
-EduDS_API DLListNode *DLList_insert(DLListNode **dllHead, void *pData);
+EduDS_API DLListNode *DLList_insert(DLListNode **dllHead,
+                                    void *pData,
+                                    EduDSErrCode *err);
 
-EduDS_API DLListNode *DLList_append(DLListNode **dllHead, void *pData);
+EduDS_API DLListNode *DLList_append(DLListNode **dllHead,
+                                    void *pData,
+                                    EduDSErrCode *err);
 
-EduDS_API DLListNode *DLList_insertAfter(DLListNode *dllPrev, void *pData);
+EduDS_API DLListNode *DLList_concat(DLListNode *dll_1,
+                                    DLListNode *dll_2,
+                                    EduDSErrCode *err);
 
-EduDS_API void *DLList_deleteNode(DLListNode **dllHead, DLListNode *dllToDelete);
+EduDS_API DLListNode *DLList_insertAfter(DLListNode *dllPrev,
+                                         void *pData,
+                                         EduDSErrCode *err);
 
-EduDS_API DLListNode *DLList_find(DLListNode *dllHead, void *pToFind);
+EduDS_API void *DLList_deleteNode(DLListNode **dllHead,
+                                  DLListNode *dllToDelete,
+                                  EduDSErrCode *err);
 
-EduDS_API void DLList_traverse(DLListNode *dllHead, UserDataCallback handleData);
+EduDS_API DLListNode *DLList_find(DLListNode *dllHead,
+                                  void *pToFind,
+                                  UserCompareCallback DataCmp,
+                                  EduDSErrCode *err);
 
-EduDS_API void DLList_destroy(DLListNode **dllHead, UserDataCallback freeData);
+EduDS_API void DLList_traverse(DLListNode *dllHead,
+                               UserDataCallback handleData,
+                               EduDSErrCode *err);
+
+EduDS_API void DLList_destroy(DLListNode **dllHead,
+                              UserDataCallback freeData,
+                              EduDSErrCode *err);
 
 #ifdef __cplusplus
 }

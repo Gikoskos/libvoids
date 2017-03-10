@@ -34,6 +34,9 @@
 # endif
 #endif
 
+#define SAVE_ERR(err, tmp_err) \
+    if (err) \
+        *(err) = tmp_err;
 
 typedef void (*UserDataCallback)(void *pData);
 typedef int (*UserCompareCallback)(const void *pKey1, const void *pKey2);
@@ -53,6 +56,15 @@ typedef struct _KeyValuePair {
     void *pKey;
 } KeyValuePair;
 
+//EduDS library error codes
+typedef enum _EduDSErrCode {
+    EduDS_SUCCESS,
+    EduDS_MALLOC_FAIL,
+    EduDS_KEY_EXISTS,
+    EduDS_INVALID_ARGS
+} EduDSErrCode;
 
+//ErrorHandling.c functions are declared here instead of using another header file
+EduDS_API const char *EduDSErrString(EduDSErrCode err);
 
 #endif //__EduDS_COMMON_H

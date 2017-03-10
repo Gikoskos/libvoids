@@ -24,15 +24,31 @@ typedef struct _QuadHashtable {
 } QuadHashtable;
 
 
-EduDS_API QuadHashtable *QuadHash_init(size_t size, UserCompareCallback KeyCmp, UserHashFuncCallback Hash);
+EduDS_API QuadHashtable *QuadHash_init(size_t size,
+                                       UserCompareCallback KeyCmp,
+                                       UserHashFuncCallback Hash,
+                                       EduDSErrCode *err);
 
-EduDS_API void *QuadHash_insert(QuadHashtable *table, void *pData, void *pKey, size_t key_size, UserDataCallback freeData);
+EduDS_API void *QuadHash_insert(QuadHashtable *table,
+                                void *pData,
+                                void *pKey,
+                                size_t key_size,
+                                UserDataCallback freeData,
+                                EduDSErrCode *err);
 
-EduDS_API KeyValuePair QuadHash_delete(QuadHashtable *table, void *pKey, size_t key_size);
+EduDS_API KeyValuePair QuadHash_delete(QuadHashtable *table,
+                                       void *pKey,
+                                       size_t key_size,
+                                       EduDSErrCode *err);
 
-EduDS_API HashArrayElement *QuadHash_find(QuadHashtable *table, void *pKey, size_t key_size);
+EduDS_API HashArrayElement *QuadHash_find(QuadHashtable *table,
+                                          void *pKey,
+                                          size_t key_size,
+                                          EduDSErrCode *err);
 
-EduDS_API void QuadHash_destroy(QuadHashtable **table, UserDataCallback freeData);
+EduDS_API void QuadHash_destroy(QuadHashtable **table,
+                                UserDataCallback freeData,
+                                EduDSErrCode *err);
 
 #ifdef __cplusplus
 }

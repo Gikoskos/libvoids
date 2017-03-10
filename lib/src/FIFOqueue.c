@@ -14,28 +14,38 @@ FIFOnode *newFIFOnode(void *node_data)
 {
     FIFOnode *newnode = (FIFOnode*)malloc(sizeof(FIFOnode));
 
-    if (!newnode)
-        return NULL;
+    if (newnode) {
 
-    newnode->data = node_data;
-    newnode->next = (FIFOnode*)NULL;
-    return (FIFOnode*)newnode;
+        newnode->data = node_data;
+        newnode->next = (FIFOnode*)NULL;
+
+    }
+
+    return newnode;
 }
 
-FIFOqueue *FIFO_init(void)
+FIFOqueue *FIFO_init(EduDSErrCode *err)
 {
-    FIFOqueue *newqueue = (FIFOqueue*)malloc(sizeof(FIFOqueue));
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    FIFOqueue *newqueue = malloc(sizeof(FIFOqueue));
 
-    if (!newqueue)
-        return (FIFOqueue*)NULL;
+    if (newqueue) {
+        newqueue->head = newqueue->tail = NULL;
+        newqueue->total_nodes = 0;
+    } else
+        tmp_err = EduDS_MALLOC_FAIL;
 
-    newqueue->head = newqueue->tail = (FIFOnode*)NULL;
-    newqueue->total_nodes = 0;
+    SAVE_ERR(err, tmp_err);
+
     return newqueue;
 }
 
-void FIFO_enqueue(FIFOqueue *queue, void *node_data)
+void FIFO_enqueue(FIFOqueue *queue,
+                  void *node_data,
+                  EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+
     if (queue) {
         FIFOnode *to_inject = newFIFOnode(node_data);
 
@@ -47,13 +57,19 @@ void FIFO_enqueue(FIFOqueue *queue, void *node_data)
 
             queue->tail = to_inject;
             queue->total_nodes++;
-        }
+        } else
+            tmp_err = EduDS_MALLOC_FAIL;
 
-    }
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 }
 
-void *FIFO_dequeue(FIFOqueue *queue)
+void *FIFO_dequeue(FIFOqueue *queue,
+                   EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
     void *pData = NULL;
 
     if (queue && queue->total_nodes) {//short-circuit eval protection
@@ -64,13 +80,20 @@ void *FIFO_dequeue(FIFOqueue *queue)
         queue->head = queue->head->next;
         free((void*)to_pop);
         queue->total_nodes--;
-    }
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 
     return pData;
 }
 
-void FIFO_destroy(FIFOqueue **queue, UserDataCallback freeData)
+void FIFO_destroy(FIFOqueue **queue,
+                  UserDataCallback freeData,
+                  EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+
     if (queue && (*queue)) {
 
         if ((*queue)->total_nodes) {
@@ -91,12 +114,23 @@ void FIFO_destroy(FIFOqueue **queue, UserDataCallback freeData)
         free(*queue);
         *queue = NULL;
 
-    }
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 }
 
-void FIFO_traverse(FIFOqueue *queue, UserDataCallback handleData)
+void FIFO_traverse(FIFOqueue *queue,
+                   UserDataCallback handleData,
+                   EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+
     if (queue && handleData)
         for (FIFOnode *curr = queue->head; curr; curr = curr->next)
             handleData(curr->data);
+    else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 }

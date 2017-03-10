@@ -21,19 +21,38 @@ typedef struct _CSLListNode {
 
 
 
-EduDS_API CSLListNode *CSLList_insert(CSLListNode **csllHead, void *pData);
+EduDS_API CSLListNode *CSLList_insert(CSLListNode **csllHead,
+                                      void *pData,
+                                      EduDSErrCode *err);
 
-EduDS_API CSLListNode *CSLList_append(CSLListNode **csllHead, void *pData);
+EduDS_API CSLListNode *CSLList_append(CSLListNode **csllHead,
+                                      void *pData,
+                                      EduDSErrCode *err);
 
-EduDS_API CSLListNode *CSLList_insertAfter(CSLListNode *csllPrev, void *pData);
+EduDS_API CSLListNode *CSLList_concat(CSLListNode **csll_1,
+                                      CSLListNode *csll_2,
+                                      EduDSErrCode *err);
 
-EduDS_API void *CSLList_deleteNode(CSLListNode **csllHead, CSLListNode *cdllToDelete);
+EduDS_API CSLListNode *CSLList_insertAfter(CSLListNode *csllPrev,
+                                           void *pData,
+                                           EduDSErrCode *err);
 
-EduDS_API CSLListNode *CSLList_find(CSLListNode *csllHead, void *pToFind);
+EduDS_API void *CSLList_deleteNode(CSLListNode **csllHead,
+                                   CSLListNode *csllToDelete,
+                                   EduDSErrCode *err);
 
-EduDS_API void CSLList_traverse(CSLListNode *csllHead, UserDataCallback handleData);
+EduDS_API CSLListNode *CSLList_find(CSLListNode *csllHead,
+                                    void *pToFind,
+                                    UserCompareCallback DataCmp,
+                                    EduDSErrCode *err);
 
-EduDS_API void CSLList_destroy(CSLListNode **csllHead, UserDataCallback freeData);
+EduDS_API void CSLList_traverse(CSLListNode *csllHead,
+                                UserDataCallback handleData,
+                                EduDSErrCode *err);
+
+EduDS_API void CSLList_destroy(CSLListNode **csllHead,
+                               UserDataCallback freeData,
+                               EduDSErrCode *err);
 
 #ifdef __cplusplus
 }

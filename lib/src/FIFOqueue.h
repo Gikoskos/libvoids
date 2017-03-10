@@ -26,15 +26,22 @@ typedef struct _FIFOqueue {
 } FIFOqueue;
 
 
-EduDS_API FIFOqueue *FIFO_init(void);
+EduDS_API FIFOqueue *FIFO_init(EduDSErrCode *err);
 
-EduDS_API void FIFO_enqueue(FIFOqueue *queue, void *node_data);
+EduDS_API void FIFO_enqueue(FIFOqueue *queue,
+                            void *node_data,
+                            EduDSErrCode *err);
 
-EduDS_API void *FIFO_dequeue(FIFOqueue *queue);
+EduDS_API void *FIFO_dequeue(FIFOqueue *queue,
+                             EduDSErrCode *err);
 
-EduDS_API void FIFO_destroy(FIFOqueue **queue, UserDataCallback freeData);
+EduDS_API void FIFO_destroy(FIFOqueue **queue,
+                            UserDataCallback freeData,
+                            EduDSErrCode *err);
 
-EduDS_API void FIFO_traverse(FIFOqueue *queue, UserDataCallback handleData);
+EduDS_API void FIFO_traverse(FIFOqueue *queue,
+                             UserDataCallback handleData,
+                             EduDSErrCode *err);
 
 #ifdef __cplusplus
 }

@@ -25,19 +25,34 @@ typedef struct _BSTree {
 } BSTree;
 
 
-EduDS_API BSTree *BSTree_init(UserCompareCallback KeyCmp);
+EduDS_API BSTree *BSTree_init(UserCompareCallback KeyCmp,
+                              EduDSErrCode *err);
 
-EduDS_API BSTreeNode *BSTree_insert(BSTree *bst, void *pData, void *pKey);
-          
-EduDS_API KeyValuePair BSTree_deleteNode(BSTree *bst, BSTreeNode *bstToDelete);
-          
-EduDS_API KeyValuePair BSTree_deleteByKey(BSTree *bst, void *pKey);
-          
-EduDS_API BSTreeNode *BSTree_find(BSTree *bst, void *pKey);
-          
-EduDS_API void BSTree_traverse(BSTree *bst, TreeTraversalMethod traversal, UserDataCallback callback);
-          
-EduDS_API void BSTree_destroy(BSTree **bst, UserDataCallback freeData);
+EduDS_API BSTreeNode *BSTree_insert(BSTree *bst,
+                                    void *pData,
+                                    void *pKey,
+                                    EduDSErrCode *err);
+
+EduDS_API KeyValuePair BSTree_deleteNode(BSTree *bst,
+                                         BSTreeNode *bstToDelete,
+                                         EduDSErrCode *err);
+
+EduDS_API KeyValuePair BSTree_deleteByKey(BSTree *bst,
+                                          void *pKey,
+                                          EduDSErrCode *err);
+
+EduDS_API BSTreeNode *BSTree_find(BSTree *bst,
+                                  void *pKey,
+                                  EduDSErrCode *err);
+
+EduDS_API void BSTree_traverse(BSTree *bst,
+                               TreeTraversalMethod traversal,
+                               UserDataCallback callback,
+                               EduDSErrCode *err);
+
+EduDS_API void BSTree_destroy(BSTree **bst,
+                              UserDataCallback freeData,
+                              EduDSErrCode *err);
 
 
 #ifdef __cplusplus

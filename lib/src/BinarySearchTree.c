@@ -12,84 +12,108 @@
 static void pre_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback);
 static void in_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback);
 static void post_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback);
-static void breadth_firstTraversal(BSTreeNode *bstRoot, UserDataCallback callback);
+static int breadth_firstTraversal(BSTreeNode *bstRoot, UserDataCallback callback);
 static void eulerTraversal(BSTreeNode *bstNode, UserDataCallback callback);
 
 
 
-BSTree *BSTree_init(UserCompareCallback KeyCmp)
+BSTree *BSTree_init(UserCompareCallback KeyCmp,
+                    EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
     BSTree *bst = NULL;
 
     if (KeyCmp) {
         bst = malloc(sizeof(BSTree));
-        bst->root = NULL;
-        bst->KeyCmp = KeyCmp;
-    }
+
+        if (bst) {
+            bst->root = NULL;
+            bst->KeyCmp = KeyCmp;
+        } else
+            tmp_err = EduDS_MALLOC_FAIL;
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 
     return bst;
 }
 
-BSTreeNode *BSTree_insert(BSTree *bst, void *pData, void *pKey)
+BSTreeNode *BSTree_insert(BSTree *bst,
+                          void *pData,
+                          void *pKey,
+                          EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
     BSTreeNode *new_node = NULL;
 
     if (bst && pKey) {
 
-        new_node = calloc(1, sizeof(BSTreeNode));
+        new_node = malloc(sizeof(BSTreeNode));
 
-        new_node->item.pData = pData;
-        new_node->item.pKey = pKey;
-        //done by calloc
-        //new_node->right = new_node->left = new_node->parent = NULL;
+        if (new_node) {
 
-        if (!bst->root) {
-            bst->root = new_node;
-        } else {
-            BSTreeNode *curr = bst->root, *parent = NULL;
-            int cmp_res;
+            new_node->item.pData = pData;
+            new_node->item.pKey = pKey;
+            new_node->right = new_node->left = new_node->parent = NULL;
 
-            while (1) {
-                cmp_res = bst->KeyCmp(pKey, curr->item.pKey);
+            if (!bst->root) {
+                bst->root = new_node;
+            } else {
+                BSTreeNode *curr = bst->root, *parent = NULL;
+                int cmp_res;
 
-                if (cmp_res > 0) {
+                while (1) {
+                    cmp_res = bst->KeyCmp(pKey, curr->item.pKey);
 
-                    parent = curr;
+                    if (cmp_res > 0) {
 
-                    curr = curr->right;
+                        parent = curr;
 
-                    if (!curr) {
-                        new_node->parent = parent;
-                        parent->right = new_node;
+                        curr = curr->right;
+
+                        if (!curr) {
+                            new_node->parent = parent;
+                            parent->right = new_node;
+                            break;
+                        }
+
+                    } else if (cmp_res < 0) {
+
+                        parent = curr;
+
+                        curr = curr->left;
+
+                        if (!curr) {
+                            new_node->parent = parent;
+                            parent->left = new_node;
+                            break;
+                        }
+
+                    } else { //if there's another node with the same key already on the tree
+                        free(new_node); //return without doing anything
+                        new_node = NULL;
+                        tmp_err = EduDS_KEY_EXISTS;
                         break;
                     }
-
-                } else if (cmp_res < 0) {
-
-                    parent = curr;
-
-                    curr = curr->left;
-
-                    if (!curr) {
-                        new_node->parent = parent;
-                        parent->left = new_node;
-                        break;
-                    }
-
-                } else { //if there's another node with the same key already on the tree
-                    free(new_node); //return without doing anything
-                    new_node = NULL;
-                    break;
                 }
             }
-        }
-    }
+
+        } else
+            tmp_err = EduDS_MALLOC_FAIL;
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 
     return new_node;
 }
 
-KeyValuePair BSTree_deleteNode(BSTree *bst, BSTreeNode *bstToDelete)
+KeyValuePair BSTree_deleteNode(BSTree *bst,
+                               BSTreeNode *bstToDelete,
+                               EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
     KeyValuePair item = { 0 };
 
     if (bst && bst->root && bstToDelete) {
@@ -146,18 +170,26 @@ KeyValuePair BSTree_deleteNode(BSTree *bst, BSTreeNode *bstToDelete)
         //delete the node because we don't need it anymore
         //and no other nodes point to it
         free(bstToDelete);
-    }
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 
     return item;
 }
 
-KeyValuePair BSTree_deleteByKey(BSTree *bst, void *pKey)
+KeyValuePair BSTree_deleteByKey(BSTree *bst,
+                                void *pKey,
+                                EduDSErrCode *err)
 {
-    return BSTree_deleteNode(bst, BSTree_find(bst, pKey));
+    return BSTree_deleteNode(bst, BSTree_find(bst, pKey, err), err);
 }
 
-BSTreeNode *BSTree_find(BSTree *bst, void *pKey)
+BSTreeNode *BSTree_find(BSTree *bst,
+                        void *pKey,
+                        EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
     BSTreeNode *curr = bst->root;
 
     if (bst && pKey) {
@@ -176,13 +208,21 @@ BSTreeNode *BSTree_find(BSTree *bst, void *pKey)
             if (cmp_res > 0)
                 curr = curr->left;
         }
-    }
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 
     return curr;
 }
 
-void BSTree_traverse(BSTree *bst, TreeTraversalMethod traversal, UserDataCallback callback)
+void BSTree_traverse(BSTree *bst,
+                     TreeTraversalMethod traversal,
+                     UserDataCallback callback,
+                     EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+
     if (bst && bst->root && callback) {
         switch (traversal) {
         case PRE_ORDER:
@@ -195,7 +235,8 @@ void BSTree_traverse(BSTree *bst, TreeTraversalMethod traversal, UserDataCallbac
             post_orderTraversal(bst->root, callback);
             break;
         case BREADTH_FIRST:
-            breadth_firstTraversal(bst->root, callback);
+            if (!breadth_firstTraversal(bst->root, callback))
+                tmp_err = EduDS_MALLOC_FAIL;
             break;
         case EULER:
             eulerTraversal(bst->root, callback);
@@ -203,11 +244,18 @@ void BSTree_traverse(BSTree *bst, TreeTraversalMethod traversal, UserDataCallbac
         default:
             break;
         }
-    }
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 }
 
-void BSTree_destroy(BSTree **bst, UserDataCallback freeData)
+void BSTree_destroy(BSTree **bst,
+                    UserDataCallback freeData,
+                    EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+
     if (bst && *bst) {
 
         BSTreeNode *curr = (*bst)->root, *to_delete;
@@ -251,7 +299,10 @@ void BSTree_destroy(BSTree **bst, UserDataCallback freeData)
         free(*bst);
         //this line is the reason for the double pointer parameter **
         *bst = NULL;
-    }
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 }
 
 
@@ -287,24 +338,46 @@ void post_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback)
     }
 }
 
-void breadth_firstTraversal(BSTreeNode *bstRoot, UserDataCallback callback)
+int breadth_firstTraversal(BSTreeNode *bstNode, UserDataCallback callback)
 {
+    EduDSErrCode err;
     BSTreeNode *curr;
-    FIFOqueue *levelFIFO = FIFO_init();
+    FIFOqueue *levelFIFO = FIFO_init(&err);
 
-    FIFO_enqueue(levelFIFO, bstRoot);
+    if (levelFIFO) {
+        FIFO_enqueue(levelFIFO, (void *)bstNode, &err);
 
-    while (levelFIFO->total_nodes) {
-        curr = (BSTreeNode *)FIFO_dequeue(levelFIFO);
-        callback((void *)&curr->item);
+        if (err == EduDS_SUCCESS) {
 
-        if (curr->right)
-            FIFO_enqueue(levelFIFO, curr->right);
-        if (curr->left)
-            FIFO_enqueue(levelFIFO, curr->left);
+            while (levelFIFO->total_nodes) {
+                curr = (BSTreeNode *)FIFO_dequeue(levelFIFO, NULL);
+
+                callback((void *)&curr->item);
+
+                if (curr->right) {
+                    FIFO_enqueue(levelFIFO, curr->right, &err);
+
+                    if (err != EduDS_SUCCESS)
+                        break;
+                }
+
+                if (curr->left) {
+                    FIFO_enqueue(levelFIFO, curr->left, &err);
+
+                    if (err != EduDS_SUCCESS)
+                        break;
+                }
+            }
+
+            FIFO_destroy(&levelFIFO, NULL, NULL);
+
+        }
     }
 
-    FIFO_destroy(&levelFIFO, NULL);
+    if (err == EduDS_SUCCESS)
+        return 1;
+
+    return 0;
 }
 
 void eulerTraversal(BSTreeNode *bstNode, UserDataCallback callback)

@@ -7,70 +7,122 @@
 #include "DoublyLinkedList.h"
 
 
-DLListNode *DLList_insert(DLListNode **dllHead, void *pData)
+DLListNode *DLList_insert(DLListNode **dllHead,
+                          void *pData,
+                          EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
     DLListNode *new_node = NULL;
 
     if (dllHead) {
         new_node = malloc(sizeof(DLListNode));
 
-        new_node->pData = pData;
-        new_node->prv = NULL;
-        new_node->nxt = *dllHead;
+        if (new_node) {
+            new_node->pData = pData;
+            new_node->prv = NULL;
+            new_node->nxt = *dllHead;
 
-        if (*dllHead)
-            (*dllHead)->prv = new_node;
+            if (*dllHead)
+                (*dllHead)->prv = new_node;
 
-        *dllHead = new_node;
-    }
-
-    return new_node;
-}
-
-DLListNode *DLList_append(DLListNode **dllHead, void *pData)
-{
-    DLListNode *new_node = NULL;
-
-    if (dllHead) {
-        new_node = malloc(sizeof(DLListNode));
-
-        new_node->pData = pData;
-        new_node->nxt = new_node->prv = NULL;
-
-        if (!(*dllHead)) {
             *dllHead = new_node;
-        } else {
-            DLListNode *curr;
+        } else
+            tmp_err = EduDS_MALLOC_FAIL;
 
-            for (curr = *dllHead; curr->nxt; curr = curr->nxt);
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
 
-            curr->nxt = new_node;
-            new_node->prv = curr;
-        }
-    }
+    SAVE_ERR(err, tmp_err);
 
     return new_node;
 }
 
-DLListNode *DLList_insertAfter(DLListNode *dllPrev, void *pData)
+DLListNode *DLList_append(DLListNode **dllHead,
+                          void *pData,
+                          EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    DLListNode *new_node = NULL;
+
+    if (dllHead) {
+        new_node = malloc(sizeof(DLListNode));
+
+        if (new_node) {
+            new_node->pData = pData;
+            new_node->nxt = new_node->prv = NULL;
+
+            if (!(*dllHead)) {
+                *dllHead = new_node;
+            } else {
+                DLListNode *curr;
+
+                for (curr = *dllHead; curr->nxt; curr = curr->nxt);
+
+                curr->nxt = new_node;
+                new_node->prv = curr;
+            }
+        } else
+            tmp_err = EduDS_MALLOC_FAIL;
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
+
+    return new_node;
+}
+
+DLListNode *DLList_concat(DLListNode *dll_1,
+                          DLListNode *dll_2,
+                          EduDSErrCode *err)
+{
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+
+    if (dll_1 && dll_2) {
+        DLListNode *tail_1;
+
+        for (tail_1 = dll_1; tail_1->nxt; tail_1 = tail_1->nxt);
+
+        tail_1->nxt = dll_2;
+        dll_2->prv = tail_1;
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
+
+    return dll_1;
+}
+
+DLListNode *DLList_insertAfter(DLListNode *dllPrev,
+                               void *pData,
+                               EduDSErrCode *err)
+{
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
     DLListNode *new_node = NULL;
 
     if (dllPrev) {
         new_node = malloc(sizeof(DLListNode));
 
-        new_node->pData = pData;
-        new_node->nxt = dllPrev->nxt;
-        new_node->prv = dllPrev;
+        if (new_node) {
+            new_node->pData = pData;
+            new_node->nxt = dllPrev->nxt;
+            new_node->prv = dllPrev;
 
-        dllPrev->nxt = new_node;
-    }
+            dllPrev->nxt = new_node;
+        } else
+            tmp_err = EduDS_MALLOC_FAIL;
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 
     return new_node;
 }
 
-void *DLList_deleteNode(DLListNode **dllHead, DLListNode *dllToDelete)
+void *DLList_deleteNode(DLListNode **dllHead,
+                        DLListNode *dllToDelete,
+                        EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
     void *pRet = NULL;
 
     if (dllHead && dllToDelete) {
@@ -91,29 +143,53 @@ void *DLList_deleteNode(DLListNode **dllHead, DLListNode *dllToDelete)
 
             free(curr);
         }
-    }
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 
     return pRet;
 }
 
-DLListNode *DLList_find(DLListNode *dllHead, void *pToFind)
+DLListNode *DLList_find(DLListNode *dllHead,
+                        void *pToFind,
+                        UserCompareCallback DataCmp,
+                        EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
     DLListNode *curr;
 
-    for (curr = dllHead; curr && (curr->pData != pToFind); curr = curr->nxt);
+    if (dllHead && DataCmp)
+        for (curr = dllHead; curr && !DataCmp(curr->pData, pToFind); curr = curr->nxt);
+    else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 
     return curr;
 }
 
-void DLList_traverse(DLListNode *dllHead, UserDataCallback handleData)
+void DLList_traverse(DLListNode *dllHead,
+                     UserDataCallback handleData,
+                     EduDSErrCode *err)
 {
-    if (handleData)
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+
+    if (dllHead && handleData)
         for (DLListNode *curr = dllHead; curr; curr = curr->nxt)
             handleData(curr->pData);
+     else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 }
 
-void DLList_destroy(DLListNode **dllHead, UserDataCallback freeData)
+void DLList_destroy(DLListNode **dllHead,
+                    UserDataCallback freeData,
+                    EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+
     if (dllHead) {
         DLListNode *curr, *tmp;
 
@@ -127,5 +203,8 @@ void DLList_destroy(DLListNode **dllHead, UserDataCallback freeData)
         }
 
         *dllHead = NULL;
-    }
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 }

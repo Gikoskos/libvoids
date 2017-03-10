@@ -14,7 +14,7 @@
 #include "SentinelDoublyLinkedList.h"
 #include "CircularSinglyLinkedList.h"
 #include "CircularDoublyLinkedList.h"
-#include "CircularBuffer.h"
+#include "RingBuffer.h"
 #include "AssociationList.h"
 #include "HashFunctions.h"
 #include "ChainedHashtable.h"
@@ -25,5 +25,6 @@
 #include "RedBlackTree.h"
 #include "FIFOqueue.h"
 #include "LIFOstack.h"
+#include "BinaryHeap.h"
 
 #endif //_EduDS_SINGLE_INCLUDE_HEADER__

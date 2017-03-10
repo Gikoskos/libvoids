@@ -23,15 +23,24 @@ static LIFOnode *newLIFOnode(void *node_data)
     return newnode;
 }
 
-LIFOstack *LIFO_init(void)
+LIFOstack *LIFO_init(EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
     LIFOstack *newstack = calloc(1, sizeof(LIFOstack));
 
+    if (!newstack)
+        tmp_err = EduDS_MALLOC_FAIL;
+
+    SAVE_ERR(err, tmp_err);
     return newstack;
 }
 
-void LIFO_push(LIFOstack *stack, void *node_data)
+void LIFO_push(LIFOstack *stack,
+               void *node_data,
+               EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+
     if (stack) {
         LIFOnode *to_push = newLIFOnode(node_data);
 
@@ -43,12 +52,18 @@ void LIFO_push(LIFOstack *stack, void *node_data)
 
             stack->tail = to_push;
             stack->total_nodes++;
-        }
-    }
+        } else
+            tmp_err = EduDS_MALLOC_FAIL;
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 }
 
-void *LIFO_pop(LIFOstack *stack)
+void *LIFO_pop(LIFOstack *stack,
+               EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
     void *pData = NULL;
 
     if (stack && stack->total_nodes) {
@@ -66,13 +81,20 @@ void *LIFO_pop(LIFOstack *stack)
 
         free((void*)to_pop);
         stack->total_nodes--;
-    }
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 
     return pData;
 }
 
-void LIFO_destroy(LIFOstack **stack, UserDataCallback freeData)
+void LIFO_destroy(LIFOstack **stack,
+                  UserDataCallback freeData,
+                  EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+
     if (stack && *stack) {
 
         if ((*stack)->total_nodes) {
@@ -92,12 +114,23 @@ void LIFO_destroy(LIFOstack **stack, UserDataCallback freeData)
 
         free(*stack);
         *stack = NULL;
-    }
+    } else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 }
 
-void LIFO_traverse(LIFOstack *stack, UserDataCallback handleData)
+void LIFO_traverse(LIFOstack *stack,
+                   UserDataCallback handleData,
+                   EduDSErrCode *err)
 {
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+
     if (stack && handleData)
         for (LIFOnode *curr = stack->head; curr; curr = curr->next)
             handleData(curr->data);
+    else
+        tmp_err = EduDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
 }
