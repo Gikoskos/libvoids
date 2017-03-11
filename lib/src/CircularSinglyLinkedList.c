@@ -79,26 +79,29 @@ CSLListNode *CSLList_append(CSLListNode **csllHead,
     return new_node;
 }
 
-CSLListNode *CSLList_concat(CSLListNode **csll_1,
+CSLListNode *CSLList_concat(CSLListNode *csll_1,
                             CSLListNode *csll_2,
                             EduDSErrCode *err)
 {
     EduDSErrCode tmp_err = EduDS_SUCCESS;
+    CSLListNode *ret = NULL;
 
-    if (csll_1 && *csll_1 && csll_2) {
+    if (csll_1 && csll_2) {
         CSLListNode *tail_1, *tail_2;
 
-        for (tail_1 = *csll_1; tail_1->nxt != *csll_1; tail_1 = tail_1->nxt);
+        for (tail_1 = csll_1; tail_1->nxt != csll_1; tail_1 = tail_1->nxt);
         for (tail_2 = csll_2; tail_2->nxt != csll_2; tail_2 = tail_2->nxt);
 
-        tail_2->nxt = *csll_1;
+        tail_2->nxt = csll_1;
         tail_1->nxt = csll_2;
+
+        ret = csll_1;
     } else
         tmp_err = EduDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
-    return *csll_1;
+    return ret;
 }
 
 CSLListNode *CSLList_insertAfter(CSLListNode *csllPrev,
@@ -124,14 +127,13 @@ CSLListNode *CSLList_insertAfter(CSLListNode *csllPrev,
     SAVE_ERR(err, tmp_err);
 
     return new_node;
-
 }
 
 void *CSLList_deleteNode(CSLListNode **csllHead,
                          CSLListNode *csllToDelete,
                          EduDSErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EduDSErrCode tmp_err = EduDS_INVALID_ARGS;
     void *pRet = NULL;
 
     if (csllHead && *csllHead && csllToDelete) {
@@ -139,6 +141,56 @@ void *CSLList_deleteNode(CSLListNode **csllHead,
 
         do {
             if (curr == csllToDelete) {
+
+                pRet = curr->pData;
+                if (prev) {
+                    prev->nxt = curr->nxt;
+                } else {
+
+                    if (curr->nxt == curr) {
+                        *csllHead = NULL;
+                    } else {
+                        CSLListNode *tail;
+
+                        for (tail = curr->nxt; tail->nxt != *csllHead; tail = tail->nxt);
+
+                        tail->nxt = curr->nxt;
+
+                        *csllHead = curr->nxt;
+                    }
+                }
+
+                free(curr);
+
+                tmp_err = EduDS_SUCCESS;
+                break;
+            }
+
+            prev = curr;
+            curr = curr->nxt;
+        } while (curr != *csllHead);
+    }
+
+    SAVE_ERR(err, tmp_err);
+
+    return pRet;
+}
+
+void *CSLList_deleteData(CSLListNode **csllHead,
+                         void *pToDelete,
+                         UserCompareCallback DataCmp,
+                         EduDSErrCode *err)
+{
+    EduDSErrCode tmp_err = EduDS_INVALID_ARGS;
+    void *pRet = NULL;
+
+    if (csllHead && *csllHead && DataCmp) {
+        CSLListNode *curr = *csllHead, *prev = NULL;
+
+        do {
+            if (!DataCmp(curr->pData, pToDelete)) {
+
+                pRet = curr->pData;
 
                 if (prev) {
                     prev->nxt = curr->nxt;
@@ -158,18 +210,50 @@ void *CSLList_deleteNode(CSLListNode **csllHead,
 
                 free(curr);
 
+                tmp_err = EduDS_SUCCESS;
                 break;
             }
 
             prev = curr;
             curr = curr->nxt;
         } while (curr != *csllHead);
+    }
+
+    SAVE_ERR(err, tmp_err);
+
+    return pRet;
+}
+
+CSLListNode *CSLList_at(CSLListNode *csllHead,
+                        size_t idx,
+                        EduDSErrCode *err)
+{
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    CSLListNode *curr = NULL;
+
+    if (csllHead) {
+        size_t i = 0;
+        curr = csllHead;
+
+        while (1) {
+            if (idx == i)
+                break;
+
+            curr = curr->nxt;
+            i++;
+
+            if (curr == csllHead) {
+                curr = NULL;
+                break;
+            }
+        }
+
     } else
         tmp_err = EduDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
-    return pRet;
+    return curr;
 }
 
 CSLListNode *CSLList_find(CSLListNode *csllHead,
@@ -178,13 +262,14 @@ CSLListNode *CSLList_find(CSLListNode *csllHead,
                           EduDSErrCode *err)
 {
     EduDSErrCode tmp_err = EduDS_SUCCESS;
+    CSLListNode *curr = NULL;
 
     if (csllHead && DataCmp) {
-        CSLListNode *curr = csllHead;
+        curr = csllHead;
 
         do {
             if (!DataCmp(curr->pData, pToFind))
-                return curr;
+                break;
 
             curr = curr->nxt;
         } while (curr != csllHead);
@@ -194,7 +279,7 @@ CSLListNode *CSLList_find(CSLListNode *csllHead,
 
     SAVE_ERR(err, tmp_err);
 
-    return NULL;
+    return curr;
 }
 
 void CSLList_traverse(CSLListNode *csllHead,

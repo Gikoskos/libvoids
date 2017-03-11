@@ -122,10 +122,10 @@ void *DLList_deleteNode(DLListNode **dllHead,
                         DLListNode *dllToDelete,
                         EduDSErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EduDSErrCode tmp_err = EduDS_INVALID_ARGS;
     void *pRet = NULL;
 
-    if (dllHead && dllToDelete) {
+    if (dllHead && *dllHead && dllToDelete) {
         DLListNode *curr;
 
         for (curr = *dllHead; curr && (curr != dllToDelete); curr = curr->nxt);
@@ -142,13 +142,65 @@ void *DLList_deleteNode(DLListNode **dllHead,
                 *dllHead = curr->nxt;
 
             free(curr);
+            tmp_err = EduDS_SUCCESS;
         }
+    }
+
+    SAVE_ERR(err, tmp_err);
+
+    return pRet;
+}
+
+void *DLList_deleteData(DLListNode **dllHead,
+                        void *pToDelete,
+                        UserCompareCallback DataCmp,
+                        EduDSErrCode *err)
+{
+    EduDSErrCode tmp_err = EduDS_INVALID_ARGS;
+    void *pRet = NULL;
+
+    if (dllHead && *dllHead && pToDelete) {
+        DLListNode *curr;
+
+        for (curr = *dllHead; curr && DataCmp(curr->pData, pToDelete); curr = curr->nxt);
+
+        if (curr) {
+            pRet = pToDelete;
+               
+            if (curr->nxt)
+                curr->nxt->prv = curr->prv;
+
+            if (curr->prv)
+                curr->prv->nxt = curr->nxt;
+            else
+                *dllHead = curr->nxt;
+
+            free(curr);
+            tmp_err = EduDS_SUCCESS;
+        }
+    }
+
+    SAVE_ERR(err, tmp_err);
+
+    return pRet;
+}
+
+DLListNode *DLList_at(DLListNode *dllHead,
+                      size_t idx,
+                      EduDSErrCode *err)
+{
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    DLListNode *curr = NULL;
+
+    if (dllHead) {
+        size_t i = 0;
+        for (curr = dllHead; curr && i < idx; curr = curr->nxt, i++);
     } else
         tmp_err = EduDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
-    return pRet;
+    return curr;
 }
 
 DLListNode *DLList_find(DLListNode *dllHead,
@@ -160,7 +212,7 @@ DLListNode *DLList_find(DLListNode *dllHead,
     DLListNode *curr;
 
     if (dllHead && DataCmp)
-        for (curr = dllHead; curr && !DataCmp(curr->pData, pToFind); curr = curr->nxt);
+        for (curr = dllHead; curr && DataCmp(curr->pData, pToFind); curr = curr->nxt);
     else
         tmp_err = EduDS_INVALID_ARGS;
 

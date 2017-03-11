@@ -120,7 +120,7 @@ KeyValuePair DictList_deleteByKey(DictListNode **dictListHead,
                                   UserCompareCallback KeyCmp,
                                   EduDSErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EduDSErrCode tmp_err = EduDS_INVALID_ARGS;
     KeyValuePair item = { 0 };
 
     if (dictListHead && KeyCmp && pKey) {
@@ -139,6 +139,7 @@ KeyValuePair DictList_deleteByKey(DictListNode **dictListHead,
             }
 
             free(curr);
+            tmp_err = EduDS_SUCCESS;
         }
     } else
         tmp_err = EduDS_INVALID_ARGS;

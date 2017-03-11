@@ -8,7 +8,7 @@
 #include "HashFunctions.h"
 
 #define XXH_PRIVATE_API
-#include "external/xxHash/xxhash.h"
+#include "xxhash.h"
 
 
 #define EDUDS_SALT 8999 //using a prime number as seed for xxhash

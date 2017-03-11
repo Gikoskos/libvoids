@@ -3,26 +3,37 @@
 #include <time.h>
 #include <EduDS.h>
 
+#define EduDS_ERR_FATAL(func, err) \
+    func; \
+    if (err != EduDS_SUCCESS) { \
+        printf("Function call \"%s\" failed with error \"%s\"\n", EduDSErrString(err), #func); \
+        return 1; \
+    }
 
 int main(int argc, char *argv[])
 {
-    CircularBuffer *buff = CircularBuffer_init(10);
+    EduDSErrCode err;
+    RingBuffer *buff;
+
+    EduDS_ERR_FATAL(buff = RingBuffer_init(10, &err), err);
 
     srand(time(NULL));
 
-    printf("cBuffNew->size = %lu\n", (unsigned  long)buff->size);
+    printf("buff->size = %lu\n", (unsigned  long)buff->size);
     for (int i = 0; i < 10; i++) {
         int *data = malloc(sizeof data);
 
         *data = (int)rand();
         printf("Pushing data %d!\n", *data);
 
-        CircularBuffer_write(buff, data);
+        EduDS_ERR_FATAL(RingBuffer_write(buff, data, &err), err);
     }
 
     putchar('\n');
     for (int i = 0; i < 4; i++) {
-        int *data = CircularBuffer_read(buff);
+        int *data;
+
+        EduDS_ERR_FATAL(data = RingBuffer_read(buff, &err), err);
 
         if (data) {
             printf("Data %d popped!\n", *data);
@@ -32,7 +43,9 @@ int main(int argc, char *argv[])
 
     putchar('\n');
     for (int i = 0; i < 6; i++) {
-        int *data = CircularBuffer_read(buff);
+        int *data;
+
+        EduDS_ERR_FATAL(data = RingBuffer_read(buff, &err), err);
 
         if (data) {
             printf("Data %d popped!\n", *data);
@@ -40,23 +53,25 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (!CircularBuffer_read(buff)) {
+    if (!RingBuffer_read(buff, NULL)) {
         printf("No more data to read from the buffer!\n\n");
     }
 
-    CircularBuffer_resize(&buff, 20);
+    EduDS_ERR_FATAL(RingBuffer_resize(&buff, 20, &err), err);
     for (int i = 0; i < 15; i++) {
         int *data = malloc(sizeof data);
 
         *data = (int)rand();
         printf("Pushing data %d!\n", *data);
 
-        CircularBuffer_write(buff, data);
+        EduDS_ERR_FATAL(RingBuffer_write(buff, data, &err), err);
     }
 
     putchar('\n');
     for (int i = 0; i < 17; i++) {
-        int *data = CircularBuffer_read(buff);
+        int *data;
+
+        EduDS_ERR_FATAL(data = RingBuffer_read(buff, &err), err);
 
         if (data) {
             printf("Data %d popped!\n", *data);
@@ -64,6 +79,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    CircularBuffer_destroy(&buff, NULL);
+    RingBuffer_destroy(&buff, NULL, &err);
     return 0;
 }

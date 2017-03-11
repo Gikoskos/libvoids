@@ -29,7 +29,7 @@ EduDS_API CDLListNode *CDLList_append(CDLListNode **cdllHead,
                                       void *pData,
                                       EduDSErrCode *err);
 
-EduDS_API CDLListNode *CDLList_concat(CDLListNode **cdll_1,
+EduDS_API CDLListNode *CDLList_concat(CDLListNode *cdll_1,
                                       CDLListNode *cdll_2,
                                       EduDSErrCode *err);
 
@@ -40,6 +40,15 @@ EduDS_API CDLListNode *CDLList_insertAfter(CDLListNode *cdllPrev,
 EduDS_API void *CDLList_deleteNode(CDLListNode **cdllHead,
                                    CDLListNode *cdllToDelete,
                                    EduDSErrCode *err);
+
+EduDS_API void *CDLList_deleteData(CDLListNode **cdllHead,
+                                   void *pToDelete,
+                                   UserCompareCallback DataCmp,
+                                   EduDSErrCode *err);
+
+EduDS_API CDLListNode *CDLList_at(CDLListNode *cdllHead,
+                                  size_t idx,
+                                  EduDSErrCode *err);
 
 EduDS_API CDLListNode *CDLList_find(CDLListNode *cdllHead,
                                     void *pToFind,

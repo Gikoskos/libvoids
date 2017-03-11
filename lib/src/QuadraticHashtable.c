@@ -7,18 +7,11 @@
 #include "QuadraticHashtable.h"
 #include "HashFunctions.h"
 
-#define _BIT_ENABLE(x, y) ((x) |= 1 << (y))
-#define _BIT_CLEAR(x, y) ((x) &= ~(1 << (y)))
-#define _BIT_IS_ENABLED(x, y) ((x) & (1 << (y)))
+#define SET_OCCUPIED(x) (x) = 1
+#define SET_DELETED(x) (x) = 2
 
-#define SET_OCCUPIED(x) (_BIT_ENABLE(x, 0))
-#define SET_DELETED(x) (_BIT_ENABLE(x, 1))
-
-#define CLEAR_OCCUPIED(x) (_BIT_CLEAR(x, 0))
-#define CLEAR_DELETED(x) (_BIT_CLEAR(x, 1))
-
-#define IS_OCCUPIED(x) (_BIT_IS_ENABLED(x, 0))
-#define IS_DELETED(x) (_BIT_IS_ENABLED(x, 1))
+#define IS_OCCUPIED(x) ((x) == 1)
+#define IS_DELETED(x) ((x) == 2)
 
 
 static int rehash(QuadHashtable *table, UserDataCallback freeData);
@@ -38,7 +31,7 @@ QuadHashtable *QuadHash_init(size_t size,
 
         if (quadtable) {
 
-            quadtable->array = calloc(quadtable->size, sizeof(HashArrayElement));
+            quadtable->array = calloc(size, sizeof(HashArrayElement));
 
             if (quadtable->array) {
                 //if the user didn't give a custom hashing algorithm, we default to either
@@ -81,7 +74,7 @@ int rehash(QuadHashtable *table, UserDataCallback freeData)
     size_t old_size = table->size;
 
     table->size *= 2;
-    //@NOERRCHECK
+
     table->array = calloc(table->size, sizeof(HashArrayElement));
     if (!table->array) {
         table->array = old_array;
@@ -98,7 +91,7 @@ int rehash(QuadHashtable *table, UserDataCallback freeData)
             do {
                 tmp_idx = (hash_idx + (offset * offset)) % table->size;
 
-                if (!IS_OCCUPIED(old_array[i].state)) {
+                if (!IS_OCCUPIED(table->array[tmp_idx].state)) {
 
                     table->array[tmp_idx] = old_array[i];
 
@@ -150,7 +143,6 @@ void *QuadHash_insert(QuadHashtable *table,
                 table->array[tmp_idx].item.pData = pData;
                 table->array[tmp_idx].item.pKey = pKey;
                 SET_OCCUPIED(table->array[tmp_idx].state);
-                CLEAR_DELETED(table->array[tmp_idx].state);
                 //saving the pre-computed hashcode
                 table->array[tmp_idx].key_hash = key_hash;
 
@@ -197,7 +189,6 @@ KeyValuePair QuadHash_delete(QuadHashtable *table,
 
             if (IS_OCCUPIED(table->array[tmp_idx].state) && table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
 
-                CLEAR_OCCUPIED(table->array[tmp_idx].state);
                 SET_DELETED(table->array[tmp_idx].state);
                 item = table->array[tmp_idx].item;
 

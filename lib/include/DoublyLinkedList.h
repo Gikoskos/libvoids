@@ -41,6 +41,15 @@ EduDS_API void *DLList_deleteNode(DLListNode **dllHead,
                                   DLListNode *dllToDelete,
                                   EduDSErrCode *err);
 
+EduDS_API void *DLList_deleteData(DLListNode **dllHead,
+                                  void *pToDelete,
+                                  UserCompareCallback DataCmp,
+                                  EduDSErrCode *err);
+
+EduDS_API DLListNode *DLList_at(DLListNode *dllHead,
+                                size_t idx,
+                                EduDSErrCode *err);
+
 EduDS_API DLListNode *DLList_find(DLListNode *dllHead,
                                   void *pToFind,
                                   UserCompareCallback DataCmp,

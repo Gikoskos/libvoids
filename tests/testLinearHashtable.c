@@ -41,10 +41,10 @@ void printHashtable(LinHashtable *table)
 {
     for (unsigned int i = 0; i < table->size; i++) {
 
-        if (table->array[i].occupied) {
+        if (table->array[i].state == 1) {
             printf("[%u] = (key=%d, data=%d) ", i, *(int*)table->array[i].item.pKey, *(int*)table->array[i].item.pData);
         } else {
-            if (table->array[i].deleted) {
+            if (table->array[i].state == 2) {
                 printf("[%u] = (key=%d, data=%d) (DELETED)", i, *(int*)table->array[i].item.pKey, *(int*)table->array[i].item.pData);
             } else {
                 printf("[%u] = (EMPTY) ", i);
@@ -57,7 +57,7 @@ void printHashtable(LinHashtable *table)
 
 int main(int argc, char *argv[])
 {
-    LinHashtable *table = LinHash_init(8, compareInts, NULL, 1);
+    LinHashtable *table = LinHash_init(8, compareInts, NULL, 1, NULL);
 
     srand(time(NULL));
 
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
         int *new_data = newRandInt(0);
         int *new_key = newRandInt(10);
 
-        if (!LinHash_insert(table, (void *)new_data, (void *)new_key, sizeof(*new_key), freeKeyValuePair)) {
+        if (!LinHash_insert(table, (void *)new_data, (void *)new_key, sizeof(*new_key), freeKeyValuePair, NULL)) {
             printf("\nFailed inserting data %d with key %d\n", *new_data, *new_key);
             free(new_data);
             free(new_key);
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     for (int i = 1; i <= 4; i++) {
         KeyValuePair item;
 
-        item = LinHash_delete(table, &i, sizeof i);
+        item = LinHash_delete(table, &i, sizeof i, NULL);
 
         if (item.pKey) {
             printf("\n==== Printing linear hashtable after deleting node (key=%d, data= %d) ====\n", *(int*)item.pKey, *(int*)item.pData);
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
         int *new_data = newRandInt(0);
         int *new_key = newRandInt(10);
 
-        if (!LinHash_insert(table, (void *)new_data, (void *)new_key, sizeof(*new_key), freeKeyValuePair)) {
+        if (!LinHash_insert(table, (void *)new_data, (void *)new_key, sizeof(*new_key), freeKeyValuePair, NULL)) {
             printf("\nFailed inserting data %d with key %d\n", *new_data, *new_key);
             free(new_data);
             free(new_key);
@@ -106,13 +106,13 @@ int main(int argc, char *argv[])
     printf("\n\n!! TESTING FIND !!");
     for (int i = 1; i <= 10; i++) {
 
-        if (!LinHash_find(table, (void *)&i, sizeof(i))) {
+        if (!LinHash_find(table, (void *)&i, sizeof(i), NULL)) {
             printf("\nFind failed on key %d\n", i);
         } else {
             printf("\nFind was successful on key %d\n", i);
         }
     }
 
-    LinHash_destroy(&table, freeKeyValuePair);
+    LinHash_destroy(&table, freeKeyValuePair, NULL);
     return 0;
 }

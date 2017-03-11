@@ -41,23 +41,23 @@ void printChainedHashtable(ChainedHashtable *table)
 {
     for (unsigned int i = 0; i < table->size; i++) {
         printf("List[%u] ", i);
-        DictList_traverse(table->chains[i], printListItem);
+        DictList_traverse(table->chains[i], printListItem, NULL);
         putchar('\n');
     }
 }
 
 int main(int argc, char *argv[])
 {
-    ChainedHashtable *table = ChainedHash_init(7, compareInts, NULL);
+    ChainedHashtable *table = ChainedHash_init(7, compareInts, NULL, NULL);
 
     srand(time(NULL));
 
     printf("!! STARTING INSERTIONS !!");
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 20; i++) {
         int *new_data = newRandInt(0);
-        int *new_key = newRandInt(100);
+        int *new_key = newRandInt(20);
 
-        if (!ChainedHash_insert(table, (void *)new_data, (void *)new_key, sizeof(*new_key))) {
+        if (!ChainedHash_insert(table, (void *)new_data, (void *)new_key, sizeof(*new_key), NULL)) {
             printf("\nFailed inserting data %d with key %d\n", *new_data, *new_key);
             free(new_data);
             free(new_key);
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     for (int i = 1; i <= 40; i++) {
         KeyValuePair item;
 
-        item = ChainedHash_delete(table, &i, sizeof i);
+        item = ChainedHash_delete(table, &i, sizeof i, NULL);
 
         if (item.pKey) {
             printf("\n==== Printing chained hashtable after deleting node (key=%d, data= %d) ====\n", *(int*)item.pKey, *(int*)item.pData);
@@ -81,6 +81,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    ChainedHash_destroy(&table, freeKeyValuePair);
+    ChainedHash_destroy(&table, freeKeyValuePair, NULL);
     return 0;
 }

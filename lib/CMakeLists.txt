@@ -2,8 +2,9 @@
 #EduDS_SRC is all the .c modules
 file(GLOB_RECURSE EduDS_SRC src//*.c)
 #EduDS_INC is all the .h header files
-file(GLOB_RECURSE EduDS_INC src//*.h)
+file(GLOB_RECURSE EduDS_INC include//*.h)
 
+include_directories(include external//xxHash)
 
 #if we're building a windows .dll, we add the resource file
 #with the DLL versioning information, to the EduDS_SRC modules
@@ -34,9 +35,5 @@ elseif(MSVC)
     target_compile_options(EduDS PRIVATE /W4)
     #no need to enable explicitly debugging symbols on the visual studio debug build
 endif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-
-
-
-
 
 set_property(TARGET EduDS PROPERTY C_STANDARD 99)

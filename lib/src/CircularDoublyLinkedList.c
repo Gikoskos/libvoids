@@ -73,22 +73,28 @@ CDLListNode *CDLList_append(CDLListNode **cdllHead,
     return new_node;
 }
 
-CDLListNode *CDLList_concat(CDLListNode **cdll_1,
+CDLListNode *CDLList_concat(CDLListNode *cdll_1,
                             CDLListNode *cdll_2,
                             EduDSErrCode *err)
 {
     EduDSErrCode tmp_err = EduDS_SUCCESS;
+    CDLListNode *ret = NULL;
 
-    if (cdll_1 && *cdll_1 && cdll_2) {
-        cdll_2->prv->nxt = *cdll_1;
-        cdll_2->prv = (*cdll_1)->prv;
-        (*cdll_1)->prv->nxt = cdll_2;
+    if (cdll_1 && cdll_2) {
+        CDLListNode *tmp = cdll_2->prv;
+
+        cdll_2->prv->nxt = cdll_1;
+        cdll_2->prv = cdll_1->prv;
+        cdll_1->prv->nxt = cdll_2;
+        cdll_1->prv = tmp;
+
+        ret = cdll_1;
     } else
         tmp_err = EduDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
-    return *cdll_1;
+    return ret;
 }
 
 CDLListNode *CDLList_insertAfter(CDLListNode *cdllPrev,
@@ -121,13 +127,11 @@ void *CDLList_deleteNode(CDLListNode **cdllHead,
                          CDLListNode *cdllToDelete,
                          EduDSErrCode *err)
 {
-    EduDSErrCode tmp_err;
+    EduDSErrCode tmp_err = EduDS_INVALID_ARGS;
     void *pRet = NULL;
 
     if (cdllHead && *cdllHead && cdllToDelete) {
         CDLListNode *curr = *cdllHead;
-        //if we haven't found the node we want to delete then it's
-        tmp_err = EduDS_INVALID_ARGS;
 
         do {
             if (curr == cdllToDelete) {
@@ -138,12 +142,14 @@ void *CDLList_deleteNode(CDLListNode **cdllHead,
                     else
                         *cdllHead = curr->nxt;
                 }
-                
+
                 curr->nxt->prv = curr->prv;
                 curr->prv->nxt = curr->nxt;
 
                 pRet = curr->pData;
                 free(curr);
+
+                tmp_err = EduDS_SUCCESS;
 
                 break;
             }
@@ -151,12 +157,80 @@ void *CDLList_deleteNode(CDLListNode **cdllHead,
             curr = curr->nxt;
         } while (curr != *cdllHead);
 
+    }
+
+    SAVE_ERR(err, tmp_err);
+
+    return pRet;
+}
+
+void *CDLList_deleteData(CDLListNode **cdllHead,
+                         void *pToDelete,
+                         UserCompareCallback DataCmp,
+                         EduDSErrCode *err)
+{
+    EduDSErrCode tmp_err = EduDS_INVALID_ARGS;
+    void *pRet = NULL;
+
+    if (cdllHead && *cdllHead && DataCmp) {
+        CDLListNode *curr = *cdllHead;
+
+        do {
+            if (!DataCmp(curr->pData, pToDelete)) {
+
+                if (curr == *cdllHead) {
+                    if ((*cdllHead)->nxt == *cdllHead)
+                        *cdllHead = NULL;
+                    else
+                        *cdllHead = curr->nxt;
+                }
+
+                curr->nxt->prv = curr->prv;
+                curr->prv->nxt = curr->nxt;
+
+                pRet = curr->pData;
+                free(curr);
+
+                tmp_err = EduDS_SUCCESS;
+
+                break;
+            }
+
+            curr = curr->nxt;
+        } while (curr != *cdllHead);
+    }
+
+    SAVE_ERR(err, tmp_err);
+
+    return pRet;
+}
+
+CDLListNode *CDLList_at(CDLListNode *cdllHead,
+                        size_t idx,
+                        EduDSErrCode *err)
+{
+    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    CDLListNode *curr = NULL;
+
+    if (cdllHead) {
+        size_t i = 0;
+        curr = cdllHead;
+        do {
+            if (idx == i)
+                break;
+
+            curr = curr->nxt;
+            i++;
+        } while (curr != cdllHead);
+
+        if (i != idx)
+            curr = NULL;
     } else
         tmp_err = EduDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
-    return pRet;
+    return curr;
 }
 
 CDLListNode *CDLList_find(CDLListNode *cdllHead,
@@ -165,23 +239,27 @@ CDLListNode *CDLList_find(CDLListNode *cdllHead,
                           EduDSErrCode *err)
 {
     EduDSErrCode tmp_err = EduDS_SUCCESS;
+    CDLListNode *ret = NULL;
 
     if (cdllHead && DataCmp) {
         CDLListNode *curr = cdllHead;
 
         do {
-            if (!DataCmp(curr->pData, pToFind))
-                return curr;
+            if (!DataCmp(curr->pData, pToFind)) {
+                ret = curr;
+                break;
+            }
 
             curr = curr->nxt;
         } while (curr != cdllHead);
 
+        
     } else
         tmp_err = EduDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
-    return NULL;
+    return ret;
 }
 
 void CDLList_traverse(CDLListNode *cdllHead,

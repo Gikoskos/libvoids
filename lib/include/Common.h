@@ -8,7 +8,7 @@
 #define __EduDS_COMMON_H
 
 #ifdef _WIN32
-# ifdef _MSC_VER //disable compiler bug on MSVC where it warns about
+# ifdef _MSC_VER //disable compiler warning bug on MSVC where it warns about
 #  pragma warning(disable : 4127) //do{}while(0) macros
 # endif
 # ifdef EXPORT_API_EduDS_DLL
@@ -58,7 +58,7 @@ typedef struct _KeyValuePair {
 
 //EduDS library error codes
 typedef enum _EduDSErrCode {
-    EduDS_SUCCESS,
+    EduDS_SUCCESS = 0x0,
     EduDS_MALLOC_FAIL,
     EduDS_KEY_EXISTS,
     EduDS_INVALID_ARGS

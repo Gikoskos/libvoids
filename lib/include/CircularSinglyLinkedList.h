@@ -29,7 +29,7 @@ EduDS_API CSLListNode *CSLList_append(CSLListNode **csllHead,
                                       void *pData,
                                       EduDSErrCode *err);
 
-EduDS_API CSLListNode *CSLList_concat(CSLListNode **csll_1,
+EduDS_API CSLListNode *CSLList_concat(CSLListNode *csll_1,
                                       CSLListNode *csll_2,
                                       EduDSErrCode *err);
 
@@ -40,6 +40,15 @@ EduDS_API CSLListNode *CSLList_insertAfter(CSLListNode *csllPrev,
 EduDS_API void *CSLList_deleteNode(CSLListNode **csllHead,
                                    CSLListNode *csllToDelete,
                                    EduDSErrCode *err);
+
+EduDS_API void *CSLList_deleteData(CSLListNode **csllHead,
+                                   void *pToDelete,
+                                   UserCompareCallback DataCmp,
+                                   EduDSErrCode *err);
+
+EduDS_API CSLListNode *CSLList_at(CSLListNode *csllHead,
+                                  size_t idx,
+                                  EduDSErrCode *err);
 
 EduDS_API CSLListNode *CSLList_find(CSLListNode *csllHead,
                                     void *pToFind,
