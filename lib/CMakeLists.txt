@@ -1,6 +1,6 @@
 
 #EduDS_SRC is all the .c modules
-file(GLOB_RECURSE EduDS_SRC src//*.c)
+file(GLOB_RECURSE EduDS_SRC src//*.c external//*.c)
 #EduDS_INC is all the .h header files
 file(GLOB_RECURSE EduDS_INC include//*.h)
 
