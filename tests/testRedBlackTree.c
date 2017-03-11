@@ -49,7 +49,7 @@ void freeKeyValuePair(void *param)
 int main(int argc, char *argv[])
 {
     RedBlackTree *rbt;
-    rbt = RBTree_init(compareInts);
+    rbt = RBTree_init(compareInts, NULL);
 
     srand(time(NULL));
     printf("\n----STARTING INSERTIONS----\n");
@@ -60,10 +60,10 @@ int main(int argc, char *argv[])
 
         printf("Trying to insert new node with key %d and data %d!\n", *new_key, *new_data);
 
-        if (RBTree_insert(rbt, (void*)new_key, (void*)new_data)) {
+        if (RBTree_insert(rbt, (void*)new_key, (void*)new_data, NULL)) {
             printf("Node was successfully inserted!\n");
             printf("in-order traversal (the node numbers should be in ascending order):\n");
-            RBTree_traverse(rbt, IN_ORDER, printIntData);
+            RBTree_traverse(rbt, IN_ORDER, printIntData, NULL);
             putchar('\n');
 
         } else {
@@ -76,11 +76,11 @@ int main(int argc, char *argv[])
     
     printf("\n----PRINTING RB TREE BEFORE STARTING TO DELETE ELEMENTS----\n");
     printf("in-order traversal (the node numbers should be in ascending order):\n");
-    RBTree_traverse(rbt, IN_ORDER, printIntData);
+    RBTree_traverse(rbt, IN_ORDER, printIntData, NULL);
 
     printf("\n----STARTING DELETIONS----\n");
     for (int i = 80; i >= 30; i--) {
-        KeyValuePair deleted = RBTree_deleteByKey(rbt, (void*)&i);
+        KeyValuePair deleted = RBTree_deleteByKey(rbt, (void*)&i, NULL);
 
         //if we deleted a valid node
         if (deleted.pKey) {
@@ -88,10 +88,10 @@ int main(int argc, char *argv[])
             free(deleted.pKey);
             free(deleted.pData);
             printf("in-order traversal (the node numbers should be in ascending order):\n");
-            RBTree_traverse(rbt, IN_ORDER, printIntData);
+            RBTree_traverse(rbt, IN_ORDER, printIntData, NULL);
         }
     }
 
-    RBTree_destroy(&rbt, freeKeyValuePair);
+    RBTree_destroy(&rbt, freeKeyValuePair, NULL);
     return 0;
 }
