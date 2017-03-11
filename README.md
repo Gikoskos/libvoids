@@ -54,7 +54,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Debug
 - [ ] Treap
 - [ ] Trie
 - [ ] Heap
-- [ ] Binomial heap
+- [x] Binomial heap
 - [ ] B-tree
 - [x] Red black tree
 - [x] Association List
