@@ -6,8 +6,8 @@
 
 #define EduDS_ERR_FATAL(func, err) \
     func; \
-    if (err != EduDS_SUCCESS) { \
-        printf("Function call \"%s\" failed with error \"%s\"\n", EduDSErrString(err), #func); \
+    if (err != EDS_SUCCESS) { \
+        printf("Function call \"%s\" failed with error \"%s\"\n", #func, EdsErrString(err)); \
         return 1; \
     }
 
@@ -34,7 +34,7 @@ int compareInts(const void *key1, const void *key2)
 int main(int argc, char *argv[])
 {
     int arr[] = {4 , 51, 6, 222, 43, 40, 4, 11, 1};
-    EduDSErrCode err;
+    EdsErrCode err;
     BinaryHeap *bheap;
 
     EduDS_ERR_FATAL(bheap = BinaryHeap_init(compareInts, MAX_ORDER_HEAP, &err), err);
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
 
     printf("=== TESTING MIN HEAP ===\n");
-    bheap->type = MIN_ORDER_HEAP;
+    bheap->order = MIN_ORDER_HEAP;
 
     for (size_t i = 0; i < sizeof arr / sizeof *arr; i++) {
         EduDS_ERR_FATAL(BinaryHeap_push(bheap, &arr[i], &err), err);

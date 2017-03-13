@@ -4,7 +4,7 @@ A collection of data structures implemented in C (EduDS = Educational Data Struc
 
 ## Building
 
-Create a new `build` folder in the root of the repository, and run
+To build the static library, create a new `build` folder in the root of the repository, and run
 
     cmake ..
 from inside that folder. For example on a Linux terminal:
@@ -45,16 +45,17 @@ cmake .. -DCMAKE_BUILD_TYPE=Debug
 - [x] Doubly linked list with sentinel
 - [x] Circular singly linked list
 - [x] Circular doubly linked list
-- [x] Circular buffer
+- [x] Circular buffer (ring buffer)
 - [x] FIFO
 - [x] Stack
 - [ ] Double ended queue (dequeue)
 - [x] Binary search tree (unbalanced)
 - [x] AVL tree
-- [ ] Treap
+- [x] Treap
 - [ ] Trie
 - [ ] Heap
-- [x] Binomial heap
+- [x] Binary heap
+- [ ] Binomial heap
 - [ ] B-tree
 - [x] Red black tree
 - [x] Association List
@@ -68,8 +69,14 @@ C99 standard library
 
 [xxHash for getting a hashcode out of data of arbitrary length (it's built as part of the library, not separately)](https://github.com/Cyan4973/xxHash/)
 
+[SIMD-oriented Fast Mersenne Twister for having randomly generated numbers on data structures that need them](http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/index.html)
+
 ### LICENSE
 
-MIT License for all files, except xxhash.c and xxhash.h which are BSD licensed.
+`lib\external\SFMT\LICENSE.txt` for all files in the `lib\external\SFMT` directory
 
-EduDS (C) 2016-2017 <georgekoskerid@outlook.com>
+`lib\external\xxHash\LICENSE` for all files in the `lib\external\xxHash` directory
+
+`LICENSE.txt` for all the other files
+
+EduDS (c) 2016-2017 <georgekoskerid@outlook.com>

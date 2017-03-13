@@ -1,7 +1,13 @@
-﻿/***********************************************\
-*                   LIFOstack.c                 *
-*           George Koskeridis (C) 2016          *
-\***********************************************/
+﻿ /********************
+ *  LIFOstack.c
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #include <stdlib.h>
 #include "LIFOstack.h"
@@ -23,13 +29,13 @@ static LIFOnode *newLIFOnode(void *node_data)
     return newnode;
 }
 
-LIFOstack *LIFO_init(EduDSErrCode *err)
+LIFOstack *LIFO_init(EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     LIFOstack *newstack = calloc(1, sizeof(LIFOstack));
 
     if (!newstack)
-        tmp_err = EduDS_MALLOC_FAIL;
+        tmp_err = EDS_MALLOC_FAIL;
 
     SAVE_ERR(err, tmp_err);
     return newstack;
@@ -37,9 +43,9 @@ LIFOstack *LIFO_init(EduDSErrCode *err)
 
 void LIFO_push(LIFOstack *stack,
                void *node_data,
-               EduDSErrCode *err)
+               EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (stack) {
         LIFOnode *to_push = newLIFOnode(node_data);
@@ -53,17 +59,17 @@ void LIFO_push(LIFOstack *stack,
             stack->tail = to_push;
             stack->total_nodes++;
         } else
-            tmp_err = EduDS_MALLOC_FAIL;
+            tmp_err = EDS_MALLOC_FAIL;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
 
 void *LIFO_pop(LIFOstack *stack,
-               EduDSErrCode *err)
+               EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     void *pData = NULL;
 
     if (stack && stack->total_nodes) {
@@ -82,7 +88,7 @@ void *LIFO_pop(LIFOstack *stack,
         free((void*)to_pop);
         stack->total_nodes--;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -91,9 +97,9 @@ void *LIFO_pop(LIFOstack *stack,
 
 void LIFO_destroy(LIFOstack **stack,
                   UserDataCallback freeData,
-                  EduDSErrCode *err)
+                  EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (stack && *stack) {
 
@@ -115,22 +121,22 @@ void LIFO_destroy(LIFOstack **stack,
         free(*stack);
         *stack = NULL;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
 
 void LIFO_traverse(LIFOstack *stack,
                    UserDataCallback handleData,
-                   EduDSErrCode *err)
+                   EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (stack && handleData)
         for (LIFOnode *curr = stack->head; curr; curr = curr->next)
             handleData(curr->data);
     else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

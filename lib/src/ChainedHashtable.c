@@ -1,7 +1,13 @@
-/***********************************************\
-*               ChainedHashTable.c              *
-*           George Koskeridis (C) 2017          *
-\***********************************************/
+ /********************
+ *  ChainedHashTable.c
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #include <stdlib.h>
 #include "ChainedHashtable.h"
@@ -11,9 +17,9 @@
 ChainedHashtable *ChainedHash_init(size_t size,
                                    UserCompareCallback KeyCmp,
                                    UserHashFuncCallback Hash,
-                                   EduDSErrCode *err)
+                                   EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     ChainedHashtable *chtable = NULL;
 
     if (KeyCmp && size > 3) {
@@ -43,15 +49,15 @@ ChainedHashtable *ChainedHash_init(size_t size,
                 chtable->size = size;
 
             } else {
-                tmp_err = EduDS_MALLOC_FAIL;
+                tmp_err = EDS_MALLOC_FAIL;
                 free(chtable);
                 chtable = NULL;
             }
 
         } else
-            tmp_err = EduDS_MALLOC_FAIL;
+            tmp_err = EDS_MALLOC_FAIL;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -62,15 +68,15 @@ DictListNode *ChainedHash_insert(ChainedHashtable *table,
                                  void *pData,
                                  void *pKey,
                                  size_t key_size,
-                                 EduDSErrCode *err)
+                                 EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     DictListNode *new_node = NULL;
 
     if (table && pKey && key_size)
         new_node = DictList_insert(&table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pData, pKey, table->KeyCmp, &tmp_err);
     else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -80,15 +86,15 @@ DictListNode *ChainedHash_insert(ChainedHashtable *table,
 KeyValuePair ChainedHash_delete(ChainedHashtable *table,
                                 void *pKey,
                                 size_t key_size,
-                                EduDSErrCode *err)
+                                EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     KeyValuePair item = { 0 };
 
     if (table && pKey && key_size)
         item = DictList_deleteByKey(&table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pKey, table->KeyCmp, &tmp_err);
     else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -98,15 +104,15 @@ KeyValuePair ChainedHash_delete(ChainedHashtable *table,
 DictListNode *ChainedHash_find(ChainedHashtable *table,
                                void *pKey,
                                size_t key_size,
-                               EduDSErrCode *err)
+                               EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     DictListNode *to_find = NULL;
 
     if (table && pKey && key_size)
         to_find = DictList_findByKey(table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pKey, table->KeyCmp, &tmp_err);
     else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -115,9 +121,9 @@ DictListNode *ChainedHash_find(ChainedHashtable *table,
 
 void ChainedHash_destroy(ChainedHashtable **table,
                          UserDataCallback freeData,
-                         EduDSErrCode *err)
+                         EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     if (table && *table) {
 
         for (size_t i = 0; i < (*table)->size; i++)
@@ -127,7 +133,7 @@ void ChainedHash_destroy(ChainedHashtable **table,
         free(*table);
         *table = NULL;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

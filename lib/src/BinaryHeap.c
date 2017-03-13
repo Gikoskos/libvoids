@@ -1,7 +1,13 @@
-/***********************************************\
-*                  BinaryHeap.c                 *
-*           George Koskeridis (C) 2017          *
-\***********************************************/
+ /********************
+ *  BinaryHeap.c
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #include <stdlib.h>
 #include "BinaryHeap.h"
@@ -19,33 +25,33 @@ static void fix_pop_min(BinaryHeapNode *curr, UserCompareCallback DataCmp);
 
 
 BinaryHeap *BinaryHeap_init(UserCompareCallback DataCmp,
-                            HeapType type,
-                            EduDSErrCode *err)
+                            HeapOrderType order,
+                            EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     BinaryHeap *bheap = NULL;
 
     if (DataCmp) {
 
-        switch (type) {
+        switch (order) {
         case MAX_ORDER_HEAP:
         case MIN_ORDER_HEAP:
             bheap = malloc(sizeof(BinaryHeap));
 
             if (bheap) {
-                bheap->type = type;
+                bheap->order = order;
                 bheap->root = NULL;
                 bheap->DataCmp = DataCmp;
             } else
-                tmp_err = EduDS_MALLOC_FAIL;
+                tmp_err = EDS_MALLOC_FAIL;
             break;
         default:
-            tmp_err = EduDS_INVALID_ARGS;
+            tmp_err = EDS_INVALID_ARGS;
             break;
         }
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -54,9 +60,9 @@ BinaryHeap *BinaryHeap_init(UserCompareCallback DataCmp,
 
 BinaryHeapNode *BinaryHeap_push(BinaryHeap *bheap,
                                 void *pData,
-                                EduDSErrCode *err)
+                                EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     BinaryHeapNode *new_node = NULL;
 
     if (bheap && pData) {
@@ -75,7 +81,7 @@ BinaryHeapNode *BinaryHeap_push(BinaryHeap *bheap,
 
                 if (breadth_first_insert(bheap, new_node)) {
 
-                    switch (bheap->type) {
+                    switch (bheap->order) {
                     case MAX_ORDER_HEAP:
                         fix_push_max(new_node, bheap->DataCmp);
                         break;
@@ -83,21 +89,21 @@ BinaryHeapNode *BinaryHeap_push(BinaryHeap *bheap,
                         fix_push_min(new_node, bheap->DataCmp);
                         break;
                     default:
-                        tmp_err = EduDS_INVALID_ARGS;
+                        tmp_err = EDS_INVALID_ARGS;
                         break;
                     }
 
                 } else {
                     free(new_node);
-                    tmp_err = EduDS_MALLOC_FAIL;
+                    tmp_err = EDS_MALLOC_FAIL;
                 }
             }
 
         } else
-            tmp_err = EduDS_MALLOC_FAIL;
+            tmp_err = EDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -142,14 +148,14 @@ void fix_push_min(BinaryHeapNode *curr, UserCompareCallback DataCmp)
 
 int breadth_first_insert(BinaryHeap *bheap, BinaryHeapNode *new_node)
 {
-    EduDSErrCode err;
+    EdsErrCode err;
     BinaryHeapNode *curr;
     FIFOqueue *levelFIFO = FIFO_init(&err);
 
     if (levelFIFO) {
         FIFO_enqueue(levelFIFO, (void *)bheap->root, &err);
 
-        if (err == EduDS_SUCCESS) {
+        if (err == EDS_SUCCESS) {
 
             while (levelFIFO->total_nodes) {
                 curr = (BinaryHeapNode *)FIFO_dequeue(levelFIFO, NULL);
@@ -157,7 +163,7 @@ int breadth_first_insert(BinaryHeap *bheap, BinaryHeapNode *new_node)
                 if (curr->left) {
                     FIFO_enqueue(levelFIFO, curr->left, &err);
 
-                    if (err != EduDS_SUCCESS)
+                    if (err != EDS_SUCCESS)
                         break;
                 } else {
                     new_node->parent = curr;
@@ -168,7 +174,7 @@ int breadth_first_insert(BinaryHeap *bheap, BinaryHeapNode *new_node)
                 if (curr->right) {
                     FIFO_enqueue(levelFIFO, curr->right, &err);
 
-                    if (err != EduDS_SUCCESS)
+                    if (err != EDS_SUCCESS)
                         break;
                 } else {
                     new_node->parent = curr;
@@ -183,16 +189,16 @@ int breadth_first_insert(BinaryHeap *bheap, BinaryHeapNode *new_node)
 
     }
 
-    if (err == EduDS_SUCCESS)
+    if (err == EDS_SUCCESS)
         return 1;
 
     return 0;
 }
 
 void *BinaryHeap_pop(BinaryHeap *bheap,
-                     EduDSErrCode *err)
+                     EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     void *pDeleted = NULL;
 
     if (bheap && bheap->root) {
@@ -225,7 +231,7 @@ void *BinaryHeap_pop(BinaryHeap *bheap,
                 free(last_node);
 
                 //restore the order of the heap
-                switch (bheap->type) {
+                switch (bheap->order) {
                 case MAX_ORDER_HEAP:
                     fix_pop_max(bheap->root, bheap->DataCmp);
                     break;
@@ -233,17 +239,17 @@ void *BinaryHeap_pop(BinaryHeap *bheap,
                     fix_pop_min(bheap->root, bheap->DataCmp);
                     break;
                 default:
-                    tmp_err = EduDS_INVALID_ARGS;
+                    tmp_err = EDS_INVALID_ARGS;
                     break;
                 }
 
             } else
-                tmp_err = EduDS_MALLOC_FAIL;
+                tmp_err = EDS_MALLOC_FAIL;
 
         }
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -374,14 +380,14 @@ void fix_pop_min(BinaryHeapNode *curr, UserCompareCallback DataCmp)
 
 BinaryHeapNode *breadth_first_get_last(BinaryHeap *bheap)
 {
-    EduDSErrCode err;
+    EdsErrCode err;
     BinaryHeapNode *curr;
     FIFOqueue *levelFIFO = FIFO_init(&err);
 
     if (levelFIFO) {
         FIFO_enqueue(levelFIFO, (void *)bheap->root, &err);
 
-        if (err == EduDS_SUCCESS) {
+        if (err == EDS_SUCCESS) {
 
             do {
                 curr = (BinaryHeapNode *)FIFO_dequeue(levelFIFO, NULL);
@@ -389,20 +395,20 @@ BinaryHeapNode *breadth_first_get_last(BinaryHeap *bheap)
                 if (curr->left) {
                     FIFO_enqueue(levelFIFO, curr->left, &err);
 
-                    if (err != EduDS_SUCCESS)
+                    if (err != EDS_SUCCESS)
                         break;
                 }
 
                 if (curr->right) {
                     FIFO_enqueue(levelFIFO, curr->right, &err);
 
-                    if (err != EduDS_SUCCESS)
+                    if (err != EDS_SUCCESS)
                         break;
                 }
 
             } while (levelFIFO->total_nodes > 1);
 
-            if (err == EduDS_SUCCESS)
+            if (err == EDS_SUCCESS)
                 curr = (BinaryHeapNode *)FIFO_dequeue(levelFIFO, NULL);
 
             FIFO_destroy(&levelFIFO, NULL, NULL);
@@ -411,7 +417,7 @@ BinaryHeapNode *breadth_first_get_last(BinaryHeap *bheap)
 
     }
 
-    if (err == EduDS_SUCCESS)
+    if (err == EDS_SUCCESS)
         return curr;
 
     return NULL;
@@ -419,9 +425,9 @@ BinaryHeapNode *breadth_first_get_last(BinaryHeap *bheap)
 
 void *BinaryHeap_replace(BinaryHeap *bheap,
                          void *pData,
-                         EduDSErrCode *err)
+                         EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     void *pDeleted = NULL;
 
     if (bheap && bheap->root && pData) {
@@ -429,7 +435,7 @@ void *BinaryHeap_replace(BinaryHeap *bheap,
         pDeleted = bheap->root->pData;
         bheap->root->pData = pData;
         
-        switch (bheap->type) {
+        switch (bheap->order) {
         case MAX_ORDER_HEAP:
             fix_pop_max(bheap->root, bheap->DataCmp);
             break;
@@ -437,12 +443,12 @@ void *BinaryHeap_replace(BinaryHeap *bheap,
             fix_pop_min(bheap->root, bheap->DataCmp);
             break;
         default:
-            tmp_err = EduDS_INVALID_ARGS;
+            tmp_err = EDS_INVALID_ARGS;
             break;
         }
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -451,9 +457,9 @@ void *BinaryHeap_replace(BinaryHeap *bheap,
 
 void BinaryHeap_destroy(BinaryHeap **bheap,
                         UserDataCallback freeData,
-                        EduDSErrCode *err)
+                        EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (bheap && *bheap) {
 
@@ -498,7 +504,7 @@ void BinaryHeap_destroy(BinaryHeap **bheap,
         free(*bheap);
         *bheap = NULL;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

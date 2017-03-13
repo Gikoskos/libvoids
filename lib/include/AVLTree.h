@@ -1,7 +1,13 @@
-/***********************************************\
-*                   AVLTree.h                   *
-*           George Koskeridis (C) 2017          *
-\***********************************************/
+ /********************
+ *  AVLTree.h
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #ifndef __EduDS_AVLTREE_H
 #define __EduDS_AVLTREE_H
@@ -27,33 +33,37 @@ typedef struct _AVLTree {
 
 
 EduDS_API AVLTree *AVLTree_init(UserCompareCallback KeyCmp,
-                                EduDSErrCode *err);
+                                EdsErrCode *err);
 
 EduDS_API AVLTreeNode *AVLTree_insert(AVLTree *avlt,
                                       void *pKey,
                                       void *pData,
-                                      EduDSErrCode *err);
+                                      EdsErrCode *err);
 
 EduDS_API KeyValuePair AVLTree_deleteNode(AVLTree *avlt,
                                           AVLTreeNode *avltToDelete,
-                                          EduDSErrCode *err);
+                                          EdsErrCode *err);
 
 EduDS_API KeyValuePair AVLTree_deleteByKey(AVLTree *avlt,
                                            void *pKey,
-                                           EduDSErrCode *err);
+                                           EdsErrCode *err);
 
-EduDS_API AVLTreeNode *AVLTree_find(AVLTree *avlt,
-                                    void *pKey,
-                                    EduDSErrCode *err);
+EduDS_API void *AVLTree_findData(AVLTree *avlt,
+                                 void *pKey,
+                                 EdsErrCode *err);
+
+EduDS_API AVLTreeNode *AVLTree_findNode(AVLTree *avlt,
+                                        void *pKey,
+                                        EdsErrCode *err);
 
 EduDS_API void AVLTree_traverse(AVLTree *avlt,
                                 TreeTraversalMethod traversal,
                                 UserDataCallback callback,
-                                EduDSErrCode *err);
+                                EdsErrCode *err);
 
 EduDS_API void AVLTree_destroy(AVLTree **avlt,
                                UserDataCallback freeData,
-                               EduDSErrCode *err);
+                               EdsErrCode *err);
 
 #ifdef __cplusplus
 }

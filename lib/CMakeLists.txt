@@ -5,6 +5,7 @@ file(GLOB_RECURSE EduDS_SRC src//*.c external//*.c)
 file(GLOB_RECURSE EduDS_INC include//*.h)
 
 include_directories(include external//xxHash)
+include_directories(include external//SFMT)
 
 #if we're building a windows .dll, we add the resource file
 #with the DLL versioning information, to the EduDS_SRC modules

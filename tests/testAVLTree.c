@@ -39,7 +39,7 @@ void freeKeyValuePair(void *param)
 
 int main(int argc, char *argv[])
 {
-    EduDSErrCode err;
+    EdsErrCode err;
     AVLTree *avlt = AVLTree_init(compareInts, &err);
 
     srand(time(NULL));
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
         if (AVLTree_insert(avlt, (void*)new_key, (void*)new_data, &err)) {
             printf("Node was successfully inserted!\n");
         } else {
-            printf("Node insertion failed with error \"%s\"!\n\n", EduDSErrString(err));
+            printf("Node insertion failed with error \"%s\"!\n\n", EdsErrString(err));
             free(new_key);
             free(new_data);
         }
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
             printf("in-order traversal (the node numbers should be in ascending order):\n");
             AVLTree_traverse(avlt, IN_ORDER, printIntData, NULL);
         } else {
-            printf("Node deletion of key %d failed with error \"%s\"!\n\n", i, EduDSErrString(err));
+            printf("Node deletion of key %d failed with error \"%s\"!\n\n", i, EdsErrString(err));
         }
     }
     AVLTree_destroy(&avlt, freeKeyValuePair, NULL);

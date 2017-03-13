@@ -1,7 +1,13 @@
-/***********************************************\
-*              QuadraticHashtable.h             *
-*           George Koskeridis (C) 2017          *
-\***********************************************/
+ /********************
+ *  QuadraticHashtable.h
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #ifndef __EduDS_QUADRATICHASHTABLE_H
 #define __EduDS_QUADRATICHASHTABLE_H
@@ -27,28 +33,28 @@ typedef struct _QuadHashtable {
 EduDS_API QuadHashtable *QuadHash_init(size_t size,
                                        UserCompareCallback KeyCmp,
                                        UserHashFuncCallback Hash,
-                                       EduDSErrCode *err);
+                                       EdsErrCode *err);
 
 EduDS_API void *QuadHash_insert(QuadHashtable *table,
                                 void *pData,
                                 void *pKey,
                                 size_t key_size,
                                 UserDataCallback freeData,
-                                EduDSErrCode *err);
+                                EdsErrCode *err);
 
 EduDS_API KeyValuePair QuadHash_delete(QuadHashtable *table,
                                        void *pKey,
                                        size_t key_size,
-                                       EduDSErrCode *err);
+                                       EdsErrCode *err);
 
 EduDS_API HashArrayElement *QuadHash_find(QuadHashtable *table,
                                           void *pKey,
                                           size_t key_size,
-                                          EduDSErrCode *err);
+                                          EdsErrCode *err);
 
 EduDS_API void QuadHash_destroy(QuadHashtable **table,
                                 UserDataCallback freeData,
-                                EduDSErrCode *err);
+                                EdsErrCode *err);
 
 #ifdef __cplusplus
 }

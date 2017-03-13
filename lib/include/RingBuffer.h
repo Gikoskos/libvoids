@@ -1,7 +1,13 @@
-/***********************************************\
-*                  RingBuffer.h                 *
-*           George Koskeridis (C) 2017          *
-\***********************************************/
+ /********************
+ *  RingBuffer.h
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #ifndef __EduDS_CIRCULAR_BUFF_H
 #define __EduDS_CIRCULAR_BUFF_H
@@ -22,22 +28,22 @@ typedef struct _RingBuffer {
 
 
 EduDS_API RingBuffer *RingBuffer_init(size_t buff_size,
-                                      EduDSErrCode *err);
+                                      EdsErrCode *err);
 
 EduDS_API void RingBuffer_resize(RingBuffer **cBuff,
                                  size_t new_size,
-                                 EduDSErrCode *err);
+                                 EdsErrCode *err);
 
 EduDS_API void RingBuffer_write(RingBuffer *cBuff,
                                 void *pData,
-                                EduDSErrCode *err);
+                                EdsErrCode *err);
 
 EduDS_API void *RingBuffer_read(RingBuffer *cBuff,
-                                EduDSErrCode *err);
+                                EdsErrCode *err);
 
 EduDS_API void RingBuffer_destroy(RingBuffer **cBuff,
                                   UserDataCallback freeData,
-                                  EduDSErrCode *err);
+                                  EdsErrCode *err);
 
 #ifdef __cplusplus
 }

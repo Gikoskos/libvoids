@@ -1,7 +1,13 @@
-/***********************************************\
-*                  BinaryHeap.h                 *
-*           George Koskeridis (C) 2017          *
-\***********************************************/
+ /********************
+ *  BinaryHeap.h
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #ifndef __EduDS_BINARYHEAP_H
 #define __EduDS_BINARYHEAP_H
@@ -13,9 +19,9 @@ extern "C" {
 
 #include "Common.h"
 
-typedef enum _HeapType {
+typedef enum _HeapOrderType {
     MAX_ORDER_HEAP, MIN_ORDER_HEAP
-} HeapType;
+} HeapOrderType;
 
 typedef struct _BinaryHeapNode {
     void *pData;
@@ -25,28 +31,28 @@ typedef struct _BinaryHeapNode {
 typedef struct _BinaryHeap {
     BinaryHeapNode *root;
     UserCompareCallback DataCmp;
-    HeapType type;
+    HeapOrderType order;
 } BinaryHeap;
 
 
 EduDS_API BinaryHeap *BinaryHeap_init(UserCompareCallback DataCmp,
-                                      HeapType type,
-                                      EduDSErrCode *err);
+                                      HeapOrderType order,
+                                      EdsErrCode *err);
 
 EduDS_API BinaryHeapNode *BinaryHeap_push(BinaryHeap *bheap,
                                           void *pData,
-                                          EduDSErrCode *err);
+                                          EdsErrCode *err);
 
 EduDS_API void *BinaryHeap_pop(BinaryHeap *bheap,
-                               EduDSErrCode *err);
+                               EdsErrCode *err);
 
 EduDS_API void *BinaryHeap_replace(BinaryHeap *bheap,
                                    void *pData,
-                                   EduDSErrCode *err);
+                                   EdsErrCode *err);
 
 EduDS_API void BinaryHeap_destroy(BinaryHeap **bheap,
                                   UserDataCallback freeData,
-                                  EduDSErrCode *err);
+                                  EdsErrCode *err);
 
 
 #ifdef __cplusplus

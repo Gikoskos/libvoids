@@ -1,7 +1,13 @@
-﻿/***********************************************\
-*                   LIFOstack.h                 *
-*           George Koskeridis (C) 2016          *
-\***********************************************/
+﻿ /********************
+ *  LIFOstack.h
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #ifndef __EduDS_LIFO_STACK_H
 #define __EduDS_LIFO_STACK_H
@@ -26,22 +32,22 @@ typedef struct _LIFOstack {
 } LIFOstack;
 
 
-EduDS_API LIFOstack *LIFO_init(EduDSErrCode *err);
+EduDS_API LIFOstack *LIFO_init(EdsErrCode *err);
 
 EduDS_API void LIFO_push(LIFOstack *stack,
                          void *node_data,
-                         EduDSErrCode *err);
+                         EdsErrCode *err);
 
 EduDS_API void *LIFO_pop(LIFOstack *stack,
-                         EduDSErrCode *err);
+                         EdsErrCode *err);
 
 EduDS_API void LIFO_destroy(LIFOstack **stack,
                             UserDataCallback freeData,
-                            EduDSErrCode *err);
+                            EdsErrCode *err);
 
 EduDS_API void LIFO_traverse(LIFOstack *stack,
                              UserDataCallback handleData,
-                             EduDSErrCode *err);
+                             EdsErrCode *err);
 
 #ifdef __cplusplus
 }

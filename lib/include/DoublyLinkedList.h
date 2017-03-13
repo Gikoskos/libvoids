@@ -1,7 +1,13 @@
-/***********************************************\
-*              DoublyLinkedList.h               *
-*           George Koskeridis (C) 2016          *
-\***********************************************/
+ /********************
+ *  DoublyLinkedList.h
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #ifndef __EduDS_DL_LIST_H
 #define __EduDS_DL_LIST_H
@@ -23,45 +29,45 @@ typedef struct _DLListNode {
 
 EduDS_API DLListNode *DLList_insert(DLListNode **dllHead,
                                     void *pData,
-                                    EduDSErrCode *err);
+                                    EdsErrCode *err);
 
 EduDS_API DLListNode *DLList_append(DLListNode **dllHead,
                                     void *pData,
-                                    EduDSErrCode *err);
+                                    EdsErrCode *err);
 
 EduDS_API DLListNode *DLList_concat(DLListNode *dll_1,
                                     DLListNode *dll_2,
-                                    EduDSErrCode *err);
+                                    EdsErrCode *err);
 
 EduDS_API DLListNode *DLList_insertAfter(DLListNode *dllPrev,
                                          void *pData,
-                                         EduDSErrCode *err);
+                                         EdsErrCode *err);
 
 EduDS_API void *DLList_deleteNode(DLListNode **dllHead,
                                   DLListNode *dllToDelete,
-                                  EduDSErrCode *err);
+                                  EdsErrCode *err);
 
 EduDS_API void *DLList_deleteData(DLListNode **dllHead,
                                   void *pToDelete,
                                   UserCompareCallback DataCmp,
-                                  EduDSErrCode *err);
+                                  EdsErrCode *err);
 
 EduDS_API DLListNode *DLList_at(DLListNode *dllHead,
                                 size_t idx,
-                                EduDSErrCode *err);
+                                EdsErrCode *err);
 
 EduDS_API DLListNode *DLList_find(DLListNode *dllHead,
                                   void *pToFind,
                                   UserCompareCallback DataCmp,
-                                  EduDSErrCode *err);
+                                  EdsErrCode *err);
 
 EduDS_API void DLList_traverse(DLListNode *dllHead,
                                UserDataCallback handleData,
-                               EduDSErrCode *err);
+                               EdsErrCode *err);
 
 EduDS_API void DLList_destroy(DLListNode **dllHead,
                               UserDataCallback freeData,
-                              EduDSErrCode *err);
+                              EdsErrCode *err);
 
 #ifdef __cplusplus
 }

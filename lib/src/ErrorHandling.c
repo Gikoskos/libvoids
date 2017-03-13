@@ -1,21 +1,27 @@
-/***********************************************\
-*                ErrorHandling.c                *
-*           George Koskeridis (C) 2017          *
-\***********************************************/
+ /********************
+ *  ErrorHandling.c
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #include <stdlib.h>
 #include "Common.h"
 
-const char *EduDSErrString(EduDSErrCode err)
+const char *EdsErrString(EdsErrCode err)
 {
     switch (err) {
-    case EduDS_SUCCESS:
+    case EDS_SUCCESS:
         return "Operation was successful";
-    case EduDS_MALLOC_FAIL:
+    case EDS_MALLOC_FAIL:
         return "Memory allocation failure";
-    case EduDS_KEY_EXISTS:
+    case EDS_KEY_EXISTS:
         return "All keys have to be unique, in this data structure";
-    case EduDS_INVALID_ARGS:
+    case EDS_INVALID_ARGS:
         return "Invalid parameters given to the function";
     default:
         return "Unknown EduDS error code";

@@ -1,7 +1,13 @@
-/***********************************************\
-*              BinarySearchTree.h               *
-*           George Koskeridis (C) 2016          *
-\***********************************************/
+ /********************
+ *  BinarySearchTree.h
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #ifndef __EduDS_BSTREE_H
 #define __EduDS_BSTREE_H
@@ -26,33 +32,37 @@ typedef struct _BSTree {
 
 
 EduDS_API BSTree *BSTree_init(UserCompareCallback KeyCmp,
-                              EduDSErrCode *err);
+                              EdsErrCode *err);
 
 EduDS_API BSTreeNode *BSTree_insert(BSTree *bst,
                                     void *pData,
                                     void *pKey,
-                                    EduDSErrCode *err);
+                                    EdsErrCode *err);
 
 EduDS_API KeyValuePair BSTree_deleteNode(BSTree *bst,
                                          BSTreeNode *bstToDelete,
-                                         EduDSErrCode *err);
+                                         EdsErrCode *err);
 
 EduDS_API KeyValuePair BSTree_deleteByKey(BSTree *bst,
                                           void *pKey,
-                                          EduDSErrCode *err);
+                                          EdsErrCode *err);
 
-EduDS_API BSTreeNode *BSTree_find(BSTree *bst,
-                                  void *pKey,
-                                  EduDSErrCode *err);
+EduDS_API BSTreeNode *BSTree_findNode(BSTree *bst,
+                                      void *pKey,
+                                      EdsErrCode *err);
+
+EduDS_API void *BSTree_findData(BSTree *bst,
+                                void *pKey,
+                                EdsErrCode *err);
 
 EduDS_API void BSTree_traverse(BSTree *bst,
                                TreeTraversalMethod traversal,
                                UserDataCallback callback,
-                               EduDSErrCode *err);
+                               EdsErrCode *err);
 
 EduDS_API void BSTree_destroy(BSTree **bst,
                               UserDataCallback freeData,
-                              EduDSErrCode *err);
+                              EdsErrCode *err);
 
 
 #ifdef __cplusplus

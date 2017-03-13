@@ -1,7 +1,13 @@
-/***********************************************\
-*               LinearHashtable.h               *
-*           George Koskeridis (C) 2017          *
-\***********************************************/
+ /********************
+ *  LinearHashtable.h
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #ifndef __EduDS_LINEARHASHTABLE_H
 #define __EduDS_LINEARHASHTABLE_H
@@ -34,28 +40,28 @@ EduDS_API LinHashtable *LinHash_init(size_t size,
                                      UserCompareCallback KeyCmp,
                                      UserHashFuncCallback Hash,
                                      int rehash,
-                                     EduDSErrCode *err);
+                                     EdsErrCode *err);
 
 EduDS_API void *LinHash_insert(LinHashtable *table,
                                void *pData,
                                void *pKey,
                                size_t key_size,
                                UserDataCallback freeData,
-                               EduDSErrCode *err);
+                               EdsErrCode *err);
 
 EduDS_API KeyValuePair LinHash_delete(LinHashtable *table,
                                       void *pKey,
                                       size_t key_size,
-                                      EduDSErrCode *err);
+                                      EdsErrCode *err);
 
 EduDS_API HashArrayElement *LinHash_find(LinHashtable *table,
                                          void *pKey,
                                          size_t key_size,
-                                         EduDSErrCode *err);
+                                         EdsErrCode *err);
 
 EduDS_API void LinHash_destroy(LinHashtable **table,
                                UserDataCallback freeData,
-                               EduDSErrCode *err);
+                               EdsErrCode *err);
 
 #ifdef __cplusplus
 }

@@ -13,7 +13,7 @@ BEGIN
   BEGIN
     BLOCK "000004B0"
     BEGIN
-      VALUE "FileDescription", "Educational Data Structures in C"
+      VALUE "FileDescription", "EduDS - Data Structures in C"
       VALUE "FileVersion", "1.0.0.0"
       VALUE "InternalName", "EduDS.dll"
       VALUE "ProductVersion", "1.0.0.0"

@@ -1,7 +1,13 @@
-/***********************************************\
-*                HashFunctions.c                *
-*           George Koskeridis (C) 2017          *
-\***********************************************/
+ /********************
+ *  HashFunctions.c
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #include <stdlib.h>
 #include <math.h>

@@ -1,7 +1,13 @@
-﻿/***********************************************\
-*                   FIFOqueue.h                 *
-*           George Koskeridis (C) 2016          *
-\***********************************************/
+﻿ /********************
+ *  FIFOqueue.h
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #ifndef __EduDS_FIFO_QUEUE_H
 #define __EduDS_FIFO_QUEUE_H
@@ -26,22 +32,22 @@ typedef struct _FIFOqueue {
 } FIFOqueue;
 
 
-EduDS_API FIFOqueue *FIFO_init(EduDSErrCode *err);
+EduDS_API FIFOqueue *FIFO_init(EdsErrCode *err);
 
 EduDS_API void FIFO_enqueue(FIFOqueue *queue,
                             void *node_data,
-                            EduDSErrCode *err);
+                            EdsErrCode *err);
 
 EduDS_API void *FIFO_dequeue(FIFOqueue *queue,
-                             EduDSErrCode *err);
+                             EdsErrCode *err);
 
 EduDS_API void FIFO_destroy(FIFOqueue **queue,
                             UserDataCallback freeData,
-                            EduDSErrCode *err);
+                            EdsErrCode *err);
 
 EduDS_API void FIFO_traverse(FIFOqueue *queue,
                              UserDataCallback handleData,
-                             EduDSErrCode *err);
+                             EdsErrCode *err);
 
 #ifdef __cplusplus
 }

@@ -1,15 +1,21 @@
-/***********************************************\
-*           SentinelSinglyLinkedList.c          *
-*           George Koskeridis (C) 2016          *
-\***********************************************/
+ /********************
+ *  SentinelSinglyLinkedList.c
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #include <stdlib.h>
 #include "SentinelSinglyLinkedList.h"
 
 
-SSLList *SSLList_init(EduDSErrCode *err)
+SSLList *SSLList_init(EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     SSLList *newList = malloc(sizeof(SSLList));
 
@@ -22,11 +28,11 @@ SSLList *SSLList_init(EduDSErrCode *err)
         } else {
             free(newList);
             newList = NULL;
-            tmp_err = EduDS_MALLOC_FAIL;
+            tmp_err = EDS_MALLOC_FAIL;
         }
 
     } else
-        tmp_err = EduDS_MALLOC_FAIL;
+        tmp_err = EDS_MALLOC_FAIL;
 
     SAVE_ERR(err, tmp_err);
 
@@ -35,9 +41,9 @@ SSLList *SSLList_init(EduDSErrCode *err)
 
 SLListNode *SSLList_insert(SSLList *ssllList,
                            void *pData,
-                           EduDSErrCode *err)
+                           EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     SLListNode *new_node = NULL;
 
     if (ssllList) {
@@ -52,10 +58,10 @@ SLListNode *SSLList_insert(SSLList *ssllList,
             ssllList->head = new_node;
 
         } else
-            tmp_err = EduDS_MALLOC_FAIL;
+            tmp_err = EDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -64,9 +70,9 @@ SLListNode *SSLList_insert(SSLList *ssllList,
 
 SLListNode *SSLList_append(SSLList *ssllList,
                            void *pData,
-                           EduDSErrCode *err)
+                           EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     SLListNode *new_node = NULL;
 
     if (ssllList) {
@@ -89,10 +95,10 @@ SLListNode *SSLList_append(SSLList *ssllList,
                 curr->nxt = new_node;
 
             } else
-                tmp_err = EduDS_MALLOC_FAIL;
+                tmp_err = EDS_MALLOC_FAIL;
         }
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -101,9 +107,9 @@ SLListNode *SSLList_append(SSLList *ssllList,
 
 SSLList *SSLList_concat(SSLList *ssll1,
                         SSLList *ssll2,
-                        EduDSErrCode *err)
+                        EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     SSLList *ret = NULL;
 
     if (ssll1 && ssll2) {
@@ -125,7 +131,7 @@ SSLList *SSLList_concat(SSLList *ssll1,
             ret = ssll1;
         }
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -134,9 +140,9 @@ SSLList *SSLList_concat(SSLList *ssll1,
 
 void *SSLList_deleteNode(SSLList *ssllList,
                          SLListNode *sllToDelete,
-                         EduDSErrCode *err)
+                         EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_INVALID_ARGS;
+    EdsErrCode tmp_err = EDS_INVALID_ARGS;
     void *pRet = NULL;
 
     if (ssllList && sllToDelete) {
@@ -156,7 +162,7 @@ void *SSLList_deleteNode(SSLList *ssllList,
                 ssllList->head = curr->nxt;
 
             free(curr);
-            tmp_err = EduDS_SUCCESS;
+            tmp_err = EDS_SUCCESS;
         }
     }
 
@@ -168,9 +174,9 @@ void *SSLList_deleteNode(SSLList *ssllList,
 void *SSLList_deleteData(SSLList *ssllList,
                          void *pData,
                          UserCompareCallback DataCmp,
-                         EduDSErrCode *err)
+                         EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_INVALID_ARGS;
+    EdsErrCode tmp_err = EDS_INVALID_ARGS;
     void *pRet = NULL;
 
     if (ssllList && DataCmp) {
@@ -189,7 +195,7 @@ void *SSLList_deleteData(SSLList *ssllList,
                 ssllList->head = curr->nxt;
 
             free(curr);
-            tmp_err = EduDS_SUCCESS;
+            tmp_err = EDS_SUCCESS;
         }
     }
 
@@ -200,9 +206,9 @@ void *SSLList_deleteData(SSLList *ssllList,
 
 SLListNode *SSLList_at(SSLList *ssllList,
                        size_t idx,
-                       EduDSErrCode *err)
+                       EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     SLListNode *ret = NULL;
 
     if (ssllList) {
@@ -215,7 +221,7 @@ SLListNode *SSLList_at(SSLList *ssllList,
         ret = (curr != ssllList->sentinel) ? curr : NULL;
             
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -225,9 +231,9 @@ SLListNode *SSLList_at(SSLList *ssllList,
 SLListNode *SSLList_find(SSLList *ssllList,
                          void *pToFind,
                          UserCompareCallback DataCmp,
-                         EduDSErrCode *err)
+                         EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     SLListNode *curr = NULL;
 
     if (ssllList && DataCmp) {
@@ -240,7 +246,7 @@ SLListNode *SSLList_find(SSLList *ssllList,
                 curr = NULL;
         }
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -249,24 +255,24 @@ SLListNode *SSLList_find(SSLList *ssllList,
 
 void SSLList_traverse(SSLList *ssllList,
                       UserDataCallback handleData,
-                      EduDSErrCode *err)
+                      EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (ssllList && handleData && (ssllList->head != ssllList->sentinel))
         for (SLListNode *curr = ssllList->head; curr != ssllList->sentinel; curr = curr->nxt)
             handleData(curr->pData);
     else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
 
 void SSLList_destroy(SSLList **ssllList,
                      UserDataCallback freeData,
-                     EduDSErrCode *err)
+                     EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (ssllList && *ssllList) {
 
@@ -286,7 +292,7 @@ void SSLList_destroy(SSLList **ssllList,
         *ssllList = NULL;
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

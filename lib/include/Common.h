@@ -1,7 +1,14 @@
-/***********************************************\
-*                   Common.h                    *
-*           George Koskeridis (C) 2016          *
-\***********************************************/
+ /********************
+ *  Common.h
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
+
 //LIBRARY INTERNAL HEADER. DO NOT INCLUDE THIS SEPARATELY.
 
 #ifndef __EduDS_COMMON_H
@@ -34,6 +41,8 @@
 # endif
 #endif
 
+#define EDUDS_SALT 8999 //using a prime number as seed for xxhash and mersenne twister
+
 #define SAVE_ERR(err, tmp_err) \
     if (err) \
         *(err) = tmp_err;
@@ -57,14 +66,14 @@ typedef struct _KeyValuePair {
 } KeyValuePair;
 
 //EduDS library error codes
-typedef enum _EduDSErrCode {
-    EduDS_SUCCESS = 0x0,
-    EduDS_MALLOC_FAIL,
-    EduDS_KEY_EXISTS,
-    EduDS_INVALID_ARGS
-} EduDSErrCode;
+typedef enum _EdsErrCode {
+    EDS_SUCCESS = 0x0,
+    EDS_MALLOC_FAIL,
+    EDS_KEY_EXISTS,
+    EDS_INVALID_ARGS
+} EdsErrCode;
 
 //ErrorHandling.c functions are declared here instead of using another header file
-EduDS_API const char *EduDSErrString(EduDSErrCode err);
+EduDS_API const char *EdsErrString(EdsErrCode err);
 
 #endif //__EduDS_COMMON_H

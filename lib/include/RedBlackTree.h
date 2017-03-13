@@ -1,7 +1,13 @@
-/***********************************************\
-*                 RedBlackTree.h                *
-*           George Koskeridis (C) 2017          *
-\***********************************************/
+ /********************
+ *  RedBlackTree.h
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #ifndef __EduDS_REDBLACKTREE_H
 #define __EduDS_REDBLACKTREE_H
@@ -31,33 +37,37 @@ typedef struct _RedBlackTree {
 
 
 EduDS_API RedBlackTree *RBTree_init(UserCompareCallback KeyCmp,
-                                    EduDSErrCode *err);
+                                    EdsErrCode *err);
 
 EduDS_API RedBlackTreeNode *RBTree_insert(RedBlackTree *rbt,
                                           void *pKey,
                                           void *pData,
-                                          EduDSErrCode *err);
+                                          EdsErrCode *err);
 
 EduDS_API KeyValuePair RBTree_deleteNode(RedBlackTree *rbt,
                                          RedBlackTreeNode *rbtToDelete,
-                                         EduDSErrCode *err);
+                                         EdsErrCode *err);
 
 EduDS_API KeyValuePair RBTree_deleteByKey(RedBlackTree *rbt,
                                           void *pKey,
-                                          EduDSErrCode *err);
+                                          EdsErrCode *err);
 
-EduDS_API RedBlackTreeNode *RBTree_find(RedBlackTree *rbt,
-                                        void *pKey,
-                                        EduDSErrCode *err);
+EduDS_API RedBlackTreeNode *RBTree_findNode(RedBlackTree *rbt,
+                                            void *pKey,
+                                            EdsErrCode *err);
+
+EduDS_API void *RBTree_findData(RedBlackTree *rbt,
+                                void *pKey,
+                                EdsErrCode *err);
 
 EduDS_API void RBTree_traverse(RedBlackTree *rbt,
                                TreeTraversalMethod traversal,
                                UserDataCallback callback,
-                               EduDSErrCode *err);
+                               EdsErrCode *err);
 
 EduDS_API void RBTree_destroy(RedBlackTree **rbt,
                               UserDataCallback freeData,
-                              EduDSErrCode *err);
+                              EdsErrCode *err);
 
 #ifdef __cplusplus
 }

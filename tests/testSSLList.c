@@ -54,11 +54,11 @@ int main(int argc, char *argv[])
 
     printf("Testing find on myList!!!\n");
     for (int i = 5; i < 15; i++) {
-        EduDSErrCode err;
+        EdsErrCode err;
         if (SSLList_find(myList, &i, IntCmp, &err)) {
-            printf("\nFound node %d \"%s\"!\n", i, EduDSErrString(err));
+            printf("\nFound node %d \"%s\"!\n", i, EdsErrString(err));
         } else {
-            printf("\nFailed finding node %d with error \"%s\"!\n", i, EduDSErrString(err));
+            printf("\nFailed finding node %d with error \"%s\"!\n", i, EdsErrString(err));
         }
     }
 

@@ -1,7 +1,13 @@
-/***********************************************\
-*               AssociationList.c               *
-*           George Koskeridis (C) 2017          *
-\***********************************************/
+ /********************
+ *  AssociationList.c
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #include <stdlib.h>
 #include "AssociationList.h"
@@ -11,9 +17,9 @@ DictListNode *DictList_insert(DictListNode **dictListHead,
                               void *pData,
                               void *pKey,
                               UserCompareCallback KeyCmp,
-                              EduDSErrCode *err)
+                              EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     DictListNode *new_node = NULL;
 
     if (dictListHead && pKey && KeyCmp) {
@@ -31,11 +37,11 @@ DictListNode *DictList_insert(DictListNode **dictListHead,
                 *dictListHead = new_node;
 
             } else
-                tmp_err = EduDS_MALLOC_FAIL;
+                tmp_err = EDS_MALLOC_FAIL;
         } else
-            tmp_err = EduDS_KEY_EXISTS;
+            tmp_err = EDS_KEY_EXISTS;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -46,9 +52,9 @@ DictListNode *DictList_append(DictListNode **dictListHead,
                               void *pData,
                               void *pKey,
                               UserCompareCallback KeyCmp,
-                              EduDSErrCode *err)
+                              EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     DictListNode *new_node = NULL;
 
     if (dictListHead && pKey && KeyCmp) {
@@ -70,16 +76,16 @@ DictListNode *DictList_append(DictListNode **dictListHead,
                     if (!KeyCmp(curr->item.pKey, pKey)) { //if a node with the same key, already exists on the list
                         free(new_node);                  //we don't add it
                         new_node = NULL;
-                        tmp_err = EduDS_KEY_EXISTS;
+                        tmp_err = EDS_KEY_EXISTS;
                         break;
                     }
 
                 curr->nxt = new_node;
             }
         } else
-            tmp_err = EduDS_MALLOC_FAIL;
+            tmp_err = EDS_MALLOC_FAIL;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -89,9 +95,9 @@ DictListNode *DictList_append(DictListNode **dictListHead,
 DictListNode *DictList_insertAfter(DictListNode *dictListPrev,
                                    void *pData,
                                    void *pKey,
-                                   EduDSErrCode *err)
+                                   EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     DictListNode *new_node = NULL;
 
     if (dictListPrev && pKey) {
@@ -106,9 +112,9 @@ DictListNode *DictList_insertAfter(DictListNode *dictListPrev,
             dictListPrev->nxt = new_node;
 
         } else
-            tmp_err = EduDS_MALLOC_FAIL;
+            tmp_err = EDS_MALLOC_FAIL;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -118,9 +124,9 @@ DictListNode *DictList_insertAfter(DictListNode *dictListPrev,
 KeyValuePair DictList_deleteByKey(DictListNode **dictListHead,
                                   void *pKey,
                                   UserCompareCallback KeyCmp,
-                                  EduDSErrCode *err)
+                                  EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_INVALID_ARGS;
+    EdsErrCode tmp_err = EDS_INVALID_ARGS;
     KeyValuePair item = { 0 };
 
     if (dictListHead && KeyCmp && pKey) {
@@ -139,10 +145,10 @@ KeyValuePair DictList_deleteByKey(DictListNode **dictListHead,
             }
 
             free(curr);
-            tmp_err = EduDS_SUCCESS;
+            tmp_err = EDS_SUCCESS;
         }
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -152,15 +158,15 @@ KeyValuePair DictList_deleteByKey(DictListNode **dictListHead,
 DictListNode *DictList_findByKey(DictListNode *dictListHead,
                                  void *pKey,
                                  UserCompareCallback KeyCmp,
-                                 EduDSErrCode *err)
+                                 EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     DictListNode *curr = dictListHead;
 
     if (KeyCmp && pKey)
         for (; curr && KeyCmp(curr->item.pKey, pKey); curr = curr->nxt);
     else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -169,15 +175,15 @@ DictListNode *DictList_findByKey(DictListNode *dictListHead,
 
 void DictList_traverse(DictListNode *dictListHead,
                        UserDataCallback handleData,
-                       EduDSErrCode *err)
+                       EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (dictListHead && handleData)
         for (DictListNode *curr = dictListHead; curr; curr = curr->nxt)
             handleData((void *)&curr->item);
     else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
 
     SAVE_ERR(err, tmp_err);
@@ -185,9 +191,9 @@ void DictList_traverse(DictListNode *dictListHead,
 
 void DictList_destroy(DictListNode **dictListHead,
                       UserDataCallback freeData,
-                      EduDSErrCode *err)
+                      EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (dictListHead) {
         DictListNode *curr, *tmp;
@@ -203,7 +209,7 @@ void DictList_destroy(DictListNode **dictListHead,
 
         *dictListHead = NULL;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

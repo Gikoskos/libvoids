@@ -1,7 +1,13 @@
-/***********************************************\
-*              SinglyLinkedList.h               *
-*           George Koskeridis (C) 2016          *
-\***********************************************/
+ /********************
+ *  SinglyLinkedList.h
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #ifndef __EduDS_SL_LIST_H
 #define __EduDS_SL_LIST_H
@@ -23,45 +29,45 @@ typedef struct _SLListNode {
 
 EduDS_API SLListNode *SLList_insert(SLListNode **sllHead,
                                     void *pData,
-                                    EduDSErrCode *err);
+                                    EdsErrCode *err);
 
 EduDS_API SLListNode *SLList_append(SLListNode **sllHead,
                                     void *pData,
-                                    EduDSErrCode *err);
+                                    EdsErrCode *err);
 
 EduDS_API SLListNode *SLList_insertAfter(SLListNode *sllPrev,
                                          void *pData,
-                                         EduDSErrCode *err);
+                                         EdsErrCode *err);
 
 EduDS_API void *SLList_deleteNode(SLListNode **sllHead,
                                   SLListNode *sllToDelete,
-                                  EduDSErrCode *err);
+                                  EdsErrCode *err);
 
 EduDS_API void *SLList_deleteData(SLListNode **sllHead,
                                   void *pData,
                                   UserCompareCallback DataCmp,
-                                  EduDSErrCode *err);
+                                  EdsErrCode *err);
 
 EduDS_API SLListNode *SLList_at(SLListNode *sllHead,
                                 size_t idx,
-                                EduDSErrCode *err);
+                                EdsErrCode *err);
 
 EduDS_API SLListNode *SLList_concat(SLListNode *sll1,
                                     SLListNode *sll2,
-                                    EduDSErrCode *err);
+                                    EdsErrCode *err);
 
 EduDS_API SLListNode *SLList_find(SLListNode *sllHead,
                                   void *pToFind,
                                   UserCompareCallback DataCmp,
-                                  EduDSErrCode *err);
+                                  EdsErrCode *err);
 
 EduDS_API void SLList_traverse(SLListNode *sllHead,
                                UserDataCallback handleData,
-                               EduDSErrCode *err);
+                               EdsErrCode *err);
 
 EduDS_API void SLList_destroy(SLListNode **sllHead,
                               UserDataCallback freeData,
-                              EduDSErrCode *err);
+                              EdsErrCode *err);
 
 #ifdef __cplusplus
 }

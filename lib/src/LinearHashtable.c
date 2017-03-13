@@ -1,7 +1,13 @@
-/***********************************************\
-*               LinearHashtable.c               *
-*           George Koskeridis (C) 2017          *
-\***********************************************/
+ /********************
+ *  LinearHashtable.c
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #include <stdlib.h>
 #include "LinearHashtable.h"
@@ -21,9 +27,9 @@ LinHashtable *LinHash_init(size_t size,
                            UserCompareCallback KeyCmp,
                            UserHashFuncCallback Hash,
                            int rehash,
-                           EduDSErrCode *err)
+                           EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     LinHashtable *lintable = NULL;
 
     if (KeyCmp && size > 3) {
@@ -57,13 +63,13 @@ LinHashtable *LinHash_init(size_t size,
             } else {
                 free(lintable);
                 lintable = NULL;
-                tmp_err = EduDS_MALLOC_FAIL;
+                tmp_err = EDS_MALLOC_FAIL;
             }
 
         } else
-            tmp_err = EduDS_MALLOC_FAIL;
+            tmp_err = EDS_MALLOC_FAIL;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -127,9 +133,9 @@ void *LinHash_insert(LinHashtable *table,
                      void *pKey,
                      size_t key_size,
                      UserDataCallback freeData,
-                     EduDSErrCode *err)
+                     EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     void *new_key = NULL;
 
     if (table && pKey && key_size && (table->total_elements < table->size)) {
@@ -169,13 +175,17 @@ void *LinHash_insert(LinHashtable *table,
 
         } while (offset < table->size);
 
+        //@TODO: handle possible case where insertion fails and we have to rehash the table
+        //(if rehashing is enabled) when offset >= table->size and try to re-insert the
+        //element with a recursive call to LinHash_insert
+
         if (table->rehash) //if the load factor is greater than 0.5 we rehash the table
             if ( ((float)table->total_elements / table->size) >= 0.5 )
                 if (!rehash(table, freeData))
-                    tmp_err = EduDS_MALLOC_FAIL;
+                    tmp_err = EDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
         
@@ -186,9 +196,9 @@ void *LinHash_insert(LinHashtable *table,
 KeyValuePair LinHash_delete(LinHashtable *table,
                             void *pKey,
                             size_t key_size,
-                            EduDSErrCode *err)
+                            EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     KeyValuePair item = { 0 };
 
     if (table && pKey && key_size) {
@@ -213,7 +223,7 @@ KeyValuePair LinHash_delete(LinHashtable *table,
         } while (offset < table->size);
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -223,9 +233,9 @@ KeyValuePair LinHash_delete(LinHashtable *table,
 HashArrayElement *LinHash_find(LinHashtable *table,
                                void *pKey,
                                size_t key_size,
-                               EduDSErrCode *err)
+                               EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     HashArrayElement *to_find = NULL;
 
     if (table && pKey && key_size) {
@@ -248,7 +258,7 @@ HashArrayElement *LinHash_find(LinHashtable *table,
         } while (offset < table->size);
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -257,9 +267,9 @@ HashArrayElement *LinHash_find(LinHashtable *table,
 
 void LinHash_destroy(LinHashtable **table,
                      UserDataCallback freeData,
-                     EduDSErrCode *err)
+                     EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (table && *table) {
 
@@ -272,7 +282,7 @@ void LinHash_destroy(LinHashtable **table,
         free(*table);
         *table = NULL;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

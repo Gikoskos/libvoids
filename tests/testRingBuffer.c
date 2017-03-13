@@ -5,14 +5,14 @@
 
 #define EduDS_ERR_FATAL(func, err) \
     func; \
-    if (err != EduDS_SUCCESS) { \
-        printf("Function call \"%s\" failed with error \"%s\"\n", EduDSErrString(err), #func); \
+    if (err != EDS_SUCCESS) { \
+        printf("Function call \"%s\" failed with error \"%s\"\n", #func, EdsErrString(err)); \
         return 1; \
     }
 
 int main(int argc, char *argv[])
 {
-    EduDSErrCode err;
+    EdsErrCode err;
     RingBuffer *buff;
 
     EduDS_ERR_FATAL(buff = RingBuffer_init(10, &err), err);

@@ -1,7 +1,13 @@
-/***********************************************\
-*              DoublyLinkedList.c               *
-*           George Koskeridis (C) 2016          *
-\***********************************************/
+ /********************
+ *  DoublyLinkedList.c
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #include <stdlib.h>
 #include "DoublyLinkedList.h"
@@ -9,9 +15,9 @@
 
 DLListNode *DLList_insert(DLListNode **dllHead,
                           void *pData,
-                          EduDSErrCode *err)
+                          EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     DLListNode *new_node = NULL;
 
     if (dllHead) {
@@ -27,10 +33,10 @@ DLListNode *DLList_insert(DLListNode **dllHead,
 
             *dllHead = new_node;
         } else
-            tmp_err = EduDS_MALLOC_FAIL;
+            tmp_err = EDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -39,9 +45,9 @@ DLListNode *DLList_insert(DLListNode **dllHead,
 
 DLListNode *DLList_append(DLListNode **dllHead,
                           void *pData,
-                          EduDSErrCode *err)
+                          EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     DLListNode *new_node = NULL;
 
     if (dllHead) {
@@ -62,9 +68,9 @@ DLListNode *DLList_append(DLListNode **dllHead,
                 new_node->prv = curr;
             }
         } else
-            tmp_err = EduDS_MALLOC_FAIL;
+            tmp_err = EDS_MALLOC_FAIL;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -73,9 +79,9 @@ DLListNode *DLList_append(DLListNode **dllHead,
 
 DLListNode *DLList_concat(DLListNode *dll_1,
                           DLListNode *dll_2,
-                          EduDSErrCode *err)
+                          EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (dll_1 && dll_2) {
         DLListNode *tail_1;
@@ -85,7 +91,7 @@ DLListNode *DLList_concat(DLListNode *dll_1,
         tail_1->nxt = dll_2;
         dll_2->prv = tail_1;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -94,9 +100,9 @@ DLListNode *DLList_concat(DLListNode *dll_1,
 
 DLListNode *DLList_insertAfter(DLListNode *dllPrev,
                                void *pData,
-                               EduDSErrCode *err)
+                               EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     DLListNode *new_node = NULL;
 
     if (dllPrev) {
@@ -109,9 +115,9 @@ DLListNode *DLList_insertAfter(DLListNode *dllPrev,
 
             dllPrev->nxt = new_node;
         } else
-            tmp_err = EduDS_MALLOC_FAIL;
+            tmp_err = EDS_MALLOC_FAIL;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -120,9 +126,9 @@ DLListNode *DLList_insertAfter(DLListNode *dllPrev,
 
 void *DLList_deleteNode(DLListNode **dllHead,
                         DLListNode *dllToDelete,
-                        EduDSErrCode *err)
+                        EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_INVALID_ARGS;
+    EdsErrCode tmp_err = EDS_INVALID_ARGS;
     void *pRet = NULL;
 
     if (dllHead && *dllHead && dllToDelete) {
@@ -142,7 +148,7 @@ void *DLList_deleteNode(DLListNode **dllHead,
                 *dllHead = curr->nxt;
 
             free(curr);
-            tmp_err = EduDS_SUCCESS;
+            tmp_err = EDS_SUCCESS;
         }
     }
 
@@ -154,9 +160,9 @@ void *DLList_deleteNode(DLListNode **dllHead,
 void *DLList_deleteData(DLListNode **dllHead,
                         void *pToDelete,
                         UserCompareCallback DataCmp,
-                        EduDSErrCode *err)
+                        EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_INVALID_ARGS;
+    EdsErrCode tmp_err = EDS_INVALID_ARGS;
     void *pRet = NULL;
 
     if (dllHead && *dllHead && pToDelete) {
@@ -176,7 +182,7 @@ void *DLList_deleteData(DLListNode **dllHead,
                 *dllHead = curr->nxt;
 
             free(curr);
-            tmp_err = EduDS_SUCCESS;
+            tmp_err = EDS_SUCCESS;
         }
     }
 
@@ -187,16 +193,16 @@ void *DLList_deleteData(DLListNode **dllHead,
 
 DLListNode *DLList_at(DLListNode *dllHead,
                       size_t idx,
-                      EduDSErrCode *err)
+                      EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     DLListNode *curr = NULL;
 
     if (dllHead) {
         size_t i = 0;
         for (curr = dllHead; curr && i < idx; curr = curr->nxt, i++);
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -206,15 +212,15 @@ DLListNode *DLList_at(DLListNode *dllHead,
 DLListNode *DLList_find(DLListNode *dllHead,
                         void *pToFind,
                         UserCompareCallback DataCmp,
-                        EduDSErrCode *err)
+                        EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     DLListNode *curr;
 
     if (dllHead && DataCmp)
         for (curr = dllHead; curr && DataCmp(curr->pData, pToFind); curr = curr->nxt);
     else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -223,24 +229,24 @@ DLListNode *DLList_find(DLListNode *dllHead,
 
 void DLList_traverse(DLListNode *dllHead,
                      UserDataCallback handleData,
-                     EduDSErrCode *err)
+                     EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (dllHead && handleData)
         for (DLListNode *curr = dllHead; curr; curr = curr->nxt)
             handleData(curr->pData);
      else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
 
 void DLList_destroy(DLListNode **dllHead,
                     UserDataCallback freeData,
-                    EduDSErrCode *err)
+                    EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (dllHead) {
         DLListNode *curr, *tmp;
@@ -256,7 +262,7 @@ void DLList_destroy(DLListNode **dllHead,
 
         *dllHead = NULL;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

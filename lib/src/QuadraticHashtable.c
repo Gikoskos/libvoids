@@ -1,7 +1,13 @@
-/***********************************************\
-*              QuadraticHashtable.c             *
-*           George Koskeridis (C) 2017          *
-\***********************************************/
+ /********************
+ *  QuadraticHashtable.c
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #include <stdlib.h>
 #include "QuadraticHashtable.h"
@@ -20,9 +26,9 @@ static int rehash(QuadHashtable *table, UserDataCallback freeData);
 QuadHashtable *QuadHash_init(size_t size,
                              UserCompareCallback KeyCmp,
                              UserHashFuncCallback Hash,
-                             EduDSErrCode *err)
+                             EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     QuadHashtable *quadtable = NULL;
 
     if (KeyCmp && size > 3) {
@@ -55,13 +61,13 @@ QuadHashtable *QuadHash_init(size_t size,
             } else {
                 free(quadtable);
                 quadtable = NULL;
-                tmp_err = EduDS_MALLOC_FAIL;
+                tmp_err = EDS_MALLOC_FAIL;
             }
 
         } else
-            tmp_err = EduDS_MALLOC_FAIL;
+            tmp_err = EDS_MALLOC_FAIL;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -120,9 +126,9 @@ void *QuadHash_insert(QuadHashtable *table,
                       void *pKey,
                       size_t key_size,
                       UserDataCallback freeData,
-                      EduDSErrCode *err)
+                      EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     void *new_key = NULL;
 
     if (table && pKey && key_size) {
@@ -159,13 +165,16 @@ void *QuadHash_insert(QuadHashtable *table,
 
         } while (offset < table->size);
 
+        //@TODO: handle possible case where insertion fails and we have to rehash the table
+        //when offset >= table->size and try to re-insert the element with a recursive call
+        //to QuadHash_insert
 
         if ( ((float)table->total_elements / table->size) >= 0.5 )
             if (!rehash(table, freeData))
-                tmp_err = EduDS_MALLOC_FAIL;
+                tmp_err = EDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);        
 
@@ -175,9 +184,9 @@ void *QuadHash_insert(QuadHashtable *table,
 KeyValuePair QuadHash_delete(QuadHashtable *table,
                              void *pKey,
                              size_t key_size,
-                             EduDSErrCode *err)
+                             EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     KeyValuePair item = { 0 };
 
     if (table && pKey && key_size) {
@@ -202,7 +211,7 @@ KeyValuePair QuadHash_delete(QuadHashtable *table,
         } while (offset < table->size);
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -212,9 +221,9 @@ KeyValuePair QuadHash_delete(QuadHashtable *table,
 HashArrayElement *QuadHash_find(QuadHashtable *table,
                                 void *pKey,
                                 size_t key_size,
-                                EduDSErrCode *err)
+                                EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     HashArrayElement *to_find = NULL;
 
     if (table && pKey && key_size) {
@@ -224,8 +233,7 @@ HashArrayElement *QuadHash_find(QuadHashtable *table,
         do {
             tmp_idx = (hash_idx + (offset * offset)) % table->size;
 
-            if (!IS_DELETED(table->array[tmp_idx].state) && 
-                IS_OCCUPIED(table->array[tmp_idx].state) &&
+            if (IS_OCCUPIED(table->array[tmp_idx].state) &&
                 !table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
 
                 to_find = &table->array[tmp_idx];
@@ -238,7 +246,7 @@ HashArrayElement *QuadHash_find(QuadHashtable *table,
         } while (offset < table->size);
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -247,9 +255,9 @@ HashArrayElement *QuadHash_find(QuadHashtable *table,
 
 void QuadHash_destroy(QuadHashtable **table,
                       UserDataCallback freeData,
-                      EduDSErrCode *err)
+                      EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (table && *table) {
 
@@ -262,7 +270,7 @@ void QuadHash_destroy(QuadHashtable **table,
         *table = NULL;
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

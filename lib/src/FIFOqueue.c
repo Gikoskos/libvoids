@@ -1,7 +1,13 @@
-﻿/***********************************************\
-*                   FIFOqueue.c                 *
-*           George Koskeridis (C) 2016          *
-\***********************************************/
+﻿ /********************
+ *  FIFOqueue.c
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #include <stdlib.h>
 #include "FIFOqueue.h"
@@ -24,16 +30,16 @@ FIFOnode *newFIFOnode(void *node_data)
     return newnode;
 }
 
-FIFOqueue *FIFO_init(EduDSErrCode *err)
+FIFOqueue *FIFO_init(EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     FIFOqueue *newqueue = malloc(sizeof(FIFOqueue));
 
     if (newqueue) {
         newqueue->head = newqueue->tail = NULL;
         newqueue->total_nodes = 0;
     } else
-        tmp_err = EduDS_MALLOC_FAIL;
+        tmp_err = EDS_MALLOC_FAIL;
 
     SAVE_ERR(err, tmp_err);
 
@@ -42,9 +48,9 @@ FIFOqueue *FIFO_init(EduDSErrCode *err)
 
 void FIFO_enqueue(FIFOqueue *queue,
                   void *node_data,
-                  EduDSErrCode *err)
+                  EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (queue) {
         FIFOnode *to_inject = newFIFOnode(node_data);
@@ -58,18 +64,18 @@ void FIFO_enqueue(FIFOqueue *queue,
             queue->tail = to_inject;
             queue->total_nodes++;
         } else
-            tmp_err = EduDS_MALLOC_FAIL;
+            tmp_err = EDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
 
 void *FIFO_dequeue(FIFOqueue *queue,
-                   EduDSErrCode *err)
+                   EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     void *pData = NULL;
 
     if (queue && queue->total_nodes) {//short-circuit eval protection
@@ -81,7 +87,7 @@ void *FIFO_dequeue(FIFOqueue *queue,
         free((void*)to_pop);
         queue->total_nodes--;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -90,9 +96,9 @@ void *FIFO_dequeue(FIFOqueue *queue,
 
 void FIFO_destroy(FIFOqueue **queue,
                   UserDataCallback freeData,
-                  EduDSErrCode *err)
+                  EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (queue && (*queue)) {
 
@@ -115,22 +121,22 @@ void FIFO_destroy(FIFOqueue **queue,
         *queue = NULL;
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
 
 void FIFO_traverse(FIFOqueue *queue,
                    UserDataCallback handleData,
-                   EduDSErrCode *err)
+                   EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (queue && handleData)
         for (FIFOnode *curr = queue->head; curr; curr = curr->next)
             handleData(curr->data);
     else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

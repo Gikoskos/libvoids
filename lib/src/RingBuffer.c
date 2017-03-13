@@ -1,7 +1,13 @@
-/***********************************************\
-*                  RingBuffer.c                 *
-*           George Koskeridis (C) 2017          *
-\***********************************************/
+ /********************
+ *  RingBuffer.c
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #include <stdlib.h>
 #include <stdint.h> //for SIZE_MAX
@@ -9,9 +15,9 @@
 
 
 RingBuffer *RingBuffer_init(size_t buff_size,
-                            EduDSErrCode *err)
+                            EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     RingBuffer *cBuffNew = NULL;
 
     if (buff_size) {
@@ -27,14 +33,14 @@ RingBuffer *RingBuffer_init(size_t buff_size,
             } else {
                 free(cBuffNew);
                 cBuffNew = NULL;
-                tmp_err = EduDS_MALLOC_FAIL;
+                tmp_err = EDS_MALLOC_FAIL;
             }
 
         } else
-            tmp_err = EduDS_MALLOC_FAIL;
+            tmp_err = EDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -43,9 +49,9 @@ RingBuffer *RingBuffer_init(size_t buff_size,
 
 void RingBuffer_resize(RingBuffer **cBuff,
                        size_t new_size,
-                       EduDSErrCode *err)
+                       EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (new_size) {
 
@@ -61,7 +67,7 @@ void RingBuffer_resize(RingBuffer **cBuff,
                         (*cBuff)->buff = tmp_buff;
                         (*cBuff)->size = new_size;
                     } else {
-                        tmp_err = EduDS_MALLOC_FAIL;
+                        tmp_err = EDS_MALLOC_FAIL;
                     }
                 }
 
@@ -70,19 +76,19 @@ void RingBuffer_resize(RingBuffer **cBuff,
             }
 
         } else
-            tmp_err = EduDS_INVALID_ARGS;
+            tmp_err = EDS_INVALID_ARGS;
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
 
 void RingBuffer_write(RingBuffer *cBuff,
                       void *pData,
-                      EduDSErrCode *err)
+                      EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (cBuff) {
 
@@ -96,15 +102,15 @@ void RingBuffer_write(RingBuffer *cBuff,
         if (cBuff->available < SIZE_MAX)
             cBuff->available++;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
 
 void *RingBuffer_read(RingBuffer *cBuff,
-                      EduDSErrCode *err)
+                      EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
     void *pData = NULL;
 
     if (cBuff) {
@@ -119,7 +125,7 @@ void *RingBuffer_read(RingBuffer *cBuff,
         }
 
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -128,9 +134,9 @@ void *RingBuffer_read(RingBuffer *cBuff,
 
 void RingBuffer_destroy(RingBuffer **cBuff,
                         UserDataCallback freeData,
-                        EduDSErrCode *err)
+                        EdsErrCode *err)
 {
-    EduDSErrCode tmp_err = EduDS_SUCCESS;
+    EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (cBuff) {
 
@@ -147,9 +153,9 @@ void RingBuffer_destroy(RingBuffer **cBuff,
             *cBuff = NULL;
 
         } else
-            tmp_err = EduDS_INVALID_ARGS;
+            tmp_err = EDS_INVALID_ARGS;
     } else
-        tmp_err = EduDS_INVALID_ARGS;
+        tmp_err = EDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

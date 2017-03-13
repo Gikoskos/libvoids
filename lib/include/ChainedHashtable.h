@@ -1,7 +1,13 @@
-/***********************************************\
-*               ChainedHashTable.h              *
-*           George Koskeridis (C) 2017          *
-\***********************************************/
+ /********************
+ *  ChainedHashTable.h
+ *
+ * This file is part of EduDS data structure library which is licensed under
+ * the 2-Clause BSD License
+ *
+ * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * All rights reserved.
+  ***********************************************************************************/
+
 
 #ifndef __EduDS_CHAINEDHASHTABLE_H
 #define __EduDS_CHAINEDHASHTABLE_H
@@ -26,27 +32,27 @@ typedef struct _ChainedHashtable {
 EduDS_API ChainedHashtable *ChainedHash_init(size_t size,
                                              UserCompareCallback KeyCmp,
                                              UserHashFuncCallback Hash,
-                                             EduDSErrCode *err);
+                                             EdsErrCode *err);
 
 EduDS_API DictListNode *ChainedHash_insert(ChainedHashtable *table,
                                            void *pData,
                                            void *pKey,
                                            size_t key_size,
-                                           EduDSErrCode *err);
+                                           EdsErrCode *err);
 
 EduDS_API KeyValuePair ChainedHash_delete(ChainedHashtable *table,
                                           void *pKey,
                                           size_t key_size,
-                                          EduDSErrCode *err);
+                                          EdsErrCode *err);
 
 EduDS_API DictListNode *ChainedHash_find(ChainedHashtable *table,
                                          void *pKey,
                                          size_t key_size,
-                                         EduDSErrCode *err);
+                                         EdsErrCode *err);
 
 EduDS_API void ChainedHash_destroy(ChainedHashtable **table,
                                    UserDataCallback freeData,
-                                   EduDSErrCode *err);
+                                   EdsErrCode *err);
 
 #ifdef __cplusplus
 }
