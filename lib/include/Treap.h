@@ -30,7 +30,7 @@ typedef struct _TreapNode {
 
 typedef struct _Treap {
     TreapNode *root;
-    EdsRandType rand_gen;
+    void *rand_gen_state; //opaque type to store the state for the PRNG
     HeapOrderType order;
     UserCompareCallback KeyCmp;
 } Treap;

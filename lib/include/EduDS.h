@@ -20,6 +20,7 @@
 #include "SentinelDoublyLinkedList.h"
 #include "CircularSinglyLinkedList.h"
 #include "CircularDoublyLinkedList.h"
+#include "DoubleEndedQueue.h"
 #include "RingBuffer.h"
 #include "AssociationList.h"
 #include "HashFunctions.h"

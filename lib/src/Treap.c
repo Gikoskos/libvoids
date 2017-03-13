@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include "Treap.h"
 
-#define isLeafNode(x) ( !((x)->right || (x)->left) )
 #define isLeftNode(x) ( (x) == (x)->parent->left )
 
 #define RotateRight(x, y) \
@@ -86,7 +85,7 @@ Treap *Treap_init(UserCompareCallback KeyCmp,
                 treap->KeyCmp = KeyCmp;
                 treap->order = order;
 
-                treap->rand_gen = RandomState_init(seed, &tmp_err);
+                treap->rand_gen_state = RandomState_init(seed, &tmp_err);
 
                 if (tmp_err != EDS_SUCCESS) {
                     free(treap);
@@ -124,7 +123,7 @@ TreapNode *Treap_insert(Treap *treap,
         if (new_node) {
 
             //generate a random priority
-            new_node->priority = RandomState_genUInt(treap->rand_gen, NULL);
+            new_node->priority = RandomState_genUInt(treap->rand_gen_state, NULL);
             new_node->item.pData = pData;
             new_node->item.pKey = pKey;
             new_node->right = new_node->left = new_node->parent = NULL;
@@ -486,7 +485,7 @@ void Treap_destroy(Treap **treap,
             }
         }
 
-        RandomState_destroy(&(*treap)->rand_gen, NULL);
+        RandomState_destroy(&(*treap)->rand_gen_state, NULL);
         free(*treap);
         *treap = NULL;
     } else
@@ -514,8 +513,7 @@ void in_orderTraversal(TreapNode *treapNode, UserDataCallback callback)
 {
     if (treapNode) {
         in_orderTraversal(treapNode->left, callback);
-        //callback((void *)&treapNode->item);
-        callback(treapNode);
+        callback((void *)&treapNode->item);
         in_orderTraversal(treapNode->right, callback);
     }
 }

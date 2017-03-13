@@ -48,7 +48,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Debug
 - [x] Circular buffer (ring buffer)
 - [x] FIFO
 - [x] Stack
-- [ ] Double ended queue (dequeue)
+- [x] Double ended queue (dequeue)
 - [x] Binary search tree (unbalanced)
 - [x] AVL tree
 - [x] Treap

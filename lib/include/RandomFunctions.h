@@ -23,16 +23,15 @@ extern "C" {
 //I keep the PRNG types and API as opaque as possible, so that if someone
 //wants to replace it with their own implementation they won't have to change
 //code in the data structures, just the implementations in RandomFunctions.c
-typedef void *EdsRandType;
 
 
-EduDS_API EdsRandType *RandomState_init(unsigned int seed, EdsErrCode *err);
+EduDS_API void *RandomState_init(unsigned int seed, EdsErrCode *err);
 
-EduDS_API unsigned int RandomState_genUInt(EdsRandType state, EdsErrCode *err);
+EduDS_API unsigned int RandomState_genUInt(void *state, EdsErrCode *err);
 
-EduDS_API int RandomState_genInt(EdsRandType state, EdsErrCode *err);
+EduDS_API int RandomState_genInt(void *state, EdsErrCode *err);
 
-EduDS_API void RandomState_destroy(EdsRandType *state, EdsErrCode *err);
+EduDS_API void RandomState_destroy(void **state, EdsErrCode *err);
 
 #ifdef __cplusplus
 }
