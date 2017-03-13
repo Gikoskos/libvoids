@@ -17,9 +17,6 @@
 #include "xxhash.h"
 
 
-#define EDUDS_SALT 8999 //using a prime number as seed for xxhash
-
-
 size_t HashCode(const void *pKey, size_t key_size)
 {
     return (size_t)XXH32(pKey, key_size, EDUDS_SALT);

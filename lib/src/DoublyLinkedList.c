@@ -215,7 +215,7 @@ DLListNode *DLList_find(DLListNode *dllHead,
                         EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
-    DLListNode *curr;
+    DLListNode *curr = NULL;
 
     if (dllHead && DataCmp)
         for (curr = dllHead; curr && DataCmp(curr->pData, pToFind); curr = curr->nxt);

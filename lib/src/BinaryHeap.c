@@ -381,7 +381,7 @@ void fix_pop_min(BinaryHeapNode *curr, UserCompareCallback DataCmp)
 BinaryHeapNode *breadth_first_get_last(BinaryHeap *bheap)
 {
     EdsErrCode err;
-    BinaryHeapNode *curr;
+    BinaryHeapNode *curr = NULL;
     FIFOqueue *levelFIFO = FIFO_init(&err);
 
     if (levelFIFO) {
