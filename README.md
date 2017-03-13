@@ -63,6 +63,8 @@ cmake .. -DCMAKE_BUILD_TYPE=Debug
 - [x] Hashing with linear probing and optional rehashing
 - [x] Hashing with quadratic probing and mandatory rehashing (in case load factor >= 0.5)
 
+more to come...
+
 ## Libs used
 
 C99 standard library
