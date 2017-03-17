@@ -31,14 +31,14 @@ int main(int argc, char *argv[])
     EdsErrCode err;
     Treap *treap;
 
-    EduDS_ERR_FATAL(treap = Treap_init(compareInts, MAX_ORDER_HEAP, 0, &err), err);
+    EduDS_ERR_FATAL(treap = Treap_init(compareInts, EDS_MAX_HEAP, 0, &err), err);
 
     printf("=== TESTING MAX HEAP ===\n");
     printf("=== INSERTIONS ===\n");
     for (size_t i = 0; i < sizeof arr / sizeof *arr; i++) {
         Treap_insert(treap, &arr[i], NULL, &err);
         printf("Inserted %d!\n", arr[i]);
-        Treap_traverse(treap, IN_ORDER, printIntData, NULL);
+        Treap_traverse(treap, EDS_IN_ORDER, printIntData, NULL);
         printf("\n");
     }
 
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
         if (z.pKey) {
             printf("removed %d from the treap\n", *(int*)z.pKey);
             printf("In-order traversal of the treap!\n");
-            Treap_traverse(treap, IN_ORDER, printIntData, NULL);
+            Treap_traverse(treap, EDS_IN_ORDER, printIntData, NULL);
             putchar('\n');
         }
     }
@@ -57,13 +57,13 @@ int main(int argc, char *argv[])
 
 
     printf("=== TESTING MIN HEAP ===\n");
-    treap->order = MIN_ORDER_HEAP;
+    treap->property = EDS_MIN_HEAP;
 
     printf("=== INSERTIONS ===\n");
     for (size_t i = 0; i < sizeof arr / sizeof *arr; i++) {
         Treap_insert(treap, &arr[i], NULL, &err);
         printf("Inserted %d!\n", arr[i]);
-        Treap_traverse(treap, IN_ORDER, printIntData, NULL);
+        Treap_traverse(treap, EDS_IN_ORDER, printIntData, NULL);
         printf("\n");
     }
 
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
         if (z.pKey) {
             printf("removed %d from the treap\n", *(int*)z.pKey);
             printf("In-order traversal of the treap!\n");
-            Treap_traverse(treap, IN_ORDER, printIntData, NULL);
+            Treap_traverse(treap, EDS_IN_ORDER, printIntData, NULL);
             putchar('\n');
         }
     }

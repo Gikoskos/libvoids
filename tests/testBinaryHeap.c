@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     EdsErrCode err;
     BinaryHeap *bheap;
 
-    EduDS_ERR_FATAL(bheap = BinaryHeap_init(compareInts, MAX_ORDER_HEAP, &err), err);
+    EduDS_ERR_FATAL(bheap = BinaryHeap_init(compareInts, EDS_MAX_HEAP, &err), err);
 
     printf("=== TESTING MAX HEAP ===\n");
     for (size_t i = 0; i < sizeof arr / sizeof *arr; i++) {
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
 
     printf("=== TESTING MIN HEAP ===\n");
-    bheap->order = MIN_ORDER_HEAP;
+    bheap->property = EDS_MIN_HEAP;
 
     for (size_t i = 0; i < sizeof arr / sizeof *arr; i++) {
         EduDS_ERR_FATAL(BinaryHeap_push(bheap, &arr[i], &err), err);

@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
         if (BSTree_insert(bst, (void*)new_data, (void*)new_key, NULL)) {
             printf("Node was successfully inserted!\n");
             printf("in-order traversal (the node numbers should be in ascending order):\n");
-            BSTree_traverse(bst, IN_ORDER, printIntData, NULL);
+            BSTree_traverse(bst, EDS_IN_ORDER, printIntData, NULL);
         } else {
             printf("Node insertion failed!\n\n");
             free(new_key);
@@ -66,19 +66,19 @@ int main(int argc, char *argv[])
     printf("\n----PRINTING BS TREE BEFORE STARTING TO DELETE ELEMENTS----\n");
     //testing traversals
     printf("in-order traversal (the node numbers should be in ascending order):\n");
-    BSTree_traverse(bst, IN_ORDER, printIntData, NULL);
+    BSTree_traverse(bst, EDS_IN_ORDER, printIntData, NULL);
 
     printf("\npre-order traversal:\n");
-    BSTree_traverse(bst, PRE_ORDER, printIntData, NULL);
+    BSTree_traverse(bst, EDS_PRE_ORDER, printIntData, NULL);
 
     printf("\npost-order traversal:\n");
-    BSTree_traverse(bst, POST_ORDER, printIntData, NULL);
+    BSTree_traverse(bst, EDS_POST_ORDER, printIntData, NULL);
 
     printf("\nbreadth-first traversal:\n");
-    BSTree_traverse(bst, BREADTH_FIRST, printIntData, NULL);
+    BSTree_traverse(bst, EDS_BREADTH_FIRST, printIntData, NULL);
 
     printf("\neuler traversal:\n");
-    BSTree_traverse(bst, EULER, printIntData, NULL);
+    BSTree_traverse(bst, EDS_EULER, printIntData, NULL);
 
     printf("\n----STARTING DELETIONS----\n");
     for (int i = 80; i >= 30; i--) {
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
             free(deleted.pKey);
             free(deleted.pData);
             printf("in-order traversal (the node numbers should be in ascending order):\n");
-            BSTree_traverse(bst, IN_ORDER, printIntData, NULL);
+            BSTree_traverse(bst, EDS_IN_ORDER, printIntData, NULL);
         }
     }
 

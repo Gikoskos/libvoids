@@ -649,20 +649,20 @@ void RBTree_traverse(RedBlackTree *rbt,
         rbt->nil->item.pKey = NULL;
 
         switch (traversal) {
-        case PRE_ORDER:
+        case EDS_PRE_ORDER:
             pre_orderTraversal(rbt->root, callback);
             break;
-        case IN_ORDER:
+        case EDS_IN_ORDER:
             in_orderTraversal(rbt->root, callback);
             break;
-        case POST_ORDER:
+        case EDS_POST_ORDER:
             post_orderTraversal(rbt->root, callback);
             break;
-        case BREADTH_FIRST:
+        case EDS_BREADTH_FIRST:
             if (!breadth_firstTraversal(rbt->root, callback))
                 tmp_err = EDS_MALLOC_FAIL;
             break;
-        case EULER:
+        case EDS_EULER:
             eulerTraversal(rbt->root, callback);
             break;
         default:

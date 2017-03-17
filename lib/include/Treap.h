@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 #include "Common.h"
-#include "BinaryHeap.h" //for HeapOrderType
+#include "BinaryHeap.h" //for HeapPropertyType
 #include "RandomFunctions.h"
 
 
@@ -31,13 +31,13 @@ typedef struct _TreapNode {
 typedef struct _Treap {
     TreapNode *root;
     void *rand_gen_state; //opaque type to store the state for the PRNG
-    HeapOrderType order;
+    HeapPropertyType property;
     UserCompareCallback KeyCmp;
 } Treap;
 
 
 EduDS_API Treap *Treap_init(UserCompareCallback KeyCmp,
-                            HeapOrderType order,
+                            HeapPropertyType property,
                             unsigned int seed,
                             EdsErrCode *err);
 

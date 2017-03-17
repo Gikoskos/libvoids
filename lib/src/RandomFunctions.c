@@ -17,7 +17,8 @@
 #include "SFMT.h"
 
 
-void *RandomState_init(unsigned int seed, EdsErrCode *err)
+void *RandomState_init(unsigned int seed,
+                       EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
     sfmt_t *sfmt_state;
@@ -34,7 +35,8 @@ void *RandomState_init(unsigned int seed, EdsErrCode *err)
     return (void*)sfmt_state;
 }
 
-unsigned int RandomState_genUInt(void *state, EdsErrCode *err)
+unsigned int RandomState_genUInt(void *state,
+                                 EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
     unsigned int ret = 0;
@@ -50,7 +52,8 @@ unsigned int RandomState_genUInt(void *state, EdsErrCode *err)
     return ret;
 }
 
-int RandomState_genInt(void *state, EdsErrCode *err)
+int RandomState_genInt(void *state,
+                       EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
     int ret = 0;
@@ -66,7 +69,8 @@ int RandomState_genInt(void *state, EdsErrCode *err)
     return ret;
 }
 
-void RandomState_destroy(void **state, EdsErrCode *err)
+void RandomState_destroy(void **state,
+                         EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
     sfmt_t **sfmt_state = (state) ? (sfmt_t**)state : NULL;

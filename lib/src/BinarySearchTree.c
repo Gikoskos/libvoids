@@ -262,20 +262,20 @@ void BSTree_traverse(BSTree *bst,
 
     if (bst && bst->root && callback) {
         switch (traversal) {
-        case PRE_ORDER:
+        case EDS_PRE_ORDER:
             pre_orderTraversal(bst->root, callback);
             break;
-        case IN_ORDER:
+        case EDS_IN_ORDER:
             in_orderTraversal(bst->root, callback);
             break;
-        case POST_ORDER:
+        case EDS_POST_ORDER:
             post_orderTraversal(bst->root, callback);
             break;
-        case BREADTH_FIRST:
+        case EDS_BREADTH_FIRST:
             if (!breadth_firstTraversal(bst->root, callback))
                 tmp_err = EDS_MALLOC_FAIL;
             break;
-        case EULER:
+        case EDS_EULER:
             eulerTraversal(bst->root, callback);
             break;
         default:

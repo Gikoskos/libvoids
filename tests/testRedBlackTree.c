@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
         if (RBTree_insert(rbt, (void*)new_key, (void*)new_data, NULL)) {
             printf("Node was successfully inserted!\n");
             printf("in-order traversal (the node numbers should be in ascending order):\n");
-            RBTree_traverse(rbt, IN_ORDER, printIntData, NULL);
+            RBTree_traverse(rbt, EDS_IN_ORDER, printIntData, NULL);
             putchar('\n');
 
         } else {
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
     
     printf("\n----PRINTING RB TREE BEFORE STARTING TO DELETE ELEMENTS----\n");
     printf("in-order traversal (the node numbers should be in ascending order):\n");
-    RBTree_traverse(rbt, IN_ORDER, printIntData, NULL);
+    RBTree_traverse(rbt, EDS_IN_ORDER, printIntData, NULL);
 
     printf("\n----STARTING DELETIONS----\n");
     for (int i = 80; i >= 30; i--) {
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
             free(deleted.pKey);
             free(deleted.pData);
             printf("in-order traversal (the node numbers should be in ascending order):\n");
-            RBTree_traverse(rbt, IN_ORDER, printIntData, NULL);
+            RBTree_traverse(rbt, EDS_IN_ORDER, printIntData, NULL);
         }
     }
 

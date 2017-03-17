@@ -19,9 +19,9 @@ extern "C" {
 
 #include "Common.h"
 
-typedef enum _HeapOrderType {
-    MAX_ORDER_HEAP, MIN_ORDER_HEAP
-} HeapOrderType;
+typedef enum _HeapPropertyType {
+    EDS_MAX_HEAP, EDS_MIN_HEAP
+} HeapPropertyType;
 
 typedef struct _BinaryHeapNode {
     void *pData;
@@ -31,12 +31,12 @@ typedef struct _BinaryHeapNode {
 typedef struct _BinaryHeap {
     BinaryHeapNode *root;
     UserCompareCallback DataCmp;
-    HeapOrderType order;
+    HeapPropertyType property;
 } BinaryHeap;
 
 
 EduDS_API BinaryHeap *BinaryHeap_init(UserCompareCallback DataCmp,
-                                      HeapOrderType order,
+                                      HeapPropertyType property,
                                       EdsErrCode *err);
 
 EduDS_API BinaryHeapNode *BinaryHeap_push(BinaryHeap *bheap,

@@ -65,7 +65,7 @@ static void fix_min_order(Treap *treap, TreapNode *curr);
 
 
 Treap *Treap_init(UserCompareCallback KeyCmp,
-                  HeapOrderType order,
+                  HeapPropertyType property,
                   unsigned int seed,
                   EdsErrCode *err)
 {
@@ -74,16 +74,16 @@ Treap *Treap_init(UserCompareCallback KeyCmp,
 
     if (KeyCmp) {
 
-        switch (order) {
-        case MAX_ORDER_HEAP:
-        case MIN_ORDER_HEAP:
+        switch (property) {
+        case EDS_MAX_HEAP:
+        case EDS_MIN_HEAP:
             treap = malloc(sizeof(Treap));
 
             if (treap) {
 
                 treap->root = NULL;
                 treap->KeyCmp = KeyCmp;
-                treap->order = order;
+                treap->property = property;
 
                 treap->rand_gen_state = RandomState_init(seed, &tmp_err);
 
@@ -170,14 +170,14 @@ TreapNode *Treap_insert(Treap *treap,
 
                 }
 
-                //we fix the order of the tree only if the new node was successfully inserted
+                //we fix the property of the tree only if the new node was successfully inserted
                 if (new_node) {
 
-                    switch (treap->order) {
-                    case MAX_ORDER_HEAP:
+                    switch (treap->property) {
+                    case EDS_MAX_HEAP:
                         fix_max_order(treap, new_node);
                         break;
-                    case MIN_ORDER_HEAP:
+                    case EDS_MIN_HEAP:
                         fix_min_order(treap, new_node);
                         break;
                     default:
@@ -312,11 +312,11 @@ KeyValuePair Treap_deleteNode(Treap *treap,
         item = treapNode->item;
 
         if (reorder) {
-            switch (treap->order) {
-            case MAX_ORDER_HEAP:
+            switch (treap->property) {
+            case EDS_MAX_HEAP:
                 fix_max_order(treap, treapNode->parent);
                 break;
-            case MIN_ORDER_HEAP:
+            case EDS_MIN_HEAP:
                 fix_min_order(treap, treapNode->parent);
                 break;
             default:
@@ -413,20 +413,20 @@ void Treap_traverse(Treap *treap,
 
     if (callback && treap && treap->root) {
         switch (traversal) {
-        case PRE_ORDER:
+        case EDS_PRE_ORDER:
             pre_orderTraversal(treap->root, callback);
             break;
-        case IN_ORDER:
+        case EDS_IN_ORDER:
             in_orderTraversal(treap->root, callback);
             break;
-        case POST_ORDER:
+        case EDS_POST_ORDER:
             post_orderTraversal(treap->root, callback);
             break;
-        case BREADTH_FIRST:
+        case EDS_BREADTH_FIRST:
             if (!breadth_firstTraversal(treap->root, callback))
                 tmp_err = EDS_MALLOC_FAIL;
             break;
-        case EULER:
+        case EDS_EULER:
             eulerTraversal(treap->root, callback);
             break;
         default:
@@ -449,7 +449,7 @@ void Treap_destroy(Treap **treap,
 
         TreapNode *curr = (*treap)->root, *to_delete;
 
-        //basically my iterative version of post-order
+        //basically my iterative version of post-property
         while (curr) {
             if (curr->left) {
 

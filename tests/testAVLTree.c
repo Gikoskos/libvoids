@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 
     printf("\n----PRINTING AVL TREE BEFORE STARTING TO DELETE ELEMENTS----\n");
     printf("in-order traversal (the node numbers should be in ascending order):\n");
-    AVLTree_traverse(avlt, IN_ORDER, printIntData, NULL);
+    AVLTree_traverse(avlt, EDS_IN_ORDER, printIntData, NULL);
 
     printf("\n----STARTING DELETIONS----\n");
     for (int i = 80; i >= 30; i--) {
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
             free(deleted.pKey);
             free(deleted.pData);
             printf("in-order traversal (the node numbers should be in ascending order):\n");
-            AVLTree_traverse(avlt, IN_ORDER, printIntData, NULL);
+            AVLTree_traverse(avlt, EDS_IN_ORDER, printIntData, NULL);
         } else {
             printf("Node deletion of key %d failed with error \"%s\"!\n\n", i, EdsErrString(err));
         }

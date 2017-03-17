@@ -52,11 +52,11 @@ typedef int (*UserCompareCallback)(const void *pKey1, const void *pKey2);
 typedef size_t (*UserHashFuncCallback)(size_t key_hash, size_t array_len);
 
 typedef enum _TreeTraversalMethod {
-    PRE_ORDER,
-    IN_ORDER,
-    POST_ORDER,
-    BREADTH_FIRST, //level-order
-    EULER
+    EDS_PRE_ORDER,
+    EDS_IN_ORDER,
+    EDS_POST_ORDER,
+    EDS_BREADTH_FIRST, //level-order
+    EDS_EULER
 } TreeTraversalMethod;
 
 //Key-value pair type definition

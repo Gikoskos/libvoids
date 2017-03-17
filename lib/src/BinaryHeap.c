@@ -25,7 +25,7 @@ static void fix_pop_min(BinaryHeapNode *curr, UserCompareCallback DataCmp);
 
 
 BinaryHeap *BinaryHeap_init(UserCompareCallback DataCmp,
-                            HeapOrderType order,
+                            HeapPropertyType property,
                             EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -33,13 +33,13 @@ BinaryHeap *BinaryHeap_init(UserCompareCallback DataCmp,
 
     if (DataCmp) {
 
-        switch (order) {
-        case MAX_ORDER_HEAP:
-        case MIN_ORDER_HEAP:
+        switch (property) {
+        case EDS_MAX_HEAP:
+        case EDS_MIN_HEAP:
             bheap = malloc(sizeof(BinaryHeap));
 
             if (bheap) {
-                bheap->order = order;
+                bheap->property = property;
                 bheap->root = NULL;
                 bheap->DataCmp = DataCmp;
             } else
@@ -81,11 +81,11 @@ BinaryHeapNode *BinaryHeap_push(BinaryHeap *bheap,
 
                 if (breadth_first_insert(bheap, new_node)) {
 
-                    switch (bheap->order) {
-                    case MAX_ORDER_HEAP:
+                    switch (bheap->property) {
+                    case EDS_MAX_HEAP:
                         fix_push_max(new_node, bheap->DataCmp);
                         break;
-                    case MIN_ORDER_HEAP:
+                    case EDS_MIN_HEAP:
                         fix_push_min(new_node, bheap->DataCmp);
                         break;
                     default:
@@ -230,12 +230,12 @@ void *BinaryHeap_pop(BinaryHeap *bheap,
 
                 free(last_node);
 
-                //restore the order of the heap
-                switch (bheap->order) {
-                case MAX_ORDER_HEAP:
+                //restore the property of the heap
+                switch (bheap->property) {
+                case EDS_MAX_HEAP:
                     fix_pop_max(bheap->root, bheap->DataCmp);
                     break;
-                case MIN_ORDER_HEAP:
+                case EDS_MIN_HEAP:
                     fix_pop_min(bheap->root, bheap->DataCmp);
                     break;
                 default:
@@ -274,7 +274,7 @@ void fix_pop_max(BinaryHeapNode *curr, UserCompareCallback DataCmp)
                 //compare the current node with the left child
                 cmp_res = DataCmp(curr->left->pData, curr->pData);
 
-                //if the child is bigger than the father, we swap the nodes to maintain max heap order
+                //if the child is bigger than the father, we swap the nodes to maintain max heap property
                 if (cmp_res > 0) {
                     pTmp = curr->pData;
                     curr->pData = curr->left->pData;
@@ -288,7 +288,7 @@ void fix_pop_max(BinaryHeapNode *curr, UserCompareCallback DataCmp)
                 //compare the current node with the left child (the bigger one of the two)
                 cmp_res = DataCmp(curr->right->pData, curr->pData);
 
-                //if the child is bigger than the father, we swap the nodes to maintain max heap order
+                //if the child is bigger than the father, we swap the nodes to maintain max heap property
                 if (cmp_res > 0) {
                     pTmp = curr->pData;
                     curr->pData = curr->right->pData;
@@ -335,7 +335,7 @@ void fix_pop_min(BinaryHeapNode *curr, UserCompareCallback DataCmp)
                 //compare the current node with the left child
                 cmp_res = DataCmp(curr->left->pData, curr->pData);
 
-                //if the child is smaller than the father, we swap the nodes to maintain max heap order
+                //if the child is smaller than the father, we swap the nodes to maintain max heap property
                 if (cmp_res < 0) {
                     pTmp = curr->pData;
                     curr->pData = curr->left->pData;
@@ -349,7 +349,7 @@ void fix_pop_min(BinaryHeapNode *curr, UserCompareCallback DataCmp)
                 //compare the current node with the left child (the smaller one of the two)
                 cmp_res = DataCmp(curr->right->pData, curr->pData);
 
-                //if the child is smaller than the father, we swap the nodes to maintain max heap order
+                //if the child is smaller than the father, we swap the nodes to maintain max heap property
                 if (cmp_res < 0) {
                     pTmp = curr->pData;
                     curr->pData = curr->right->pData;
@@ -435,11 +435,11 @@ void *BinaryHeap_replace(BinaryHeap *bheap,
         pDeleted = bheap->root->pData;
         bheap->root->pData = pData;
         
-        switch (bheap->order) {
-        case MAX_ORDER_HEAP:
+        switch (bheap->property) {
+        case EDS_MAX_HEAP:
             fix_pop_max(bheap->root, bheap->DataCmp);
             break;
-        case MIN_ORDER_HEAP:
+        case EDS_MIN_HEAP:
             fix_pop_min(bheap->root, bheap->DataCmp);
             break;
         default:
@@ -465,7 +465,7 @@ void BinaryHeap_destroy(BinaryHeap **bheap,
 
         BinaryHeapNode *curr = (*bheap)->root, *to_delete;
 
-        //basically my iterative version of post-order
+        //basically my iterative version of post-property
         while (curr) {
             if (curr->left) {
 
