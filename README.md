@@ -53,10 +53,11 @@ cmake .. -DCMAKE_BUILD_TYPE=Debug
 - [x] AVL tree
 - [x] Treap
 - [ ] Trie
-- [ ] Heap
 - [ ] (a,b) tree
 - [x] Binary heap
+- [x] Array heap
 - [ ] Binomial heap
+- [ ] Fibonacci heap
 - [ ] B-tree
 - [x] Red black tree
 - [x] Association List

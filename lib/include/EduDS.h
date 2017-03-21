@@ -34,5 +34,6 @@
 #include "FIFOqueue.h"
 #include "LIFOstack.h"
 #include "BinaryHeap.h"
+#include "ArrayHeap.h"
 
 #endif //_EduDS_SINGLE_INCLUDE_HEADER__

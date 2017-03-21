@@ -41,11 +41,7 @@ EduDS_API void *ArrayHeap_push(ArrayHeap *arrheap,
 EduDS_API void *ArrayHeap_pop(ArrayHeap *arrheap,
                               EdsErrCode *err);
 
-EduDS_API void *ArrayHeap_replace(ArrayHeap *arrheap,
-                                  void *pData,
-                                  EdsErrCode *err);
-
-EduDS_API void ArrayHeap_destroy(ArrayHeap *arrheap,
+EduDS_API void ArrayHeap_destroy(ArrayHeap **arrheap,
                                  UserDataCallback freeData,
                                  EdsErrCode *err);
 

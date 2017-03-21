@@ -3,6 +3,19 @@
 #include <time.h>
 #include <EduDS.h>
 
+#define EduDS_ERR_FATAL(func, err) \
+    func; \
+    if (err != EDS_SUCCESS) { \
+        printf("Function call \"%s\" failed with error \"%s\"\n", #func, EdsErrString(err)); \
+        return 1; \
+    }
+
+#define EduDS_ERR_NON_FATAL(func, err) \
+    func; \
+    if (err != EDS_SUCCESS) { \
+        printf("Function call \"%s\" failed with error \"%s\"\n", #func, EdsErrString(err)); \
+    }
+
 
 int *newRandInt(int range)
 {
@@ -22,97 +35,99 @@ int compareInts(const void *key1, const void *key2)
     return *(int*)key1 - *(int*)key2;
 }
 
-void freeKeyValuePair(void *param)
+void printInt(void *param)
 {
-    KeyValuePair *item = (KeyValuePair *)param;
+    int x = *(int*)param;
 
-    free(item->pKey);
-    free(item->pData);
+    printf("(%d) ", x);
 }
 
-void printListItem(void *param)
+/*EduDS_API ArrayHeap *ArrayHeap_init(UserCompareCallback DataCmp,
+                                    HeapPropertyType property,
+                                    size_t size,
+                                    EdsErrCode *err);
+
+EduDS_API void *ArrayHeap_push(ArrayHeap *arrheap,
+                               void *pData,
+                               EdsErrCode *err);
+
+EduDS_API void *ArrayHeap_pop(ArrayHeap *arrheap,
+                              EdsErrCode *err);
+
+EduDS_API void ArrayHeap_destroy(ArrayHeap **arrheap,
+                                 UserDataCallback freeData,
+                                 EdsErrCode *err);*/
+void printArrayHeap(ArrayHeap *heap, UserDataCallback printData)
 {
-    KeyValuePair *item = (KeyValuePair *)param;
-
-    printf("->(key=%d, data=%d) ", *(int*)item->pKey, *(int*)item->pData);
-}
-
-void printHashtable(LinHashtable *table)
-{
-    for (unsigned int i = 0; i < table->size; i++) {
-
-        if (table->array[i].state == 1) {
-            printf("[%u] = (key=%d, data=%d) ", i, *(int*)table->array[i].item.pKey, *(int*)table->array[i].item.pData);
-        } else {
-            if (table->array[i].state == 2) {
-                printf("[%u] = (key=%d, data=%d) (DELETED)", i, *(int*)table->array[i].item.pKey, *(int*)table->array[i].item.pData);
-            } else {
-                printf("[%u] = (EMPTY) ", i);
-            }
+    if (printData) {
+        for (size_t i = 0; i < heap->idx; i++) {
+            printData(heap->array[i]);
         }
-
-        putchar('\n');
+        printf("\n");
     }
 }
 
 int main(int argc, char *argv[])
 {
-    LinHashtable *table = LinHash_init(8, compareInts, NULL, 1, NULL);
+    EdsErrCode err;
+    ArrayHeap *heap;
+
+    EduDS_ERR_FATAL(heap = ArrayHeap_init(compareInts, EDS_MAX_HEAP, 13, &err), err);
 
     srand(time(NULL));
 
-    printf("!! STARTING INSERTIONS !!");
-    for (int i = 0; i < 5; i++) {
-        int *new_data = newRandInt(0);
-        int *new_key = newRandInt(10);
+    printf("===PUSHING DATA TO THE HEAP===\n");
+    for (int i = 0; i < 20; i++) {
+        int *s = newRandInt(50);
 
-        if (!LinHash_insert(table, (void *)new_data, (void *)new_key, sizeof(*new_key), freeKeyValuePair, NULL)) {
-            printf("\nFailed inserting data %d with key %d\n", *new_data, *new_key);
-            free(new_data);
-            free(new_key);
-        } else {
-            printf("\n==== Printing linear hashtable after inserting node (key=%d, data= %d) ====\n", *new_key, *new_data);
-            printHashtable(table);
+        printf("\nTrying to push %d to the heap\n", *s);
+        EduDS_ERR_NON_FATAL(ArrayHeap_push(heap, (void*)s, &err), err);
+        if (err != EDS_SUCCESS)
+            free(s);
+        else
+            printArrayHeap(heap, printInt);
+    }
+
+    printf("\n\n===POPPING DATA FROM THE HEAP===\n");
+    for (int i = 0; i < 20; i++) {
+        int *s;
+
+        EduDS_ERR_NON_FATAL(s = ArrayHeap_pop(heap, &err), err);
+        if (s) {
+            printf("\nPopped %d!\n", *s);
+            free(s);
+            printArrayHeap(heap, printInt);
         }
     }
 
-    printf("\n\n!! STARTING DELETIONS !!");
-    for (int i = 1; i <= 4; i++) {
-        KeyValuePair item;
+    printf("\n===Switching heap order to minimum===\n");
+    heap->property = EDS_MIN_HEAP;
 
-        item = LinHash_delete(table, &i, sizeof i, NULL);
+    printf("===PUSHING DATA TO THE HEAP===\n");
+    for (int i = 0; i < 20; i++) {
+        int *s = newRandInt(50);
 
-        if (item.pKey) {
-            printf("\n==== Printing linear hashtable after deleting node (key=%d, data= %d) ====\n", *(int*)item.pKey, *(int*)item.pData);
-            printHashtable(table);
+        printf("\nTrying to push %d to the heap\n", *s);
+        EduDS_ERR_NON_FATAL(ArrayHeap_push(heap, (void*)s, &err), err);
+        if (err != EDS_SUCCESS)
+            free(s);
+        else
+            printArrayHeap(heap, printInt);
+    }
+
+    printf("\n\n===POPPING DATA FROM THE HEAP===\n");
+    for (int i = 0; i < 20; i++) {
+        int *s;
+
+        EduDS_ERR_NON_FATAL(s = ArrayHeap_pop(heap, &err), err);
+        if (s) {
+            printf("\nPopped %d!\n", *s);
+            free(s);
+            printArrayHeap(heap, printInt);
         }
     }
 
-    printf("\n\n!! STARTING INSERTIONS !!");
-    for (int i = 0; i < 4; i++) {
-        int *new_data = newRandInt(0);
-        int *new_key = newRandInt(10);
 
-        if (!LinHash_insert(table, (void *)new_data, (void *)new_key, sizeof(*new_key), freeKeyValuePair, NULL)) {
-            printf("\nFailed inserting data %d with key %d\n", *new_data, *new_key);
-            free(new_data);
-            free(new_key);
-        } else {
-            printf("\n==== Printing linear hashtable after inserting node (key=%d, data= %d) ====\n", *new_key, *new_data);
-            printHashtable(table);
-        }
-    }
-
-    printf("\n\n!! TESTING FIND !!");
-    for (int i = 1; i <= 10; i++) {
-
-        if (!LinHash_find(table, (void *)&i, sizeof(i), NULL)) {
-            printf("\nFind failed on key %d\n", i);
-        } else {
-            printf("\nFind was successful on key %d\n", i);
-        }
-    }
-
-    LinHash_destroy(&table, freeKeyValuePair, NULL);
+    EduDS_ERR_FATAL(ArrayHeap_destroy(&heap, free, &err), err);
     return 0;
 }

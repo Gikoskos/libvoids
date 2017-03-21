@@ -13,7 +13,7 @@
 #include "BinomialHeap.h"
 
 
-
+/*
 BinomialHeap *BinomialHeap_init(UserCompareCallback KeyCmp,
                                 HeapPropertyType property,
                                 EdsErrCode *err)
@@ -188,3 +188,4 @@ void BinomialHeap_destroy(BinomialHeap **binheap,
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
 }
+*/
