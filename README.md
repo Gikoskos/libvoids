@@ -56,7 +56,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Debug
 - [ ] (a,b) tree
 - [x] Binary heap
 - [x] Array heap
-- [ ] Binomial heap
+- [x] Binomial heap
 - [ ] Fibonacci heap
 - [ ] B-tree
 - [x] Red black tree

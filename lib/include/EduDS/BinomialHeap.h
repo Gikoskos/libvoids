@@ -49,10 +49,10 @@ EduDS_API KeyValuePair BinomialHeap_pop(BinomialHeap *binheap,
 EduDS_API KeyValuePair BinomialHeap_getTop(BinomialHeap *binheap,
                                            EdsErrCode *err);
 
-EduDS_API KeyValuePair BinomialHeap_replaceKey(BinomialHeap *binheap,
-                                               BinomialTree *tree,
-                                               void *pKey,
-                                               EdsErrCode *err);
+EduDS_API void *BinomialHeap_replaceKey(BinomialHeap *binheap,
+                                        BinomialTree *tree,
+                                        void *pNewKey,
+                                        EdsErrCode *err);
 
 EduDS_API void BinomialHeap_destroy(BinomialHeap **binheap,
                                     UserDataCallback freeData,
