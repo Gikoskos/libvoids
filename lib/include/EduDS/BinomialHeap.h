@@ -38,10 +38,10 @@ EduDS_API BinomialHeap *BinomialHeap_init(UserCompareCallback KeyCmp,
                                           HeapPropertyType property,
                                           EdsErrCode *err);
 
-EduDS_API BinomialTree *BinomialHeap_insert(BinomialHeap *binheap,
-                                            void *pData,
-                                            void *pKey,
-                                            EdsErrCode *err);
+EduDS_API BinomialTree *BinomialHeap_push(BinomialHeap *binheap,
+                                          void *pData,
+                                          void *pKey,
+                                          EdsErrCode *err);
 
 EduDS_API KeyValuePair BinomialHeap_pop(BinomialHeap *binheap,
                                         EdsErrCode *err);
