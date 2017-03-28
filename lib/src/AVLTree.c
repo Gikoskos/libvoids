@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "AVLTree.h"
 
 #define isLeafNode(x) ( !((x)->right || (x)->left) )
@@ -73,7 +73,7 @@ AVLTree *AVLTree_init(UserCompareCallback KeyCmp,
     AVLTree *avlt = NULL;
 
     if (KeyCmp) {
-        avlt = malloc(sizeof(AVLTree));
+        avlt = EdsMalloc(sizeof(AVLTree));
 
         if (avlt) {
             avlt->root = NULL;
@@ -98,7 +98,7 @@ AVLTreeNode *AVLTree_insert(AVLTree *avlt,
 
     if (avlt && pKey) {
 
-        new_node = malloc(sizeof(AVLTreeNode));
+        new_node = EdsMalloc(sizeof(AVLTreeNode));
 
         if (new_node) {
 
@@ -141,7 +141,7 @@ AVLTreeNode *AVLTree_insert(AVLTree *avlt,
                         }
 
                     } else { //if there's another node with the same key already on the tree
-                        free(new_node); //return without doing anything
+                        EdsFree(new_node); //return without doing anything
                         parent = new_node = NULL; //nullify the parent so that the rebalancing call below won't do anything
                         tmp_err = EDS_KEY_EXISTS;
                         break;
@@ -372,7 +372,7 @@ KeyValuePair AVLTree_deleteNode(AVLTree *avlt,
 
         //delete the node because we don't need it anymore
         //and no other nodes point to it
-        free(avltToDelete);
+        EdsFree(avltToDelete);
 
         rebalance(&avlt->root, parent);
     } else
@@ -487,7 +487,7 @@ void AVLTree_traverse(AVLTree *avlt,
 }
 
 void AVLTree_destroy(AVLTree **avlt,
-                     UserDataCallback freeData,
+                     UserDataCallback EdsFreeData,
                      EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -513,26 +513,26 @@ void AVLTree_destroy(AVLTree **avlt,
                 //we make curr the parent
                 curr = curr->parent;
 
-                if (freeData)
-                    freeData((void *)&to_delete->item);
+                if (EdsFreeData)
+                    EdsFreeData((void *)&to_delete->item);
 
                 if (curr) {
 
                     if (curr->right == to_delete) {
-                        free(curr->right);
+                        EdsFree(curr->right);
                         curr->right = NULL;
                     } else {
-                        free(curr->left);
+                        EdsFree(curr->left);
                         curr->left = NULL;
                     }
 
                 } else { //if curr is NULL, it means that to_delete holds the root node
-                    free(to_delete);
+                    EdsFree(to_delete);
                 }
             }
         }
 
-        free(*avlt);
+        EdsFree(*avlt);
         *avlt = NULL;
     } else
         tmp_err = EDS_INVALID_ARGS;

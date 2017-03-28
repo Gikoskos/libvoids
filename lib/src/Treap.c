@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "Treap.h"
 
 #define isLeftNode(x) ( (x) == (x)->parent->left )
@@ -77,7 +77,7 @@ Treap *Treap_init(UserCompareCallback KeyCmp,
         switch (property) {
         case EDS_MAX_HEAP:
         case EDS_MIN_HEAP:
-            treap = malloc(sizeof(Treap));
+            treap = EdsMalloc(sizeof(Treap));
 
             if (treap) {
 
@@ -88,7 +88,7 @@ Treap *Treap_init(UserCompareCallback KeyCmp,
                 treap->rand_gen_state = RandomState_init(seed, &tmp_err);
 
                 if (tmp_err != EDS_SUCCESS) {
-                    free(treap);
+                    EdsFree(treap);
                     tmp_err = EDS_MALLOC_FAIL;
                 }
 
@@ -118,7 +118,7 @@ TreapNode *Treap_insert(Treap *treap,
 
     if (treap && pKey) {
 
-        new_node = malloc(sizeof(TreapNode));
+        new_node = EdsMalloc(sizeof(TreapNode));
 
         if (new_node) {
 
@@ -162,7 +162,7 @@ TreapNode *Treap_insert(Treap *treap,
                         }
 
                     } else { //if there's another node with the same key already on the tree
-                        free(new_node); //return without doing anything
+                        EdsFree(new_node); //return without doing anything
                         parent = new_node = NULL;
                         tmp_err = EDS_KEY_EXISTS;
                         break;
@@ -327,7 +327,7 @@ KeyValuePair Treap_deleteNode(Treap *treap,
 
         //delete the node because we don't need it anymore
         //and no other nodes point to it
-        free(treapNode);
+        EdsFree(treapNode);
 
     } else
         tmp_err = EDS_INVALID_ARGS;
@@ -440,7 +440,7 @@ void Treap_traverse(Treap *treap,
 }
 
 void Treap_destroy(Treap **treap,
-                   UserDataCallback freeData,
+                   UserDataCallback EdsFreeData,
                    EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -466,27 +466,27 @@ void Treap_destroy(Treap **treap,
                 //we make curr the parent
                 curr = curr->parent;
 
-                if (freeData)
-                    freeData((void *)&to_delete->item);
+                if (EdsFreeData)
+                    EdsFreeData((void *)&to_delete->item);
 
                 if (curr) {
 
                     if (curr->right == to_delete) {
-                        free(curr->right);
+                        EdsFree(curr->right);
                         curr->right = NULL;
                     } else {
-                        free(curr->left);
+                        EdsFree(curr->left);
                         curr->left = NULL;
                     }
 
                 } else { //if curr is NULL, it means that to_delete holds the root node
-                    free(to_delete);
+                    EdsFree(to_delete);
                 }
             }
         }
 
         RandomState_destroy(&(*treap)->rand_gen_state, NULL);
-        free(*treap);
+        EdsFree(*treap);
         *treap = NULL;
     } else
         tmp_err = EDS_INVALID_ARGS;

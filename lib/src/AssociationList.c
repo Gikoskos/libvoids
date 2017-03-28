@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "AssociationList.h"
 
 
@@ -26,7 +26,7 @@ DictListNode *DictList_insert(DictListNode **dictListHead,
 
         //insert the new node ONLY if a node with the same key doesn't exist already in the list
         if (!DictList_findByKey(*dictListHead, pKey, KeyCmp, NULL)) {
-            new_node = malloc(sizeof(DictListNode));
+            new_node = EdsMalloc(sizeof(DictListNode));
 
             if (new_node) {
 
@@ -59,7 +59,7 @@ DictListNode *DictList_append(DictListNode **dictListHead,
 
     if (dictListHead && pKey && KeyCmp) {
 
-        new_node = malloc(sizeof(DictListNode));
+        new_node = EdsMalloc(sizeof(DictListNode));
 
         if (new_node) {
 
@@ -74,7 +74,7 @@ DictListNode *DictList_append(DictListNode **dictListHead,
 
                 for (curr = *dictListHead; curr->nxt; curr = curr->nxt)
                     if (!KeyCmp(curr->item.pKey, pKey)) { //if a node with the same key, already exists on the list
-                        free(new_node);                  //we don't add it
+                        EdsFree(new_node);                  //we don't add it
                         new_node = NULL;
                         tmp_err = EDS_KEY_EXISTS;
                         break;
@@ -101,7 +101,7 @@ DictListNode *DictList_insertAfter(DictListNode *dictListPrev,
     DictListNode *new_node = NULL;
 
     if (dictListPrev && pKey) {
-        new_node = malloc(sizeof(DictListNode));
+        new_node = EdsMalloc(sizeof(DictListNode));
 
         if (new_node) {
 
@@ -144,7 +144,7 @@ KeyValuePair DictList_deleteByKey(DictListNode **dictListHead,
                 *dictListHead = curr->nxt;
             }
 
-            free(curr);
+            EdsFree(curr);
             tmp_err = EDS_SUCCESS;
         }
     } else
@@ -190,7 +190,7 @@ void DictList_traverse(DictListNode *dictListHead,
 }
 
 void DictList_destroy(DictListNode **dictListHead,
-                      UserDataCallback freeData,
+                      UserDataCallback EdsFreeData,
                       EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -199,12 +199,12 @@ void DictList_destroy(DictListNode **dictListHead,
         DictListNode *curr, *tmp;
 
         for (curr = *dictListHead; curr;) {
-            if (freeData)
-                freeData((void *)&curr->item);
+            if (EdsFreeData)
+                EdsFreeData((void *)&curr->item);
 
             tmp = curr;
             curr = curr->nxt;
-            free(tmp);
+            EdsFree(tmp);
         }
 
         *dictListHead = NULL;

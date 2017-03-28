@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "FIFOqueue.h"
 
 
@@ -18,7 +18,7 @@ static FIFOnode *newFIFOnode(void *node_data);
 
 FIFOnode *newFIFOnode(void *node_data)
 {
-    FIFOnode *newnode = (FIFOnode*)malloc(sizeof(FIFOnode));
+    FIFOnode *newnode = (FIFOnode*)EdsMalloc(sizeof(FIFOnode));
 
     if (newnode) {
 
@@ -33,7 +33,7 @@ FIFOnode *newFIFOnode(void *node_data)
 FIFOqueue *FIFO_init(EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
-    FIFOqueue *newqueue = malloc(sizeof(FIFOqueue));
+    FIFOqueue *newqueue = EdsMalloc(sizeof(FIFOqueue));
 
     if (newqueue) {
         newqueue->head = newqueue->tail = NULL;
@@ -84,7 +84,7 @@ void *FIFO_dequeue(FIFOqueue *queue,
         pData = to_pop->data;
 
         queue->head = queue->head->next;
-        free((void*)to_pop);
+        EdsFree((void*)to_pop);
         queue->total_nodes--;
     } else
         tmp_err = EDS_INVALID_ARGS;
@@ -95,7 +95,7 @@ void *FIFO_dequeue(FIFOqueue *queue,
 }
 
 void FIFO_destroy(FIFOqueue **queue,
-                  UserDataCallback freeData,
+                  UserDataCallback EdsFreeData,
                   EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -108,16 +108,16 @@ void FIFO_destroy(FIFOqueue **queue,
                 FIFOnode *to_delete = curr;
                 curr = curr->next;
 
-                if (to_delete->data && freeData)
-                    freeData(to_delete->data);
+                if (to_delete->data && EdsFreeData)
+                    EdsFreeData(to_delete->data);
 
-                free((void*)to_delete);
+                EdsFree((void*)to_delete);
                 to_delete = NULL;
                 (*queue)->total_nodes--;
             }
         }
 
-        free(*queue);
+        EdsFree(*queue);
         *queue = NULL;
 
     } else

@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "BinarySearchTree.h"
 
 #define isLeafNode(x) ( !(x->right || x->left) )
@@ -30,7 +30,7 @@ BSTree *BSTree_init(UserCompareCallback KeyCmp,
     BSTree *bst = NULL;
 
     if (KeyCmp) {
-        bst = malloc(sizeof(BSTree));
+        bst = EdsMalloc(sizeof(BSTree));
 
         if (bst) {
             bst->root = NULL;
@@ -55,7 +55,7 @@ BSTreeNode *BSTree_insert(BSTree *bst,
 
     if (bst && pKey) {
 
-        new_node = malloc(sizeof(BSTreeNode));
+        new_node = EdsMalloc(sizeof(BSTreeNode));
 
         if (new_node) {
 
@@ -97,7 +97,7 @@ BSTreeNode *BSTree_insert(BSTree *bst,
                         }
 
                     } else { //if there's another node with the same key already on the tree
-                        free(new_node); //return without doing anything
+                        EdsFree(new_node); //return without doing anything
                         new_node = NULL;
                         tmp_err = EDS_KEY_EXISTS;
                         break;
@@ -175,7 +175,7 @@ KeyValuePair BSTree_deleteNode(BSTree *bst,
 
         //delete the node because we don't need it anymore
         //and no other nodes point to it
-        free(bstToDelete);
+        EdsFree(bstToDelete);
     } else
         tmp_err = EDS_INVALID_ARGS;
 
@@ -288,7 +288,7 @@ void BSTree_traverse(BSTree *bst,
 }
 
 void BSTree_destroy(BSTree **bst,
-                    UserDataCallback freeData,
+                    UserDataCallback EdsFreeData,
                     EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -314,26 +314,26 @@ void BSTree_destroy(BSTree **bst,
                 //we make curr the parent
                 curr = curr->parent;
 
-                if (freeData)
-                    freeData((void *)&to_delete->item);
+                if (EdsFreeData)
+                    EdsFreeData((void *)&to_delete->item);
 
                 if (curr) {
 
                     if (curr->right == to_delete) {
-                        free(curr->right);
+                        EdsFree(curr->right);
                         curr->right = NULL;
                     } else {
-                        free(curr->left);
+                        EdsFree(curr->left);
                         curr->left = NULL;
                     }
 
                 } else { //if curr is NULL, it means that to_delete holds the root node
-                    free(to_delete);
+                    EdsFree(to_delete);
                 }
             }
         }
 
-        free(*bst);
+        EdsFree(*bst);
         //this line is the reason for the double pointer parameter **
         *bst = NULL;
     } else

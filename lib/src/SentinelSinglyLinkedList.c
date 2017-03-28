@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "SentinelSinglyLinkedList.h"
 
 
@@ -17,16 +17,16 @@ SSLList *SSLList_init(EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
 
-    SSLList *newList = malloc(sizeof(SSLList));
+    SSLList *newList = EdsMalloc(sizeof(SSLList));
 
     if (newList) {
 
-        newList->head = malloc(sizeof(SLListNode));
+        newList->head = EdsMalloc(sizeof(SLListNode));
 
         if (newList->head) {
             newList->sentinel = newList->head;
         } else {
-            free(newList);
+            EdsFree(newList);
             newList = NULL;
             tmp_err = EDS_MALLOC_FAIL;
         }
@@ -48,7 +48,7 @@ SLListNode *SSLList_insert(SSLList *ssllList,
 
     if (ssllList) {
 
-        new_node = malloc(sizeof(SLListNode));
+        new_node = EdsMalloc(sizeof(SLListNode));
 
         if (new_node) {
 
@@ -83,7 +83,7 @@ SLListNode *SSLList_append(SSLList *ssllList,
         } else {
             SLListNode *curr;
 
-            new_node = malloc(sizeof(SLListNode));
+            new_node = EdsMalloc(sizeof(SLListNode));
 
             if (new_node) {
 
@@ -121,12 +121,12 @@ SSLList *SSLList_concat(SSLList *ssll1,
 
             tail1->nxt = ssll2->head;
 
-            //order of free()'s is important here
-            free(ssll1->sentinel);
+            //order of EdsFree()'s is important here
+            EdsFree(ssll1->sentinel);
 
             ssll1->sentinel = ssll2->sentinel;
 
-            free(ssll2);
+            EdsFree(ssll2);
 
             ret = ssll1;
         }
@@ -161,7 +161,7 @@ void *SSLList_deleteNode(SSLList *ssllList,
             else
                 ssllList->head = curr->nxt;
 
-            free(curr);
+            EdsFree(curr);
             tmp_err = EDS_SUCCESS;
         }
     }
@@ -194,7 +194,7 @@ void *SSLList_deleteData(SSLList *ssllList,
             else
                 ssllList->head = curr->nxt;
 
-            free(curr);
+            EdsFree(curr);
             tmp_err = EDS_SUCCESS;
         }
     }
@@ -269,7 +269,7 @@ void SSLList_traverse(SSLList *ssllList,
 }
 
 void SSLList_destroy(SSLList **ssllList,
-                     UserDataCallback freeData,
+                     UserDataCallback EdsFreeData,
                      EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -279,16 +279,16 @@ void SSLList_destroy(SSLList **ssllList,
         SLListNode *curr, *tmp;
 
         for (curr = (*ssllList)->head; curr != (*ssllList)->sentinel;) {
-            if (freeData)
-                freeData(curr->pData);
+            if (EdsFreeData)
+                EdsFreeData(curr->pData);
 
             tmp = curr;
             curr = curr->nxt;
-            free(tmp);
+            EdsFree(tmp);
         }
 
-        free((*ssllList)->sentinel);
-        free(*ssllList);
+        EdsFree((*ssllList)->sentinel);
+        EdsFree(*ssllList);
         *ssllList = NULL;
 
     } else

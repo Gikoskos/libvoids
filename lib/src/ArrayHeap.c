@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "ArrayHeap.h"
 
 
@@ -32,11 +32,11 @@ ArrayHeap *ArrayHeap_init(UserCompareCallback DataCmp,
         switch (property) {
         case EDS_MAX_HEAP:
         case EDS_MIN_HEAP:
-            arrheap = malloc(sizeof(ArrayHeap));
+            arrheap = EdsMalloc(sizeof(ArrayHeap));
 
             if (arrheap) {
 
-                arrheap->array = malloc(sizeof(void*) * size);
+                arrheap->array = EdsMalloc(sizeof(void*) * size);
 
                 if (arrheap->array) {
 
@@ -274,20 +274,20 @@ void fix_pop_min(ArrayHeap *heap)
 }
 
 void ArrayHeap_destroy(ArrayHeap **arrheap,
-                       UserDataCallback freeData,
+                       UserDataCallback EdsFreeData,
                        EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (arrheap && *arrheap) {
 
-        if (freeData) {
+        if (EdsFreeData) {
             for (size_t i = 0; i < (*arrheap)->idx; i++)
-                freeData((*arrheap)->array[i]);
+                EdsFreeData((*arrheap)->array[i]);
         }
 
-        free((*arrheap)->array);
-        free(*arrheap);
+        EdsFree((*arrheap)->array);
+        EdsFree(*arrheap);
         *arrheap = NULL;
     } else
         tmp_err = EDS_INVALID_ARGS;

@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "CircularSinglyLinkedList.h"
 
 
@@ -21,7 +21,7 @@ CSLListNode *CSLList_insert(CSLListNode **csllHead,
     CSLListNode *new_node = NULL;
 
     if (csllHead) {
-        new_node = malloc(sizeof(CSLListNode));
+        new_node = EdsMalloc(sizeof(CSLListNode));
 
         if (new_node) {
             new_node->pData = pData;
@@ -61,7 +61,7 @@ CSLListNode *CSLList_append(CSLListNode **csllHead,
         if (!(*csllHead)) {
             new_node = CSLList_insert(csllHead, pData, &tmp_err);
         } else {
-            new_node = malloc(sizeof(CSLListNode));
+            new_node = EdsMalloc(sizeof(CSLListNode));
 
             if (new_node) {
 
@@ -118,7 +118,7 @@ CSLListNode *CSLList_insertAfter(CSLListNode *csllPrev,
     CSLListNode *new_node = NULL;
 
     if (csllPrev) {
-        new_node = malloc(sizeof(CSLListNode));
+        new_node = EdsMalloc(sizeof(CSLListNode));
 
         if (new_node) {
             new_node->pData = pData;
@@ -166,7 +166,7 @@ void *CSLList_deleteNode(CSLListNode **csllHead,
                     }
                 }
 
-                free(curr);
+                EdsFree(curr);
 
                 tmp_err = EDS_SUCCESS;
                 break;
@@ -214,7 +214,7 @@ void *CSLList_deleteData(CSLListNode **csllHead,
                         *csllHead = curr->nxt;
                 }
 
-                free(curr);
+                EdsFree(curr);
 
                 tmp_err = EDS_SUCCESS;
                 break;
@@ -308,7 +308,7 @@ void CSLList_traverse(CSLListNode *csllHead,
 }
 
 void CSLList_destroy(CSLListNode **csllHead,
-                     UserDataCallback freeData,
+                     UserDataCallback EdsFreeData,
                      EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -317,15 +317,15 @@ void CSLList_destroy(CSLListNode **csllHead,
         CSLListNode *curr, *tmp;
 
         for (curr = (*csllHead)->nxt; curr != *csllHead;) {
-            if (freeData)
-                freeData(curr->pData);
+            if (EdsFreeData)
+                EdsFreeData(curr->pData);
 
             tmp = curr;
             curr = curr->nxt;
-            free(tmp);
+            EdsFree(tmp);
         }
 
-        free(*csllHead);
+        EdsFree(*csllHead);
         *csllHead = NULL;
     } else
         tmp_err = EDS_INVALID_ARGS;

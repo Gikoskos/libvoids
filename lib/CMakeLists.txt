@@ -21,6 +21,8 @@ if(BUILD_SHARED_LIBS)
     target_compile_definitions(EduDS PRIVATE EXPORT_API_EduDS_DLL)
 endif(BUILD_SHARED_LIBS)
 
+target_compile_definitions(EduDS PRIVATE BUILD_EduDS_LIB)
+
 #set gcc specific flags
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     #maximum gcc warnings

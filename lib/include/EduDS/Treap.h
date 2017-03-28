@@ -19,7 +19,7 @@ extern "C" {
 
 #include "Common.h"
 #include "BinaryHeap.h" //for HeapPropertyType
-#include "RandomFunctions.h"
+#include "RandomState.h"
 
 
 typedef struct _TreapNode {

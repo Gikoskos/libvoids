@@ -1,5 +1,5 @@
  /********************
- *  RandomFunctions.c
+ *  RandomState.c
  *
  * This file is part of EduDS data structure library which is licensed under
  * the 2-Clause BSD License
@@ -9,9 +9,9 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include <math.h>
-#include "RandomFunctions.h"
+#include "RandomState.h"
 
 #define SFMT_MEXP 19937
 #include "SFMT.h"
@@ -23,7 +23,7 @@ void *RandomState_init(unsigned int seed,
     EdsErrCode tmp_err = EDS_SUCCESS;
     sfmt_t *sfmt_state;
 
-    sfmt_state = malloc(sizeof(sfmt_t));
+    sfmt_state = EdsMalloc(sizeof(sfmt_t));
 
     if (sfmt_state)
         sfmt_init_gen_rand(sfmt_state, (seed) ? seed : EDUDS_SALT);
@@ -76,7 +76,7 @@ void RandomState_destroy(void **state,
     sfmt_t **sfmt_state = (state) ? (sfmt_t**)state : NULL;
 
     if (sfmt_state && *sfmt_state) {
-        free(*sfmt_state);
+        EdsFree(*sfmt_state);
         *sfmt_state = NULL;
     } else
         tmp_err = EDS_INVALID_ARGS;

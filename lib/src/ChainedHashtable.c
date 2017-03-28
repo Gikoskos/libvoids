@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "ChainedHashtable.h"
 #include "HashFunctions.h"
 
@@ -24,11 +24,11 @@ ChainedHashtable *ChainedHash_init(size_t size,
 
     if (KeyCmp && size > 3) {
 
-        chtable = malloc(sizeof(ChainedHashtable));
+        chtable = EdsMalloc(sizeof(ChainedHashtable));
 
         if (chtable) {
 
-            chtable->chains = calloc(size, sizeof(DictListNode*));
+            chtable->chains = EdsCalloc(size, sizeof(DictListNode*));
 
             if (chtable->chains) {
                 //if the user didn't give a custom hashing algorithm, we default to either
@@ -50,7 +50,7 @@ ChainedHashtable *ChainedHash_init(size_t size,
 
             } else {
                 tmp_err = EDS_MALLOC_FAIL;
-                free(chtable);
+                EdsFree(chtable);
                 chtable = NULL;
             }
 
@@ -120,17 +120,17 @@ DictListNode *ChainedHash_find(ChainedHashtable *table,
 }
 
 void ChainedHash_destroy(ChainedHashtable **table,
-                         UserDataCallback freeData,
+                         UserDataCallback EdsFreeData,
                          EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
     if (table && *table) {
 
         for (size_t i = 0; i < (*table)->size; i++)
-            DictList_destroy(&(*table)->chains[i], freeData, NULL);
+            DictList_destroy(&(*table)->chains[i], EdsFreeData, NULL);
 
-        free((*table)->chains);
-        free(*table);
+        EdsFree((*table)->chains);
+        EdsFree(*table);
         *table = NULL;
     } else
         tmp_err = EDS_INVALID_ARGS;

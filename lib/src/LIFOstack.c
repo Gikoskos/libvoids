@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "LIFOstack.h"
 
 
@@ -19,7 +19,7 @@ static LIFOnode *newLIFOnode(void *node_data);
 
 static LIFOnode *newLIFOnode(void *node_data)
 {
-    LIFOnode *newnode = malloc(sizeof(LIFOnode));
+    LIFOnode *newnode = EdsMalloc(sizeof(LIFOnode));
 
     if (!newnode)
         return NULL;
@@ -32,7 +32,7 @@ static LIFOnode *newLIFOnode(void *node_data)
 LIFOstack *LIFO_init(EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
-    LIFOstack *newstack = calloc(1, sizeof(LIFOstack));
+    LIFOstack *newstack = EdsCalloc(1, sizeof(LIFOstack));
 
     if (!newstack)
         tmp_err = EDS_MALLOC_FAIL;
@@ -85,7 +85,7 @@ void *LIFO_pop(LIFOstack *stack,
             stack->tail->next = NULL;
         }
 
-        free((void*)to_pop);
+        EdsFree((void*)to_pop);
         stack->total_nodes--;
     } else
         tmp_err = EDS_INVALID_ARGS;
@@ -96,7 +96,7 @@ void *LIFO_pop(LIFOstack *stack,
 }
 
 void LIFO_destroy(LIFOstack **stack,
-                  UserDataCallback freeData,
+                  UserDataCallback EdsFreeData,
                   EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -109,16 +109,16 @@ void LIFO_destroy(LIFOstack **stack,
                 LIFOnode *to_delete = curr;
                 curr = curr->next;
 
-                if (to_delete->data && freeData)
-                    freeData(to_delete->data);
+                if (to_delete->data && EdsFreeData)
+                    EdsFreeData(to_delete->data);
 
-                free((void*)to_delete);
+                EdsFree((void*)to_delete);
                 to_delete = NULL;
                 (*stack)->total_nodes--;
             }
         }
 
-        free(*stack);
+        EdsFree(*stack);
         *stack = NULL;
     } else
         tmp_err = EDS_INVALID_ARGS;

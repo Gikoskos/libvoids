@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "DoublyLinkedList.h"
 
 
@@ -21,7 +21,7 @@ DLListNode *DLList_insert(DLListNode **dllHead,
     DLListNode *new_node = NULL;
 
     if (dllHead) {
-        new_node = malloc(sizeof(DLListNode));
+        new_node = EdsMalloc(sizeof(DLListNode));
 
         if (new_node) {
             new_node->pData = pData;
@@ -51,7 +51,7 @@ DLListNode *DLList_append(DLListNode **dllHead,
     DLListNode *new_node = NULL;
 
     if (dllHead) {
-        new_node = malloc(sizeof(DLListNode));
+        new_node = EdsMalloc(sizeof(DLListNode));
 
         if (new_node) {
             new_node->pData = pData;
@@ -106,7 +106,7 @@ DLListNode *DLList_insertAfter(DLListNode *dllPrev,
     DLListNode *new_node = NULL;
 
     if (dllPrev) {
-        new_node = malloc(sizeof(DLListNode));
+        new_node = EdsMalloc(sizeof(DLListNode));
 
         if (new_node) {
             new_node->pData = pData;
@@ -147,7 +147,7 @@ void *DLList_deleteNode(DLListNode **dllHead,
             else
                 *dllHead = curr->nxt;
 
-            free(curr);
+            EdsFree(curr);
             tmp_err = EDS_SUCCESS;
         }
     }
@@ -181,7 +181,7 @@ void *DLList_deleteData(DLListNode **dllHead,
             else
                 *dllHead = curr->nxt;
 
-            free(curr);
+            EdsFree(curr);
             tmp_err = EDS_SUCCESS;
         }
     }
@@ -243,7 +243,7 @@ void DLList_traverse(DLListNode *dllHead,
 }
 
 void DLList_destroy(DLListNode **dllHead,
-                    UserDataCallback freeData,
+                    UserDataCallback EdsFreeData,
                     EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -252,12 +252,12 @@ void DLList_destroy(DLListNode **dllHead,
         DLListNode *curr, *tmp;
 
         for (curr = *dllHead; curr;) {
-            if (freeData)
-                freeData(curr->pData);
+            if (EdsFreeData)
+                EdsFreeData(curr->pData);
 
             tmp = curr;
             curr = curr->nxt;
-            free(tmp);
+            EdsFree(tmp);
         }
 
         *dllHead = NULL;

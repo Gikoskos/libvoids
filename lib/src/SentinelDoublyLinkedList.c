@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "SentinelDoublyLinkedList.h"
 
 
@@ -17,16 +17,16 @@ SDLList *SDLList_init(EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
 
-    SDLList *newList = malloc(sizeof(SDLList));
+    SDLList *newList = EdsMalloc(sizeof(SDLList));
 
     if (newList) {
 
-        newList->head = calloc(1, sizeof(DLListNode));
+        newList->head = EdsCalloc(1, sizeof(DLListNode));
 
         if (newList->head) {
             newList->sentinel = newList->head;
         } else {
-            free(newList);
+            EdsFree(newList);
             newList = NULL;
             tmp_err = EDS_MALLOC_FAIL;
         }
@@ -47,7 +47,7 @@ DLListNode *SDLList_insert(SDLList *sdllList,
     DLListNode *new_node = NULL;
 
     if (sdllList) {
-        new_node = malloc(sizeof(DLListNode));
+        new_node = EdsMalloc(sizeof(DLListNode));
 
         if (new_node) {
 
@@ -83,7 +83,7 @@ DLListNode *SDLList_append(SDLList *sdllList,
             new_node = SDLList_insert(sdllList, pData, &tmp_err);
 
         } else {
-            new_node = malloc(sizeof(DLListNode));
+            new_node = EdsMalloc(sizeof(DLListNode));
             new_node->pData = pData;
             new_node->nxt = sdllList->sentinel;
             new_node->prv = sdllList->sentinel->prv;
@@ -121,7 +121,7 @@ void *SDLList_deleteNode(SDLList *sdllList,
             else
                 sdllList->head = curr->nxt;
 
-            free(curr);
+            EdsFree(curr);
             tmp_err = EDS_SUCCESS;
         }
     }
@@ -155,7 +155,7 @@ void *SDLList_deleteData(SDLList *sdllList,
             else
                 sdllList->head = curr->nxt;
 
-            free(curr);
+            EdsFree(curr);
             tmp_err = EDS_SUCCESS;
         }
     }
@@ -205,12 +205,12 @@ SDLList *SDLList_concat(SDLList *sdll1,
             tail1->nxt = sdll2->head;
             sdll2->head->prv = tail1;
 
-            //order of free()'s is important here
-            free(sdll1->sentinel);
+            //order of EdsFree()'s is important here
+            EdsFree(sdll1->sentinel);
 
             sdll1->sentinel = sdll2->sentinel;
 
-            free(sdll2);
+            EdsFree(sdll2);
 
             ret = sdll1;
         }
@@ -265,7 +265,7 @@ void SDLList_traverse(SDLList *sdllList,
 }
 
 void SDLList_destroy(SDLList **sdllList,
-                     UserDataCallback freeData,
+                     UserDataCallback EdsFreeData,
                      EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -275,16 +275,16 @@ void SDLList_destroy(SDLList **sdllList,
         DLListNode *curr, *tmp;
 
         for (curr = (*sdllList)->head; curr != (*sdllList)->sentinel;) {
-            if (freeData)
-                freeData(curr->pData);
+            if (EdsFreeData)
+                EdsFreeData(curr->pData);
 
             tmp = curr;
             curr = curr->nxt;
-            free(tmp);
+            EdsFree(tmp);
         }
 
-        free((*sdllList)->sentinel);
-        free(*sdllList);
+        EdsFree((*sdllList)->sentinel);
+        EdsFree(*sdllList);
         *sdllList = NULL;
 
     } else

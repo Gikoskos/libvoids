@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "DoubleEndedQueue.h"
 
 
@@ -17,7 +17,7 @@ Dequeue *Dequeue_init(EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
 
-    Dequeue *newDequeue = calloc(1, sizeof(Dequeue));
+    Dequeue *newDequeue = EdsCalloc(1, sizeof(Dequeue));
 
     if (!newDequeue)
         tmp_err = EDS_MALLOC_FAIL;
@@ -35,7 +35,7 @@ DLListNode *Dequeue_push(Dequeue *dequeue,
     DLListNode *new_node = NULL;
 
     if (dequeue && pData) {
-        new_node = malloc(sizeof(DLListNode));
+        new_node = EdsMalloc(sizeof(DLListNode));
 
         if (new_node) {
             new_node->pData = pData;
@@ -72,7 +72,7 @@ DLListNode *Dequeue_inject(Dequeue *dequeue,
         if (!dequeue->tail) {
             new_node = Dequeue_push(dequeue, pData, &tmp_err);
         } else {
-            new_node = malloc(sizeof(DLListNode));
+            new_node = EdsMalloc(sizeof(DLListNode));
 
             if (new_node) {
                 new_node->pData = pData;
@@ -110,7 +110,7 @@ void *Dequeue_eject(Dequeue *dequeue,
         else
             dequeue->head = NULL;
 
-        free(tmp);
+        EdsFree(tmp);
     } else
         tmp_err = EDS_INVALID_ARGS;
 
@@ -137,7 +137,7 @@ void *Dequeue_pop(Dequeue *dequeue,
         else
             dequeue->tail = NULL;
 
-        free(tmp);
+        EdsFree(tmp);
     } else
         tmp_err = EDS_INVALID_ARGS;
 
@@ -147,7 +147,7 @@ void *Dequeue_pop(Dequeue *dequeue,
 }
 
 void Dequeue_destroy(Dequeue **dequeue,
-                     UserDataCallback freeData,
+                     UserDataCallback EdsFreeData,
                      EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -157,15 +157,15 @@ void Dequeue_destroy(Dequeue **dequeue,
         DLListNode *curr, *tmp;
 
         for (curr = (*dequeue)->head; curr;) {
-            if (freeData)
-                freeData(curr->pData);
+            if (EdsFreeData)
+                EdsFreeData(curr->pData);
 
             tmp = curr;
             curr = curr->nxt;
-            free(tmp);
+            EdsFree(tmp);
         }
 
-        free(*dequeue);
+        EdsFree(*dequeue);
         *dequeue = NULL;
 
     } else

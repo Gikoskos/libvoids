@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "SinglyLinkedList.h"
 
 
@@ -21,7 +21,7 @@ SLListNode *SLList_insert(SLListNode **sllHead,
     SLListNode *new_node = NULL;
 
     if (sllHead) {
-        new_node = malloc(sizeof(SLListNode));
+        new_node = EdsMalloc(sizeof(SLListNode));
 
         if (new_node) {
 
@@ -48,7 +48,7 @@ SLListNode *SLList_append(SLListNode **sllHead,
     SLListNode *new_node = NULL;
 
     if (sllHead) {
-        new_node = malloc(sizeof(SLListNode));
+        new_node = EdsMalloc(sizeof(SLListNode));
 
         if (new_node) {
 
@@ -83,7 +83,7 @@ SLListNode *SLList_insertAfter(SLListNode *sllPrev,
     SLListNode *new_node = NULL;
 
     if (sllPrev) {
-        new_node = malloc(sizeof(SLListNode));
+        new_node = EdsMalloc(sizeof(SLListNode));
 
         if (new_node) {
 
@@ -124,7 +124,7 @@ void *SLList_deleteNode(SLListNode **sllHead,
             else
                 *sllHead = curr->nxt;
 
-            free(curr);
+            EdsFree(curr);
             tmp_err = EDS_SUCCESS;
         }
     }
@@ -156,7 +156,7 @@ void *SLList_deleteData(SLListNode **sllHead,
             else
                 *sllHead = curr->nxt;
 
-            free(curr);
+            EdsFree(curr);
             tmp_err = EDS_SUCCESS;
         }
     }
@@ -240,7 +240,7 @@ void SLList_traverse(SLListNode *sllHead,
 }
 
 void SLList_destroy(SLListNode **sllHead,
-                    UserDataCallback freeData,
+                    UserDataCallback EdsFreeData,
                     EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -249,12 +249,12 @@ void SLList_destroy(SLListNode **sllHead,
         SLListNode *curr, *tmp;
 
         for (curr = *sllHead; curr;) {
-            if (freeData)
-                freeData(curr->pData);
+            if (EdsFreeData)
+                EdsFreeData(curr->pData);
 
             tmp = curr;
             curr = curr->nxt;
-            free(tmp);
+            EdsFree(tmp);
         }
 
         *sllHead = NULL;

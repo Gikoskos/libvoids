@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include <assert.h>
 #include "RedBlackTree.h"
 
@@ -74,10 +74,10 @@ RedBlackTree *RBTree_init(UserCompareCallback KeyCmp,
     RedBlackTree *rbt = NULL;
 
     if (KeyCmp) {
-        rbt = malloc(sizeof(RedBlackTree));
+        rbt = EdsMalloc(sizeof(RedBlackTree));
 
         if (rbt) {
-            rbt->nil = malloc(sizeof(RedBlackTreeNode));
+            rbt->nil = EdsMalloc(sizeof(RedBlackTreeNode));
 
             if (rbt->nil) {
                 rbt->root = NULL;
@@ -86,7 +86,7 @@ RedBlackTree *RBTree_init(UserCompareCallback KeyCmp,
                 rbt->nil->color = BLACK_NODE; //this is needed in fixup functions
                 rbt->KeyCmp = KeyCmp;
             } else {
-                free(rbt);
+                EdsFree(rbt);
                 rbt = NULL;
                 tmp_err = EDS_MALLOC_FAIL;
             }
@@ -111,7 +111,7 @@ RedBlackTreeNode *RBTree_insert(RedBlackTree *rbt,
 
     if (rbt && pKey) {
 
-        new_node = malloc(sizeof(RedBlackTreeNode));
+        new_node = EdsMalloc(sizeof(RedBlackTreeNode));
 
         if (new_node) {
 
@@ -157,7 +157,7 @@ RedBlackTreeNode *RBTree_insert(RedBlackTree *rbt,
                         }
 
                     } else { //if there's another node with the same key already on the tree
-                        free(new_node); //return without doing anything
+                        EdsFree(new_node); //return without doing anything
                         new_node = NULL;
                         tmp_err = EDS_KEY_EXISTS;
                         break;
@@ -432,7 +432,7 @@ KeyValuePair RBTree_deleteNode(RedBlackTree *rbt,
 
         //delete the node because we don't need it anymore
         //and no other nodes point to it
-        free(rbtToDelete);
+        EdsFree(rbtToDelete);
 
     } else
         tmp_err = EDS_INVALID_ARGS;
@@ -675,7 +675,7 @@ void RBTree_traverse(RedBlackTree *rbt,
 }
 
 void RBTree_destroy(RedBlackTree **rbt,
-                    UserDataCallback freeData,
+                    UserDataCallback EdsFreeData,
                     EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -702,27 +702,27 @@ void RBTree_destroy(RedBlackTree **rbt,
                 //we make curr the parent
                 curr = curr->parent;
 
-                if (freeData)
-                    freeData((void *)&to_delete->item);
+                if (EdsFreeData)
+                    EdsFreeData((void *)&to_delete->item);
 
                 if (curr->item.pKey) {
 
                     if (curr->right == to_delete) {
-                        free(curr->right);
+                        EdsFree(curr->right);
                         curr->right = (*rbt)->nil;
                     } else {
-                        free(curr->left);
+                        EdsFree(curr->left);
                         curr->left = (*rbt)->nil;
                     }
 
                 } else { //if curr is nil, it means that to_delete holds the root node
-                    free(to_delete);
+                    EdsFree(to_delete);
                 }
             }
         }
 
-        free((*rbt)->nil);
-        free(*rbt);
+        EdsFree((*rbt)->nil);
+        EdsFree(*rbt);
         *rbt = NULL;
 
     } else

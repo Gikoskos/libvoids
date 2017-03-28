@@ -17,16 +17,30 @@
 #ifdef _WIN32
 # ifdef _MSC_VER //disable compiler warning bug on MSVC where it warns about
 #  pragma warning(disable : 4127) //do{}while(0) macros
-# endif
-# ifdef EXPORT_API_EduDS_DLL
-#  define EduDS_API __declspec(dllexport)
-# elif IMPORT_API_EduDS_DLL
-#  define EduDS_API __declspec(dllimport)
-# else
-#  define EduDS_API
-# endif
+# endif //_MSC_VER
+
+# ifdef BUILD_EduDS_LIB
+
+#  ifdef EXPORT_API_EduDS_DLL
+#   define EduDS_API __declspec(dllexport)
+#  else //EXPORT_API_EduDS_DLL
+#   define EduDS_API
+#  endif //not EXPORT_API_EduDS_DLL
+
+# else //BUILD_EduDS_LIB
+
+#  ifdef IMPORT_API_EduDS_DLL
+#   define EduDS_API __declspec(dllimport)
+#  else //IMPORT_API_EduDS_DLL
+#   define EduDS_API
+#  endif //not IMPORT_API_EduDS_DLL
+
+# endif //not BUILD_EduDS_LIB
+
 # define EduDS_LOCAL
-#else
+
+#else //_WIN32
+
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
 #   define EduDS_API    __attribute__ ((visibility ("default")))
@@ -35,17 +49,25 @@
 #   define EduDS_API
 #   define EduDS_LOCAL
 #  endif
-# else
+# else //__GNUC__
 #  define EduDS_API
 #  define EduDS_LOCAL
-# endif
-#endif
+# endif //not __GNUC__
+
+#endif //not _WIN32
+
+//global macros are library internal and shouldn't pollute the user's namespace
+#ifdef BUILD_EduDS_LIB
 
 #define EDUDS_SALT 8999 //using a prime number as seed for xxhash and mersenne twister
 
 #define SAVE_ERR(err, tmp_err) \
     if (err) \
         *(err) = tmp_err;
+
+#endif //BUILD_EduDS_LIB
+
+#include <stddef.h>
 
 typedef void (*UserDataCallback)(void *pData);
 typedef int (*UserCompareCallback)(const void *pKey1, const void *pKey2);

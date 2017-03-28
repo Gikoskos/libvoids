@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "BinomialHeap.h"
 
 
@@ -31,7 +31,7 @@ BinomialHeap *BinomialHeap_init(UserCompareCallback KeyCmp,
         switch (property) {
         case EDS_MAX_HEAP:
         case EDS_MIN_HEAP:
-            binheap = malloc(sizeof(BinomialHeap));
+            binheap = EdsMalloc(sizeof(BinomialHeap));
 
             if (binheap) {
 
@@ -66,9 +66,9 @@ BinomialTree *BinomialHeap_push(BinomialHeap *binheap,
     if (binheap && pKey) {
 
         //create the new binomial tree root that will hold the user's data
-        new_tree = malloc(sizeof(BinomialTree));
+        new_tree = EdsMalloc(sizeof(BinomialTree));
 
-        //if malloc succeeded
+        //if EdsMalloc succeeded
         if (new_tree) {
 
             //create a binomial tree of order 0 that holds the new item
@@ -115,10 +115,11 @@ BinomialTree *BinomialHeap_push(BinomialHeap *binheap,
 BinomialTree *merge_forests(BinomialTree *forest1, BinomialTree *forest2)
 {
     //handle edge cases
-    if (!forest1)
+    if (!forest1) {
         return forest2;
-    if (!forest2)
+    } if (!forest2) {
         return forest1;
+    }
 
     BinomialTree *curr1 = forest1,
                  *curr2 = forest2,
@@ -134,7 +135,6 @@ BinomialTree *merge_forests(BinomialTree *forest1, BinomialTree *forest2)
 
     merged_curr = merged_root;
 
-    //@TODO: this needs heavy testing
     while (merged_curr) {
 
         if (curr1 && curr2) {
@@ -180,6 +180,9 @@ BinomialTree *merge_heaps_max(BinomialHeap *binheap1, BinomialTree *forest2)
 
     merged_curr = merged_root = merge_forests(binheap1->forest, forest2);
     merged_prev = NULL;
+
+    if (!merged_root)
+        return NULL;
 
     while (merged_curr->sibling) {
 
@@ -244,6 +247,9 @@ BinomialTree *merge_heaps_min(BinomialHeap *binheap1, BinomialTree *forest2)
     merged_curr = merged_root = merge_forests(binheap1->forest, forest2);
     merged_prev = NULL;
 
+    if (!merged_root)
+        return NULL;
+
     while (merged_curr->sibling) {
 
         //if merged_curr points to the first of 3 roots in a row, who are of the same order,
@@ -302,7 +308,7 @@ BinomialTree *make_children_forest(BinomialTree *root)
     if (list_head) {
 
         //points to the current child node of 'root' we are examining at every iteration
-        BinomialTree *curr = root->child->sibling;
+        BinomialTree *curr = list_head->sibling;
         //temporary pointer to tree we use to swap the trees
         BinomialTree *tmp;
 
@@ -335,10 +341,10 @@ KeyValuePair BinomialHeap_pop(BinomialHeap *binheap,
     if (binheap && binheap->forest) {
 
         BinomialTree *top_tree, *prev_top = NULL;
-        BinomialTree *curr_root = binheap->forest->sibling, *prev_root = NULL;
+        BinomialTree *curr_root = binheap->forest->sibling, *prev_root;
 
 
-        top_tree = binheap->forest;
+        prev_root = top_tree = binheap->forest;
 
         switch (binheap->property) {
         case EDS_MAX_HEAP:
@@ -358,26 +364,26 @@ KeyValuePair BinomialHeap_pop(BinomialHeap *binheap,
             popped = top_tree->item;
 
             //remove the top root from the list
-            if (prev_top) {
+            if (prev_top)
                 prev_top->sibling = top_tree->sibling;
-                printf("prev_top key = %d\n", *(int*)prev_top->item.pKey);
-            } else
+            else
                 binheap->forest = top_tree->sibling;
 
             binheap->forest = merge_heaps_max(binheap, make_children_forest(top_tree));
 
-            free(top_tree);
+            EdsFree(top_tree);
             break;
         case EDS_MIN_HEAP:
 
             while (curr_root) {
 
-                if (binheap->KeyCmp(top_tree->item.pKey, curr_root->item.pKey) > 0)
+                if (binheap->KeyCmp(top_tree->item.pKey, curr_root->item.pKey) > 0) {
+                    prev_top = prev_root;
                     top_tree = curr_root;
+                }
 
-                prev_top = curr_root;
+                prev_root = curr_root;
                 curr_root = curr_root->sibling;
-
             }
 
             //don't forget to copy the deleted item
@@ -391,8 +397,7 @@ KeyValuePair BinomialHeap_pop(BinomialHeap *binheap,
 
             binheap->forest = merge_heaps_min(binheap, make_children_forest(top_tree));
 
-            //free(top_tree);
-            break;
+            EdsFree(top_tree);
         default:
             tmp_err = EDS_INVALID_ARGS;
             break;
@@ -487,7 +492,7 @@ void *BinomialHeap_replaceKey(BinomialHeap *binheap,
         case EDS_MIN_HEAP:
 
             if (binheap->KeyCmp(pNewKey, tree->item.pKey) < 0) {
-                
+
                 KeyValuePair tmp;
                 BinomialTree *curr = tree->parent;
 
@@ -525,7 +530,7 @@ void *BinomialHeap_replaceKey(BinomialHeap *binheap,
 }
 
 void BinomialHeap_destroy(BinomialHeap **binheap,
-                          UserDataCallback freeData,
+                          UserDataCallback EdsFreeData,
                           EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -549,17 +554,17 @@ void BinomialHeap_destroy(BinomialHeap **binheap,
                     tmp = curr_node;
                     curr_node = curr_node->sibling;
 
-                    if (freeData)
-                        freeData((void *)&tmp->item);
+                    if (EdsFreeData)
+                        EdsFreeData((void *)&tmp->item);
 
-                    free(tmp);
+                    EdsFree(tmp);
                 }
 
             }
 
         }
 
-        free(*binheap);
+        EdsFree(*binheap);
         *binheap = NULL;
 
     } else

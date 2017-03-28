@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include <stdint.h> //for SIZE_MAX
 #include "RingBuffer.h"
 
@@ -22,16 +22,16 @@ RingBuffer *RingBuffer_init(size_t buff_size,
 
     if (buff_size) {
 
-        cBuffNew = calloc(1, sizeof(RingBuffer));
+        cBuffNew = EdsCalloc(1, sizeof(RingBuffer));
 
         if (cBuffNew) {
 
-            cBuffNew->buff = malloc(sizeof(void*) * buff_size);
+            cBuffNew->buff = EdsMalloc(sizeof(void*) * buff_size);
 
             if (cBuffNew->buff) {
                 cBuffNew->size = buff_size;
             } else {
-                free(cBuffNew);
+                EdsFree(cBuffNew);
                 cBuffNew = NULL;
                 tmp_err = EDS_MALLOC_FAIL;
             }
@@ -61,7 +61,7 @@ void RingBuffer_resize(RingBuffer **cBuff,
 
                 //@FIXME: can only resize to a bigger buffer for now
                 if ((*cBuff)->size < new_size) {
-                    void **tmp_buff = realloc((*cBuff)->buff, sizeof(void*) * new_size);
+                    void **tmp_buff = EdsRealloc((*cBuff)->buff, sizeof(void*) * new_size);
 
                     if (tmp_buff) {
                         (*cBuff)->buff = tmp_buff;
@@ -133,7 +133,7 @@ void *RingBuffer_read(RingBuffer *cBuff,
 }
 
 void RingBuffer_destroy(RingBuffer **cBuff,
-                        UserDataCallback freeData,
+                        UserDataCallback EdsFreeData,
                         EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -142,13 +142,13 @@ void RingBuffer_destroy(RingBuffer **cBuff,
 
         if (*cBuff) {
 
-            if (freeData) {
+            if (EdsFreeData) {
                 for (size_t i = 0; i <= (*cBuff)->size; i++)
-                    freeData((*cBuff)->buff[i]);
+                    EdsFreeData((*cBuff)->buff[i]);
             }
 
-            free((*cBuff)->buff);
-            free(*cBuff);
+            EdsFree((*cBuff)->buff);
+            EdsFree(*cBuff);
 
             *cBuff = NULL;
 

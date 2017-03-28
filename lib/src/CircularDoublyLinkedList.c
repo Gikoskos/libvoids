@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "CircularDoublyLinkedList.h"
 
 
@@ -21,7 +21,7 @@ CDLListNode *CDLList_insert(CDLListNode **cdllHead,
     CDLListNode *new_node = NULL;
 
     if (cdllHead) {
-        new_node = malloc(sizeof(CDLListNode));
+        new_node = EdsMalloc(sizeof(CDLListNode));
 
         if (new_node) {
             new_node->pData = pData;
@@ -59,7 +59,7 @@ CDLListNode *CDLList_append(CDLListNode **cdllHead,
         if (!(*cdllHead)) {
             new_node = CDLList_insert(cdllHead, pData, &tmp_err);
         } else {
-            new_node = malloc(sizeof(CDLListNode));
+            new_node = EdsMalloc(sizeof(CDLListNode));
 
             if (new_node) {
                 new_node->pData = pData;
@@ -111,7 +111,7 @@ CDLListNode *CDLList_insertAfter(CDLListNode *cdllPrev,
     CDLListNode *new_node = NULL;
 
     if (cdllPrev) {
-        new_node = malloc(sizeof(CDLListNode));
+        new_node = EdsMalloc(sizeof(CDLListNode));
 
         if (new_node) {
             new_node->pData = pData;
@@ -153,7 +153,7 @@ void *CDLList_deleteNode(CDLListNode **cdllHead,
                 curr->prv->nxt = curr->nxt;
 
                 pRet = curr->pData;
-                free(curr);
+                EdsFree(curr);
 
                 tmp_err = EDS_SUCCESS;
 
@@ -195,7 +195,7 @@ void *CDLList_deleteData(CDLListNode **cdllHead,
                 curr->prv->nxt = curr->nxt;
 
                 pRet = curr->pData;
-                free(curr);
+                EdsFree(curr);
 
                 tmp_err = EDS_SUCCESS;
 
@@ -288,7 +288,7 @@ void CDLList_traverse(CDLListNode *cdllHead,
 }
 
 void CDLList_destroy(CDLListNode **cdllHead,
-                     UserDataCallback freeData,
+                     UserDataCallback EdsFreeData,
                      EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -301,12 +301,12 @@ void CDLList_destroy(CDLListNode **cdllHead,
         (*cdllHead)->prv->nxt = NULL;
 
         for (curr = *cdllHead; curr;) {
-            if (freeData)
-                freeData(curr->pData);
+            if (EdsFreeData)
+                EdsFreeData(curr->pData);
 
             tmp = curr;
             curr = curr->nxt;
-            free(tmp);
+            EdsFree(tmp);
         }
 
         *cdllHead = NULL;

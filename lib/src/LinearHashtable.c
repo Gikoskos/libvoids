@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "LinearHashtable.h"
 #include "HashFunctions.h"
 
@@ -20,7 +20,7 @@
 #define IS_DELETED(x) ((x) == 2)
 
 
-static int rehash(LinHashtable *table, UserDataCallback freeData);
+static int rehash(LinHashtable *table, UserDataCallback EdsFreeData);
 
 
 LinHashtable *LinHash_init(size_t size,
@@ -34,11 +34,11 @@ LinHashtable *LinHash_init(size_t size,
 
     if (KeyCmp && size > 3) {
 
-        lintable = malloc(sizeof(LinHashtable));
+        lintable = EdsMalloc(sizeof(LinHashtable));
 
         if (lintable) {
 
-            lintable->array = calloc(size, sizeof(HashArrayElement));
+            lintable->array = EdsCalloc(size, sizeof(HashArrayElement));
 
             if (lintable->array) {
                 //if the user didn't give a custom hashing algorithm, we default to either
@@ -61,7 +61,7 @@ LinHashtable *LinHash_init(size_t size,
                 lintable->total_elements = 0;
 
             } else {
-                free(lintable);
+                EdsFree(lintable);
                 lintable = NULL;
                 tmp_err = EDS_MALLOC_FAIL;
             }
@@ -77,7 +77,7 @@ LinHashtable *LinHash_init(size_t size,
     return lintable;
 }
 
-int rehash(LinHashtable *table, UserDataCallback freeData)
+int rehash(LinHashtable *table, UserDataCallback EdsFreeData)
 {
     HashArrayElement *old_array = table->array; //save the old array
     size_t old_size = table->size;
@@ -85,7 +85,7 @@ int rehash(LinHashtable *table, UserDataCallback freeData)
     table->size *= 2;
 
     //allocate the new array that has twice the size
-    table->array = calloc(table->size, sizeof(HashArrayElement));
+    table->array = EdsCalloc(table->size, sizeof(HashArrayElement));
     if (!table->array) {
         table->array = old_array;
         return 0;
@@ -118,12 +118,12 @@ int rehash(LinHashtable *table, UserDataCallback freeData)
             continue;
         }
 
-        if (IS_DELETED(old_array[i].state) && freeData)
-            freeData((void*)&old_array[i].item);
+        if (IS_DELETED(old_array[i].state) && EdsFreeData)
+            EdsFreeData((void*)&old_array[i].item);
 
     }
 
-    free(old_array);
+    EdsFree(old_array);
 
     return 1;
 }
@@ -132,7 +132,7 @@ void *LinHash_insert(LinHashtable *table,
                      void *pData,
                      void *pKey,
                      size_t key_size,
-                     UserDataCallback freeData,
+                     UserDataCallback EdsFreeData,
                      EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -153,8 +153,8 @@ void *LinHash_insert(LinHashtable *table,
 
                 //in case there is already a deleted element in the position that we're about to add
                 //the new element to the array, we have to cleanup with the user-supplied cleanup function
-                if (IS_DELETED(table->array[tmp_idx].state) && freeData)
-                    freeData((void *)&table->array[tmp_idx].item);
+                if (IS_DELETED(table->array[tmp_idx].state) && EdsFreeData)
+                    EdsFreeData((void *)&table->array[tmp_idx].item);
 
                 table->array[tmp_idx].item.pData = pData;
                 table->array[tmp_idx].item.pKey = pKey;
@@ -181,7 +181,7 @@ void *LinHash_insert(LinHashtable *table,
 
         if (table->rehash) //if the load factor is greater than 0.5 we rehash the table
             if ( ((float)table->total_elements / table->size) >= 0.5 )
-                if (!rehash(table, freeData))
+                if (!rehash(table, EdsFreeData))
                     tmp_err = EDS_MALLOC_FAIL;
 
     } else
@@ -266,7 +266,7 @@ HashArrayElement *LinHash_find(LinHashtable *table,
 }
 
 void LinHash_destroy(LinHashtable **table,
-                     UserDataCallback freeData,
+                     UserDataCallback EdsFreeData,
                      EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -274,12 +274,12 @@ void LinHash_destroy(LinHashtable **table,
     if (table && *table) {
 
         for (size_t i = 0; i < (*table)->size; i++)
-            if (freeData &&
+            if (EdsFreeData &&
                 (IS_OCCUPIED((*table)->array[i].state) || IS_DELETED((*table)->array[i].state)))
-                freeData((void *)&(*table)->array[i].item);
+                EdsFreeData((void *)&(*table)->array[i].item);
 
-        free((*table)->array);
-        free(*table);
+        EdsFree((*table)->array);
+        EdsFree(*table);
         *table = NULL;
     } else
         tmp_err = EDS_INVALID_ARGS;

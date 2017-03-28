@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include <stdlib.h>
+#include "MemoryAllocation.h"
 #include "BinaryHeap.h"
 #include "FIFOqueue.h" //for breadth-first
 
@@ -36,7 +36,7 @@ BinaryHeap *BinaryHeap_init(UserCompareCallback DataCmp,
         switch (property) {
         case EDS_MAX_HEAP:
         case EDS_MIN_HEAP:
-            bheap = malloc(sizeof(BinaryHeap));
+            bheap = EdsMalloc(sizeof(BinaryHeap));
 
             if (bheap) {
                 bheap->property = property;
@@ -67,7 +67,7 @@ BinaryHeapNode *BinaryHeap_push(BinaryHeap *bheap,
 
     if (bheap && pData) {
 
-        new_node = malloc(sizeof(BinaryHeapNode));
+        new_node = EdsMalloc(sizeof(BinaryHeapNode));
 
         if (new_node) {
 
@@ -94,7 +94,7 @@ BinaryHeapNode *BinaryHeap_push(BinaryHeap *bheap,
                     }
 
                 } else {
-                    free(new_node);
+                    EdsFree(new_node);
                     tmp_err = EDS_MALLOC_FAIL;
                 }
             }
@@ -208,7 +208,7 @@ void *BinaryHeap_pop(BinaryHeap *bheap,
         //if there's only one node on the tree
         if (!bheap->root->left && !bheap->root->right) {
 
-            free(bheap->root);
+            EdsFree(bheap->root);
             bheap->root = NULL;
 
         } else {
@@ -228,7 +228,7 @@ void *BinaryHeap_pop(BinaryHeap *bheap,
                 else
                     last_node->parent->right = NULL;
 
-                free(last_node);
+                EdsFree(last_node);
 
                 //restore the property of the heap
                 switch (bheap->property) {
@@ -456,7 +456,7 @@ void *BinaryHeap_replace(BinaryHeap *bheap,
 }
 
 void BinaryHeap_destroy(BinaryHeap **bheap,
-                        UserDataCallback freeData,
+                        UserDataCallback EdsFreeData,
                         EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -482,26 +482,26 @@ void BinaryHeap_destroy(BinaryHeap **bheap,
                 //we make curr the parent
                 curr = curr->parent;
 
-                if (freeData)
-                    freeData(to_delete->pData);
+                if (EdsFreeData)
+                    EdsFreeData(to_delete->pData);
 
                 if (curr) {
 
                     if (curr->right == to_delete) {
-                        free(curr->right);
+                        EdsFree(curr->right);
                         curr->right = NULL;
                     } else {
-                        free(curr->left);
+                        EdsFree(curr->left);
                         curr->left = NULL;
                     }
 
                 } else { //if curr is NULL, it means that to_delete holds the root node
-                    free(to_delete);
+                    EdsFree(to_delete);
                 }
             }
         }
 
-        free(*bheap);
+        EdsFree(*bheap);
         *bheap = NULL;
     } else
         tmp_err = EDS_INVALID_ARGS;

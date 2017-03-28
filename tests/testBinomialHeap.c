@@ -103,22 +103,28 @@ int main(int argc, char *argv[])
     printf("\n\n");
 
 
-    /*printf("=== TESTING MIN HEAP ===\n");
+    printf("=== TESTING MIN HEAP ===\n");
     binheap->property = EDS_MIN_HEAP;
 
-    for (size_t i = 0; i < sizeof arr / sizeof *arr; i++) {
-        EduDS_ERR_FATAL(BinaryHeap_push(binheap, &arr[i], &err), err);
+    printf("\n=== TESTING INSERTIONS ===\n");
+    for (size_t i = 0; i < ARRAY_LEN(arr); i++) {
+        EduDS_ERR_FATAL(BinomialHeap_push(binheap, NULL, &arr[i], &err), err);
         printf("Inserted %d!\n", arr[i]);
-        in_orderTraversal(binheap->root, printIntData);
+        printBinomialHeap(binheap);
         printf("\n");
     }
 
-    for (size_t i = 0; i < sizeof arr / sizeof *arr; i++) {
-        int z;
-        EduDS_ERR_FATAL(z = *(int*)BinaryHeap_pop(binheap, &err), err);
-        printf("%d ", z);
+    printf("\n=== TESTING DELETIONS ===\n");
+    for (size_t i = 0; i < ARRAY_LEN(arr); i++) {
+        KeyValuePair tmp;
+        tmp = BinomialHeap_pop(binheap, &err);
+
+        if (tmp.pKey) {
+            printf("\nPopped %d!\n", *(int*)tmp.pKey);
+            printBinomialHeap(binheap);
+        }
     }
-    printf("\n");*/
+    printf("\n\n");
 
     EduDS_ERR_FATAL(BinomialHeap_destroy(&binheap, NULL, &err), err);
 
