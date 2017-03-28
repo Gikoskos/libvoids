@@ -52,7 +52,7 @@ int compareInts(const void *key1, const void *key2)
 
 int main(int argc, char *argv[])
 {
-#define REPLACED_KEY  3
+#define REPLACED_KEY  7
 
     int arr[] = {4 , 51, 6, 222, 43, 40, 4, 11, 1};
     EdsErrCode err;
@@ -64,21 +64,23 @@ int main(int argc, char *argv[])
     printf("=== TESTING MAX HEAP ===\n");
     printf("\n=== TESTING INSERTIONS ===\n");
     for (size_t i = 0; i < ARRAY_LEN(arr); i++) {
-        if (i == REPLACED_KEY)
+        if (i == REPLACED_KEY) {
             EduDS_ERR_FATAL(tree_node = BinomialHeap_push(binheap, NULL, &arr[i], &err), err);
-        else
+        } else {
             EduDS_ERR_FATAL(BinomialHeap_push(binheap, NULL, &arr[i], &err), err);
+        }
         printf("Inserted %d!\n", arr[i]);
         printBinomialHeap(binheap);
         printf("\n");
     }
 
     printf("\n=== TESTING DECREASE KEY ===\n");
-    arr[REPLACED_KEY] = 10;
-    void *BinomialHeap_replaceKey(binheap,
-                              BinomialTree *tree,
-                              void *pNewKey,
-                              EdsErrCode *err)
+    int new_key = 555;
+    EduDS_ERR_FATAL(BinomialHeap_replaceKey(binheap, tree_node, (void*)&new_key, &err), err);
+
+    printf("Replaced %d with %d!\n", arr[REPLACED_KEY], new_key);
+    printBinomialHeap(binheap);
+    printf("\n");
 
     printf("\n=== TESTING DELETIONS ===\n");
     for (size_t i = 0; i < ARRAY_LEN(arr); i++) {
