@@ -440,7 +440,7 @@ void Treap_traverse(Treap *treap,
 }
 
 void Treap_destroy(Treap **treap,
-                   UserDataCallback EdsFreeData,
+                   UserDataCallback freeData,
                    EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -466,8 +466,8 @@ void Treap_destroy(Treap **treap,
                 //we make curr the parent
                 curr = curr->parent;
 
-                if (EdsFreeData)
-                    EdsFreeData((void *)&to_delete->item);
+                if (freeData)
+                    freeData((void *)&to_delete->item);
 
                 if (curr) {
 

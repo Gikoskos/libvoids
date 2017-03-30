@@ -120,14 +120,14 @@ DictListNode *ChainedHash_find(ChainedHashtable *table,
 }
 
 void ChainedHash_destroy(ChainedHashtable **table,
-                         UserDataCallback EdsFreeData,
+                         UserDataCallback freeData,
                          EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
     if (table && *table) {
 
         for (size_t i = 0; i < (*table)->size; i++)
-            DictList_destroy(&(*table)->chains[i], EdsFreeData, NULL);
+            DictList_destroy(&(*table)->chains[i], freeData, NULL);
 
         EdsFree((*table)->chains);
         EdsFree(*table);

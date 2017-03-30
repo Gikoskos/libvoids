@@ -95,7 +95,7 @@ void *FIFO_dequeue(FIFOqueue *queue,
 }
 
 void FIFO_destroy(FIFOqueue **queue,
-                  UserDataCallback EdsFreeData,
+                  UserDataCallback freeData,
                   EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -108,8 +108,8 @@ void FIFO_destroy(FIFOqueue **queue,
                 FIFOnode *to_delete = curr;
                 curr = curr->next;
 
-                if (to_delete->data && EdsFreeData)
-                    EdsFreeData(to_delete->data);
+                if (to_delete->data && freeData)
+                    freeData(to_delete->data);
 
                 EdsFree((void*)to_delete);
                 to_delete = NULL;

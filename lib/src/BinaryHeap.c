@@ -12,11 +12,12 @@
 #include "MemoryAllocation.h"
 #include "BinaryHeap.h"
 #include "FIFOqueue.h" //for breadth-first
+#include <math.h> //log2, floor
 
 #define isLeafNode(x) ( !(x->right || x->left) )
 
 
-static int breadth_first_insert(BinaryHeap *bheap, BinaryHeapNode *new_node);
+static void recur_insert(BinaryHeapNode *subtree, unsigned int total_nodes, BinaryHeapNode *new_node);
 static void fix_push_max(BinaryHeapNode *curr, UserCompareCallback DataCmp);
 static void fix_push_min(BinaryHeapNode *curr, UserCompareCallback DataCmp);
 static BinaryHeapNode *breadth_first_get_last(BinaryHeap *bheap);
@@ -41,6 +42,7 @@ BinaryHeap *BinaryHeap_init(UserCompareCallback DataCmp,
             if (bheap) {
                 bheap->property = property;
                 bheap->root = NULL;
+                bheap->total_nodes = 0;
                 bheap->DataCmp = DataCmp;
             } else
                 tmp_err = EDS_MALLOC_FAIL;
@@ -77,26 +79,24 @@ BinaryHeapNode *BinaryHeap_push(BinaryHeap *bheap,
             if (!bheap->root) {
                 new_node->parent = NULL;
                 bheap->root = new_node;
+                bheap->total_nodes = 1;
             } else {
 
-                if (breadth_first_insert(bheap, new_node)) {
+                recur_insert(bheap->root, bheap->total_nodes, new_node);
+                bheap->total_nodes++;
 
-                    switch (bheap->property) {
-                    case EDS_MAX_HEAP:
-                        fix_push_max(new_node, bheap->DataCmp);
-                        break;
-                    case EDS_MIN_HEAP:
-                        fix_push_min(new_node, bheap->DataCmp);
-                        break;
-                    default:
-                        tmp_err = EDS_INVALID_ARGS;
-                        break;
-                    }
-
-                } else {
-                    EdsFree(new_node);
-                    tmp_err = EDS_MALLOC_FAIL;
+                switch (bheap->property) {
+                case EDS_MAX_HEAP:
+                    fix_push_max(new_node, bheap->DataCmp);
+                    break;
+                case EDS_MIN_HEAP:
+                    fix_push_min(new_node, bheap->DataCmp);
+                    break;
+                default:
+                    tmp_err = EDS_INVALID_ARGS;
+                    break;
                 }
+
             }
 
         } else
@@ -146,53 +146,46 @@ void fix_push_min(BinaryHeapNode *curr, UserCompareCallback DataCmp)
     }
 }
 
-int breadth_first_insert(BinaryHeap *bheap, BinaryHeapNode *new_node)
+/* my algorithm that locates the inserts a new node in a complete binary tree, in a way
+ * that maintains the tree's completeness */
+/* TODO: add description of how it works */
+void recur_insert(BinaryHeapNode *subtree, unsigned int total_nodes, BinaryHeapNode *new_node)
 {
-    EdsErrCode err;
-    BinaryHeapNode *curr;
-    FIFOqueue *levelFIFO = FIFO_init(&err);
+    if (total_nodes <= 2) {
 
-    if (levelFIFO) {
-        FIFO_enqueue(levelFIFO, (void *)bheap->root, &err);
+        new_node->parent = subtree;
 
-        if (err == EDS_SUCCESS) {
+        if (!subtree->left)
+            subtree->left = new_node;
+        else
+            subtree->right = new_node;
 
-            while (levelFIFO->total_nodes) {
-                curr = (BinaryHeapNode *)FIFO_dequeue(levelFIFO, NULL);
+    } else {
 
-                if (curr->left) {
-                    FIFO_enqueue(levelFIFO, curr->left, &err);
+        unsigned int depth, two_to_depth, last_node_left_subtree;
 
-                    if (err != EDS_SUCCESS)
-                        break;
-                } else {
-                    new_node->parent = curr;
-                    curr->left = new_node;
-                    break;
-                }
 
-                if (curr->right) {
-                    FIFO_enqueue(levelFIFO, curr->right, &err);
+        depth = (unsigned int)floor(log2(total_nodes));
 
-                    if (err != EDS_SUCCESS)
-                        break;
-                } else {
-                    new_node->parent = curr;
-                    curr->right = new_node;
-                    break;
-                }
-            }
+        two_to_depth = (unsigned int)pow(2, depth);
 
-            FIFO_destroy(&levelFIFO, NULL, NULL);
+        last_node_left_subtree = two_to_depth + (unsigned int)pow(2, depth - 1) - 1;
+
+
+        if (total_nodes < last_node_left_subtree) {
+
+            recur_insert(subtree->left, total_nodes - (two_to_depth / 2), new_node);
+
+        } else if (!( (total_nodes + 1) & (total_nodes) )) {
+
+            recur_insert(subtree->left, total_nodes - two_to_depth, new_node);
+
+        } else {
+
+            recur_insert(subtree->right, total_nodes - two_to_depth, new_node);
 
         }
-
     }
-
-    if (err == EDS_SUCCESS)
-        return 1;
-
-    return 0;
 }
 
 void *BinaryHeap_pop(BinaryHeap *bheap,
@@ -246,7 +239,7 @@ void *BinaryHeap_pop(BinaryHeap *bheap,
             } else
                 tmp_err = EDS_MALLOC_FAIL;
 
-        }
+}
 
     } else
         tmp_err = EDS_INVALID_ARGS;
@@ -434,7 +427,7 @@ void *BinaryHeap_replace(BinaryHeap *bheap,
 
         pDeleted = bheap->root->pData;
         bheap->root->pData = pData;
-        
+
         switch (bheap->property) {
         case EDS_MAX_HEAP:
             fix_pop_max(bheap->root, bheap->DataCmp);
@@ -456,7 +449,7 @@ void *BinaryHeap_replace(BinaryHeap *bheap,
 }
 
 void BinaryHeap_destroy(BinaryHeap **bheap,
-                        UserDataCallback EdsFreeData,
+                        UserDataCallback freeData,
                         EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -465,7 +458,7 @@ void BinaryHeap_destroy(BinaryHeap **bheap,
 
         BinaryHeapNode *curr = (*bheap)->root, *to_delete;
 
-        //basically my iterative version of post-property
+        //basically my iterative version of post-order
         while (curr) {
             if (curr->left) {
 
@@ -482,8 +475,8 @@ void BinaryHeap_destroy(BinaryHeap **bheap,
                 //we make curr the parent
                 curr = curr->parent;
 
-                if (EdsFreeData)
-                    EdsFreeData(to_delete->pData);
+                if (freeData)
+                    freeData(to_delete->pData);
 
                 if (curr) {
 

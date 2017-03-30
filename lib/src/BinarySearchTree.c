@@ -288,7 +288,7 @@ void BSTree_traverse(BSTree *bst,
 }
 
 void BSTree_destroy(BSTree **bst,
-                    UserDataCallback EdsFreeData,
+                    UserDataCallback freeData,
                     EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -314,8 +314,8 @@ void BSTree_destroy(BSTree **bst,
                 //we make curr the parent
                 curr = curr->parent;
 
-                if (EdsFreeData)
-                    EdsFreeData((void *)&to_delete->item);
+                if (freeData)
+                    freeData((void *)&to_delete->item);
 
                 if (curr) {
 

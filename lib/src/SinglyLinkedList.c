@@ -240,7 +240,7 @@ void SLList_traverse(SLListNode *sllHead,
 }
 
 void SLList_destroy(SLListNode **sllHead,
-                    UserDataCallback EdsFreeData,
+                    UserDataCallback freeData,
                     EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -249,8 +249,8 @@ void SLList_destroy(SLListNode **sllHead,
         SLListNode *curr, *tmp;
 
         for (curr = *sllHead; curr;) {
-            if (EdsFreeData)
-                EdsFreeData(curr->pData);
+            if (freeData)
+                freeData(curr->pData);
 
             tmp = curr;
             curr = curr->nxt;

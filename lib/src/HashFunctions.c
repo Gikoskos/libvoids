@@ -9,7 +9,7 @@
   ***********************************************************************************/
 
 
-#include "MemoryAllocation.h"
+#include <stddef.h>
 #include <math.h>
 #include "HashFunctions.h"
 

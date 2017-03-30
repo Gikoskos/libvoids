@@ -274,16 +274,16 @@ void fix_pop_min(ArrayHeap *heap)
 }
 
 void ArrayHeap_destroy(ArrayHeap **arrheap,
-                       UserDataCallback EdsFreeData,
+                       UserDataCallback freeData,
                        EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (arrheap && *arrheap) {
 
-        if (EdsFreeData) {
+        if (freeData) {
             for (size_t i = 0; i < (*arrheap)->idx; i++)
-                EdsFreeData((*arrheap)->array[i]);
+                freeData((*arrheap)->array[i]);
         }
 
         EdsFree((*arrheap)->array);

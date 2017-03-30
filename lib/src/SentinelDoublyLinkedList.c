@@ -265,7 +265,7 @@ void SDLList_traverse(SDLList *sdllList,
 }
 
 void SDLList_destroy(SDLList **sdllList,
-                     UserDataCallback EdsFreeData,
+                     UserDataCallback freeData,
                      EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -275,8 +275,8 @@ void SDLList_destroy(SDLList **sdllList,
         DLListNode *curr, *tmp;
 
         for (curr = (*sdllList)->head; curr != (*sdllList)->sentinel;) {
-            if (EdsFreeData)
-                EdsFreeData(curr->pData);
+            if (freeData)
+                freeData(curr->pData);
 
             tmp = curr;
             curr = curr->nxt;

@@ -10,7 +10,6 @@
 
 
 #include "MemoryAllocation.h"
-#include <assert.h>
 #include "RedBlackTree.h"
 
 #define isLeafNode(x)    ( ((x)->item.pKey == NULL) )
@@ -675,7 +674,7 @@ void RBTree_traverse(RedBlackTree *rbt,
 }
 
 void RBTree_destroy(RedBlackTree **rbt,
-                    UserDataCallback EdsFreeData,
+                    UserDataCallback freeData,
                     EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -702,8 +701,8 @@ void RBTree_destroy(RedBlackTree **rbt,
                 //we make curr the parent
                 curr = curr->parent;
 
-                if (EdsFreeData)
-                    EdsFreeData((void *)&to_delete->item);
+                if (freeData)
+                    freeData((void *)&to_delete->item);
 
                 if (curr->item.pKey) {
 

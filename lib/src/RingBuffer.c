@@ -133,7 +133,7 @@ void *RingBuffer_read(RingBuffer *cBuff,
 }
 
 void RingBuffer_destroy(RingBuffer **cBuff,
-                        UserDataCallback EdsFreeData,
+                        UserDataCallback freeData,
                         EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -142,9 +142,9 @@ void RingBuffer_destroy(RingBuffer **cBuff,
 
         if (*cBuff) {
 
-            if (EdsFreeData) {
+            if (freeData) {
                 for (size_t i = 0; i <= (*cBuff)->size; i++)
-                    EdsFreeData((*cBuff)->buff[i]);
+                    freeData((*cBuff)->buff[i]);
             }
 
             EdsFree((*cBuff)->buff);

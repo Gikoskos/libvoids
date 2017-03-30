@@ -30,6 +30,7 @@ typedef struct _BinaryHeapNode {
 
 typedef struct _BinaryHeap {
     BinaryHeapNode *root;
+    unsigned int total_nodes;
     UserCompareCallback DataCmp;
     HeapPropertyType property;
 } BinaryHeap;

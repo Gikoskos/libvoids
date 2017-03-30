@@ -17,6 +17,8 @@ static BinomialTree *merge_forests(BinomialTree *forest1, BinomialTree *forest2)
 static BinomialTree *merge_heaps_max(BinomialHeap *binheap1, BinomialTree *forest2);
 static BinomialTree *merge_heaps_min(BinomialHeap *binheap1, BinomialTree *forest2);
 static BinomialTree *make_children_forest(BinomialTree *root);
+static void destroy_recur_user(BinomialTree *curr, UserDataCallback freeData);
+static void destroy_recur_plain(BinomialTree *curr);
 
 
 BinomialHeap *BinomialHeap_init(UserCompareCallback KeyCmp,
@@ -529,40 +531,53 @@ void *BinomialHeap_replaceKey(BinomialHeap *binheap,
     return pOldKey;
 }
 
+void destroy_recur_user(BinomialTree *curr, UserDataCallback freeData)
+{
+    if (curr) {
+        destroy_recur_user(curr->sibling, freeData);
+        destroy_recur_user(curr->child, freeData);
+        if (curr->parent) {
+            if (curr->parent->child == curr)
+                curr->parent->child = NULL;
+            else
+                curr->parent->sibling = NULL;
+        }
+
+        freeData((void *)&curr->item);
+
+        EdsFree(curr);
+    }
+}
+
+void destroy_recur_plain(BinomialTree *curr)
+{
+    if (curr) {
+        destroy_recur_plain(curr->sibling);
+        destroy_recur_plain(curr->child);
+        if (curr->parent) {
+            if (curr->parent->child == curr)
+                curr->parent->child = NULL;
+            else
+                curr->parent->sibling = NULL;
+        }
+
+        EdsFree(curr);
+    }
+}
+
 void BinomialHeap_destroy(BinomialHeap **binheap,
-                          UserDataCallback EdsFreeData,
+                          UserDataCallback freeData,
                           EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
 
     if (binheap && *binheap) {
 
-        BinomialTree *curr_root = (*binheap)->forest, *curr_tree, *curr_node, *tmp;
-
-        while (curr_root) {
-
-            curr_tree = curr_root;
-            curr_root = curr_root->sibling;
-
-            while (curr_tree) {
-
-                curr_node = curr_tree;
-                curr_tree = curr_tree->child;
-
-                while (curr_node) {
-
-                    tmp = curr_node;
-                    curr_node = curr_node->sibling;
-
-                    if (EdsFreeData)
-                        EdsFreeData((void *)&tmp->item);
-
-                    EdsFree(tmp);
-                }
-
-            }
-
-        }
+        //@TODO: replace recursive destroy of Binomial heap with iterative version
+        if (freeData)
+            destroy_recur_user((*binheap)->forest, freeData);
+        else
+            destroy_recur_plain((*binheap)->forest);
 
         EdsFree(*binheap);
         *binheap = NULL;

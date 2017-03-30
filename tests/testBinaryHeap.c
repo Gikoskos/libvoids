@@ -25,6 +25,15 @@ void in_orderTraversal(BinaryHeapNode *bheapNode, UserDataCallback callback)
     }
 }
 
+void pre_orderTraversal(BinaryHeapNode *bheapNode, UserDataCallback callback)
+{
+    if (bheapNode) {
+        callback(bheapNode->pData);
+        pre_orderTraversal(bheapNode->left, callback);
+        pre_orderTraversal(bheapNode->right, callback);
+    }
+}
+
 
 int compareInts(const void *key1, const void *key2)
 {
@@ -33,7 +42,7 @@ int compareInts(const void *key1, const void *key2)
 
 int main(int argc, char *argv[])
 {
-    int arr[] = {4 , 51, 6, 222, 43, 40, 4, 11, 1};
+    int arr[] = {4 , 51, 6, 222, 43, 40, 4, 11, 1, 55, 10, 3, 666, 89, 99, 7, 12};
     EdsErrCode err;
     BinaryHeap *bheap;
 
@@ -42,8 +51,12 @@ int main(int argc, char *argv[])
     printf("=== TESTING MAX HEAP ===\n");
     for (size_t i = 0; i < sizeof arr / sizeof *arr; i++) {
         EduDS_ERR_FATAL(BinaryHeap_push(bheap, &arr[i], &err), err);
-        printf("Inserted %d!\n", arr[i]);
+        printf("\nInserted %d! PRINTING INORDER\n", arr[i]);
         in_orderTraversal(bheap->root, printIntData);
+
+        printf("\nPRINTING PREORDER\n", arr[i]);
+        pre_orderTraversal(bheap->root, printIntData);
+        printf("==================================");
         printf("\n");
     }
 

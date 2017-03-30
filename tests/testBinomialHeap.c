@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
     printBinomialHeap(binheap);
     printf("\n");
 
-    printf("\n=== TESTING DELETIONS ===\n");
+    /*printf("\n=== TESTING DELETIONS ===\n");
     for (size_t i = 0; i < ARRAY_LEN(arr); i++) {
         KeyValuePair tmp;
         tmp = BinomialHeap_pop(binheap, &err);
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
             printBinomialHeap(binheap);
         }
     }
-    printf("\n\n");
+    printf("\n\n");*/
 
     EduDS_ERR_FATAL(BinomialHeap_destroy(&binheap, NULL, &err), err);
 

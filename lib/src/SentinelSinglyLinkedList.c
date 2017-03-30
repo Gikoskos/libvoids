@@ -269,7 +269,7 @@ void SSLList_traverse(SSLList *ssllList,
 }
 
 void SSLList_destroy(SSLList **ssllList,
-                     UserDataCallback EdsFreeData,
+                     UserDataCallback freeData,
                      EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -279,8 +279,8 @@ void SSLList_destroy(SSLList **ssllList,
         SLListNode *curr, *tmp;
 
         for (curr = (*ssllList)->head; curr != (*ssllList)->sentinel;) {
-            if (EdsFreeData)
-                EdsFreeData(curr->pData);
+            if (freeData)
+                freeData(curr->pData);
 
             tmp = curr;
             curr = curr->nxt;

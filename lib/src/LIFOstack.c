@@ -96,7 +96,7 @@ void *LIFO_pop(LIFOstack *stack,
 }
 
 void LIFO_destroy(LIFOstack **stack,
-                  UserDataCallback EdsFreeData,
+                  UserDataCallback freeData,
                   EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -109,8 +109,8 @@ void LIFO_destroy(LIFOstack **stack,
                 LIFOnode *to_delete = curr;
                 curr = curr->next;
 
-                if (to_delete->data && EdsFreeData)
-                    EdsFreeData(to_delete->data);
+                if (to_delete->data && freeData)
+                    freeData(to_delete->data);
 
                 EdsFree((void*)to_delete);
                 to_delete = NULL;

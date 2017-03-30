@@ -190,7 +190,7 @@ void DictList_traverse(DictListNode *dictListHead,
 }
 
 void DictList_destroy(DictListNode **dictListHead,
-                      UserDataCallback EdsFreeData,
+                      UserDataCallback freeData,
                       EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -199,8 +199,8 @@ void DictList_destroy(DictListNode **dictListHead,
         DictListNode *curr, *tmp;
 
         for (curr = *dictListHead; curr;) {
-            if (EdsFreeData)
-                EdsFreeData((void *)&curr->item);
+            if (freeData)
+                freeData((void *)&curr->item);
 
             tmp = curr;
             curr = curr->nxt;

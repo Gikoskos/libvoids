@@ -20,7 +20,7 @@
 #define IS_DELETED(x) ((x) == 2)
 
 
-static int rehash(QuadHashtable *table, UserDataCallback EdsFreeData);
+static int rehash(QuadHashtable *table, UserDataCallback freeData);
 
 
 QuadHashtable *QuadHash_init(size_t size,
@@ -74,7 +74,7 @@ QuadHashtable *QuadHash_init(size_t size,
     return quadtable;
 }
 
-int rehash(QuadHashtable *table, UserDataCallback EdsFreeData)
+int rehash(QuadHashtable *table, UserDataCallback freeData)
 {
     HashArrayElement *old_array = table->array; //save the old array
     size_t old_size = table->size;
@@ -111,8 +111,8 @@ int rehash(QuadHashtable *table, UserDataCallback EdsFreeData)
             continue;
         }
 
-        if (IS_DELETED(old_array[i].state) && EdsFreeData)
-            EdsFreeData((void*)&old_array[i].item);
+        if (IS_DELETED(old_array[i].state) && freeData)
+            freeData((void*)&old_array[i].item);
 
     }
 
@@ -125,7 +125,7 @@ void *QuadHash_insert(QuadHashtable *table,
                       void *pData,
                       void *pKey,
                       size_t key_size,
-                      UserDataCallback EdsFreeData,
+                      UserDataCallback freeData,
                       EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -143,8 +143,8 @@ void *QuadHash_insert(QuadHashtable *table,
 
             if (!IS_OCCUPIED(table->array[tmp_idx].state)) {
 
-                if (IS_DELETED(table->array[tmp_idx].state) && EdsFreeData)
-                    EdsFreeData((void *)&table->array[tmp_idx].item);
+                if (IS_DELETED(table->array[tmp_idx].state) && freeData)
+                    freeData((void *)&table->array[tmp_idx].item);
 
                 table->array[tmp_idx].item.pData = pData;
                 table->array[tmp_idx].item.pKey = pKey;
@@ -170,7 +170,7 @@ void *QuadHash_insert(QuadHashtable *table,
         //to QuadHash_insert
 
         if ( ((float)table->total_elements / table->size) >= 0.5 )
-            if (!rehash(table, EdsFreeData))
+            if (!rehash(table, freeData))
                 tmp_err = EDS_MALLOC_FAIL;
 
     } else
@@ -254,7 +254,7 @@ HashArrayElement *QuadHash_find(QuadHashtable *table,
 }
 
 void QuadHash_destroy(QuadHashtable **table,
-                      UserDataCallback EdsFreeData,
+                      UserDataCallback freeData,
                       EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -262,8 +262,8 @@ void QuadHash_destroy(QuadHashtable **table,
     if (table && *table) {
 
         for (size_t i = 0; i < (*table)->size; i++)
-            if (EdsFreeData && (IS_OCCUPIED((*table)->array[i].state) || IS_DELETED((*table)->array[i].state)))
-                EdsFreeData((void *)&(*table)->array[i].item);
+            if (freeData && (IS_OCCUPIED((*table)->array[i].state) || IS_DELETED((*table)->array[i].state)))
+                freeData((void *)&(*table)->array[i].item);
 
         EdsFree((*table)->array);
         EdsFree(*table);

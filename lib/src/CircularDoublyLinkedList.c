@@ -288,7 +288,7 @@ void CDLList_traverse(CDLListNode *cdllHead,
 }
 
 void CDLList_destroy(CDLListNode **cdllHead,
-                     UserDataCallback EdsFreeData,
+                     UserDataCallback freeData,
                      EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -301,8 +301,8 @@ void CDLList_destroy(CDLListNode **cdllHead,
         (*cdllHead)->prv->nxt = NULL;
 
         for (curr = *cdllHead; curr;) {
-            if (EdsFreeData)
-                EdsFreeData(curr->pData);
+            if (freeData)
+                freeData(curr->pData);
 
             tmp = curr;
             curr = curr->nxt;

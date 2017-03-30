@@ -147,7 +147,7 @@ void *Dequeue_pop(Dequeue *dequeue,
 }
 
 void Dequeue_destroy(Dequeue **dequeue,
-                     UserDataCallback EdsFreeData,
+                     UserDataCallback freeData,
                      EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -157,8 +157,8 @@ void Dequeue_destroy(Dequeue **dequeue,
         DLListNode *curr, *tmp;
 
         for (curr = (*dequeue)->head; curr;) {
-            if (EdsFreeData)
-                EdsFreeData(curr->pData);
+            if (freeData)
+                freeData(curr->pData);
 
             tmp = curr;
             curr = curr->nxt;

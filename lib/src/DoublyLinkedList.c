@@ -243,7 +243,7 @@ void DLList_traverse(DLListNode *dllHead,
 }
 
 void DLList_destroy(DLListNode **dllHead,
-                    UserDataCallback EdsFreeData,
+                    UserDataCallback freeData,
                     EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -252,8 +252,8 @@ void DLList_destroy(DLListNode **dllHead,
         DLListNode *curr, *tmp;
 
         for (curr = *dllHead; curr;) {
-            if (EdsFreeData)
-                EdsFreeData(curr->pData);
+            if (freeData)
+                freeData(curr->pData);
 
             tmp = curr;
             curr = curr->nxt;

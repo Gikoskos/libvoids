@@ -308,7 +308,7 @@ void CSLList_traverse(CSLListNode *csllHead,
 }
 
 void CSLList_destroy(CSLListNode **csllHead,
-                     UserDataCallback EdsFreeData,
+                     UserDataCallback freeData,
                      EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -317,8 +317,8 @@ void CSLList_destroy(CSLListNode **csllHead,
         CSLListNode *curr, *tmp;
 
         for (curr = (*csllHead)->nxt; curr != *csllHead;) {
-            if (EdsFreeData)
-                EdsFreeData(curr->pData);
+            if (freeData)
+                freeData(curr->pData);
 
             tmp = curr;
             curr = curr->nxt;

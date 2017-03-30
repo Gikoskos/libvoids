@@ -487,7 +487,7 @@ void AVLTree_traverse(AVLTree *avlt,
 }
 
 void AVLTree_destroy(AVLTree **avlt,
-                     UserDataCallback EdsFreeData,
+                     UserDataCallback freeData,
                      EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
@@ -513,8 +513,8 @@ void AVLTree_destroy(AVLTree **avlt,
                 //we make curr the parent
                 curr = curr->parent;
 
-                if (EdsFreeData)
-                    EdsFreeData((void *)&to_delete->item);
+                if (freeData)
+                    freeData((void *)&to_delete->item);
 
                 if (curr) {
 
