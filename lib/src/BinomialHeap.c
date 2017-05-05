@@ -573,7 +573,6 @@ void BinomialHeap_destroy(BinomialHeap **binheap,
 
     if (binheap && *binheap) {
 
-        //@TODO: replace recursive destroy of Binomial heap with iterative version
         if (freeData)
             destroy_recur_user((*binheap)->forest, freeData);
         else

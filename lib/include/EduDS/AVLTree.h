@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_AVLTREE_H
-#define __EduDS_AVLTREE_H
+#ifndef EduDS_AVLTREE_H__
+#define EduDS_AVLTREE_H__
 
 
 #ifdef __cplusplus
@@ -69,4 +69,4 @@ EduDS_API void AVLTree_destroy(AVLTree **avlt,
 }
 #endif
 
-#endif //__EduDS_AVLTREE_H
+#endif //EduDS_AVLTREE_H__

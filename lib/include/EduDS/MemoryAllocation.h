@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_MEMORYALLOCATION_H
-#define __EduDS_MEMORYALLOCATION_H
+#ifndef EduDS_MEMORYALLOCATION_H__
+#define EduDS_MEMORYALLOCATION_H__
 
 
 #ifdef __cplusplus
@@ -32,4 +32,4 @@ EduDS_LOCAL void *EdsRealloc(void *ptr, size_t size);
 }
 #endif
 
-#endif //__EduDS_MEMORYALLOCATION_H
+#endif //EduDS_MEMORYALLOCATION_H__

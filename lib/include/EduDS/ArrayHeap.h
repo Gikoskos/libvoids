@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_ARRAYHEAP_H
-#define __EduDS_ARRAYHEAP_H
+#ifndef EduDS_ARRAYHEAP_H__
+#define EduDS_ARRAYHEAP_H__
 
 
 #ifdef __cplusplus
@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 #include "Common.h"
-#include "BinaryHeap.h"
+#include "BinaryTreeHeap.h"
 
 
 typedef struct _ArrayHeap {
@@ -50,4 +50,4 @@ EduDS_API void ArrayHeap_destroy(ArrayHeap **arrheap,
 }
 #endif
 
-#endif //__EduDS_ARRAYHEAP_H
+#endif //EduDS_ARRAYHEAP_H__

@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_DEQUEUE__H
-#define __EduDS_DEQUEUE__H
+#ifndef EduDS_DEQUEUE__H__
+#define EduDS_DEQUEUE__H__
 
 
 #ifdef __cplusplus
@@ -50,4 +50,4 @@ EduDS_API void Dequeue_destroy(Dequeue **dequeue,
 }
 #endif
 
-#endif //__EduDS_DEQUEUE__H
+#endif //EduDS_DEQUEUE__H__

@@ -1,5 +1,5 @@
  /********************
- *  BinaryHeap.c
+ *  BinaryTreeHeap.c
  *
  * This file is part of EduDS data structure library which is licensed under
  * the 2-Clause BSD License
@@ -10,40 +10,40 @@
 
 
 #include "MemoryAllocation.h"
-#include "BinaryHeap.h"
+#include "BinaryTreeHeap.h"
 #include "FIFOqueue.h" //for breadth-first
 #include <math.h> //log2, floor
 
-#define isLeafNode(x) ( !(x->right || x->left) )
 
 
-static void recur_insert(BinaryHeapNode *subtree, unsigned int total_nodes, BinaryHeapNode *new_node);
-static void fix_push_max(BinaryHeapNode *curr, UserCompareCallback DataCmp);
-static void fix_push_min(BinaryHeapNode *curr, UserCompareCallback DataCmp);
-static BinaryHeapNode *breadth_first_get_last(BinaryHeap *bheap);
-static void fix_pop_max(BinaryHeapNode *curr, UserCompareCallback DataCmp);
-static void fix_pop_min(BinaryHeapNode *curr, UserCompareCallback DataCmp);
+static void recur_insert(BTHeapNode *subtree, unsigned int total_nodes, BTHeapNode *new_node);
+static void fix_push_max(BTHeapNode *curr, UserCompareCallback DataCmp);
+static void fix_push_min(BTHeapNode *curr, UserCompareCallback DataCmp);
+static BTHeapNode *breadth_first_get_last(BTHeap *btheap);
+static BTHeapNode *recur_get_last(BTHeapNode *subtree, unsigned int total_nodes);
+static void fix_pop_max(BTHeapNode *curr, UserCompareCallback DataCmp);
+static void fix_pop_min(BTHeapNode *curr, UserCompareCallback DataCmp);
 
 
-BinaryHeap *BinaryHeap_init(UserCompareCallback DataCmp,
-                            HeapPropertyType property,
-                            EdsErrCode *err)
+BTHeap *BTHeap_init(UserCompareCallback DataCmp,
+                    HeapPropertyType property,
+                    EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
-    BinaryHeap *bheap = NULL;
+    BTHeap *btheap = NULL;
 
     if (DataCmp) {
 
         switch (property) {
         case EDS_MAX_HEAP:
         case EDS_MIN_HEAP:
-            bheap = EdsMalloc(sizeof(BinaryHeap));
+            btheap = EdsMalloc(sizeof(BTHeap));
 
-            if (bheap) {
-                bheap->property = property;
-                bheap->root = NULL;
-                bheap->total_nodes = 0;
-                bheap->DataCmp = DataCmp;
+            if (btheap) {
+                btheap->property = property;
+                btheap->root = NULL;
+                btheap->total_nodes = 0;
+                btheap->DataCmp = DataCmp;
             } else
                 tmp_err = EDS_MALLOC_FAIL;
             break;
@@ -57,40 +57,40 @@ BinaryHeap *BinaryHeap_init(UserCompareCallback DataCmp,
 
     SAVE_ERR(err, tmp_err);
 
-    return bheap;
+    return btheap;
 }
 
-BinaryHeapNode *BinaryHeap_push(BinaryHeap *bheap,
-                                void *pData,
-                                EdsErrCode *err)
+BTHeapNode *BTHeap_push(BTHeap *btheap,
+                        void *pData,
+                        EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
-    BinaryHeapNode *new_node = NULL;
+    BTHeapNode *new_node = NULL;
 
-    if (bheap && pData) {
+    if (btheap && pData) {
 
-        new_node = EdsMalloc(sizeof(BinaryHeapNode));
+        new_node = EdsMalloc(sizeof(BTHeapNode));
 
         if (new_node) {
 
             new_node->pData = pData;
             new_node->right = new_node->left = NULL;
 
-            if (!bheap->root) {
+            if (!btheap->root) {
                 new_node->parent = NULL;
-                bheap->root = new_node;
-                bheap->total_nodes = 1;
+                btheap->root = new_node;
+                btheap->total_nodes = 1;
             } else {
 
-                recur_insert(bheap->root, bheap->total_nodes, new_node);
-                bheap->total_nodes++;
+                recur_insert(btheap->root, btheap->total_nodes, new_node);
+                btheap->total_nodes++;
 
-                switch (bheap->property) {
+                switch (btheap->property) {
                 case EDS_MAX_HEAP:
-                    fix_push_max(new_node, bheap->DataCmp);
+                    fix_push_max(new_node, btheap->DataCmp);
                     break;
                 case EDS_MIN_HEAP:
-                    fix_push_min(new_node, bheap->DataCmp);
+                    fix_push_min(new_node, btheap->DataCmp);
                     break;
                 default:
                     tmp_err = EDS_INVALID_ARGS;
@@ -110,7 +110,7 @@ BinaryHeapNode *BinaryHeap_push(BinaryHeap *bheap,
     return new_node;
 }
 
-void fix_push_max(BinaryHeapNode *curr, UserCompareCallback DataCmp)
+void fix_push_max(BTHeapNode *curr, UserCompareCallback DataCmp)
 {
     int cmp_res;
     void *pTmp;
@@ -128,7 +128,7 @@ void fix_push_max(BinaryHeapNode *curr, UserCompareCallback DataCmp)
     }
 }
 
-void fix_push_min(BinaryHeapNode *curr, UserCompareCallback DataCmp)
+void fix_push_min(BTHeapNode *curr, UserCompareCallback DataCmp)
 {
     int cmp_res;
     void *pTmp;
@@ -149,7 +149,7 @@ void fix_push_min(BinaryHeapNode *curr, UserCompareCallback DataCmp)
 /* my algorithm that locates the inserts a new node in a complete binary tree, in a way
  * that maintains the tree's completeness */
 /* TODO: add description of how it works */
-void recur_insert(BinaryHeapNode *subtree, unsigned int total_nodes, BinaryHeapNode *new_node)
+void recur_insert(BTHeapNode *subtree, unsigned int total_nodes, BTHeapNode *new_node)
 {
     if (total_nodes <= 2) {
 
@@ -188,30 +188,30 @@ void recur_insert(BinaryHeapNode *subtree, unsigned int total_nodes, BinaryHeapN
     }
 }
 
-void *BinaryHeap_pop(BinaryHeap *bheap,
-                     EdsErrCode *err)
+void *BTHeap_pop(BTHeap *btheap,
+                 EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
     void *pDeleted = NULL;
 
-    if (bheap && bheap->root) {
+    if (btheap && btheap->root) {
         //save the data of the deleted node
-        pDeleted = bheap->root->pData;
+        pDeleted = btheap->root->pData;
 
         //if there's only one node on the tree
-        if (!bheap->root->left && !bheap->root->right) {
+        if (!btheap->root->left && !btheap->root->right) {
 
-            EdsFree(bheap->root);
-            bheap->root = NULL;
+            EdsFree(btheap->root);
+            btheap->root = NULL;
 
         } else {
 
-            BinaryHeapNode *last_node = breadth_first_get_last(bheap);
+            BTHeapNode *last_node = breadth_first_get_last(btheap);
             if (last_node) {
 
                 void *pTmp = last_node->pData;
-                last_node->pData = bheap->root->pData;
-                bheap->root->pData = pTmp;
+                last_node->pData = btheap->root->pData;
+                btheap->root->pData = pTmp;
 
                 //don't forget to NULL the parent of the last node (the node
                 //that will be technically deleted)
@@ -224,12 +224,12 @@ void *BinaryHeap_pop(BinaryHeap *bheap,
                 EdsFree(last_node);
 
                 //restore the property of the heap
-                switch (bheap->property) {
+                switch (btheap->property) {
                 case EDS_MAX_HEAP:
-                    fix_pop_max(bheap->root, bheap->DataCmp);
+                    fix_pop_max(btheap->root, btheap->DataCmp);
                     break;
                 case EDS_MIN_HEAP:
-                    fix_pop_min(bheap->root, bheap->DataCmp);
+                    fix_pop_min(btheap->root, btheap->DataCmp);
                     break;
                 default:
                     tmp_err = EDS_INVALID_ARGS;
@@ -239,7 +239,7 @@ void *BinaryHeap_pop(BinaryHeap *bheap,
             } else
                 tmp_err = EDS_MALLOC_FAIL;
 
-}
+        }
 
     } else
         tmp_err = EDS_INVALID_ARGS;
@@ -249,7 +249,7 @@ void *BinaryHeap_pop(BinaryHeap *bheap,
     return pDeleted;
 }
 
-void fix_pop_max(BinaryHeapNode *curr, UserCompareCallback DataCmp)
+void fix_pop_max(BTHeapNode *curr, UserCompareCallback DataCmp)
 {
     int cmp_res;
     void *pTmp;
@@ -310,7 +310,7 @@ void fix_pop_max(BinaryHeapNode *curr, UserCompareCallback DataCmp)
     }
 }
 
-void fix_pop_min(BinaryHeapNode *curr, UserCompareCallback DataCmp)
+void fix_pop_min(BTHeapNode *curr, UserCompareCallback DataCmp)
 {
     int cmp_res;
     void *pTmp;
@@ -371,19 +371,51 @@ void fix_pop_min(BinaryHeapNode *curr, UserCompareCallback DataCmp)
     }
 }
 
-BinaryHeapNode *breadth_first_get_last(BinaryHeap *bheap)
+BTHeapNode *recur_get_last(BTHeapNode *subtree, unsigned int total_nodes)
+{
+    if (total_nodes <= 4) {
+
+        if (subtree->right)
+            return subtree->right;
+
+        if (subtree->left)
+            return subtree->left;
+
+        return subtree;
+    }
+
+    unsigned int depth, two_to_depth, last_node_left_subtree;
+
+
+    depth = (unsigned int)floor(log2(total_nodes));
+
+    two_to_depth = (unsigned int)pow(2, depth);
+
+    last_node_left_subtree = two_to_depth + (unsigned int)pow(2, depth - 1) - 1;
+
+
+    if (total_nodes < last_node_left_subtree)
+        return recur_get_last(subtree->left, total_nodes - (two_to_depth / 2));
+
+    if (!( (total_nodes + 1) & (total_nodes) ))
+        return recur_get_last(subtree->left, total_nodes - two_to_depth);
+
+    return recur_get_last(subtree->right, total_nodes - two_to_depth);
+}
+
+BTHeapNode *breadth_first_get_last(BTHeap *btheap)
 {
     EdsErrCode err;
-    BinaryHeapNode *curr = NULL;
+    BTHeapNode *curr = NULL;
     FIFOqueue *levelFIFO = FIFO_init(&err);
 
     if (levelFIFO) {
-        FIFO_enqueue(levelFIFO, (void *)bheap->root, &err);
+        FIFO_enqueue(levelFIFO, (void *)btheap->root, &err);
 
         if (err == EDS_SUCCESS) {
 
             do {
-                curr = (BinaryHeapNode *)FIFO_dequeue(levelFIFO, NULL);
+                curr = (BTHeapNode *)FIFO_dequeue(levelFIFO, NULL);
 
                 if (curr->left) {
                     FIFO_enqueue(levelFIFO, curr->left, &err);
@@ -402,7 +434,7 @@ BinaryHeapNode *breadth_first_get_last(BinaryHeap *bheap)
             } while (levelFIFO->total_nodes > 1);
 
             if (err == EDS_SUCCESS)
-                curr = (BinaryHeapNode *)FIFO_dequeue(levelFIFO, NULL);
+                curr = (BTHeapNode *)FIFO_dequeue(levelFIFO, NULL);
 
             FIFO_destroy(&levelFIFO, NULL, NULL);
 
@@ -416,24 +448,24 @@ BinaryHeapNode *breadth_first_get_last(BinaryHeap *bheap)
     return NULL;
 }
 
-void *BinaryHeap_replace(BinaryHeap *bheap,
-                         void *pData,
-                         EdsErrCode *err)
+void *BTHeap_replace(BTHeap *btheap,
+                     void *pData,
+                     EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
     void *pDeleted = NULL;
 
-    if (bheap && bheap->root && pData) {
+    if (btheap && btheap->root && pData) {
 
-        pDeleted = bheap->root->pData;
-        bheap->root->pData = pData;
+        pDeleted = btheap->root->pData;
+        btheap->root->pData = pData;
 
-        switch (bheap->property) {
+        switch (btheap->property) {
         case EDS_MAX_HEAP:
-            fix_pop_max(bheap->root, bheap->DataCmp);
+            fix_pop_max(btheap->root, btheap->DataCmp);
             break;
         case EDS_MIN_HEAP:
-            fix_pop_min(bheap->root, bheap->DataCmp);
+            fix_pop_min(btheap->root, btheap->DataCmp);
             break;
         default:
             tmp_err = EDS_INVALID_ARGS;
@@ -448,15 +480,15 @@ void *BinaryHeap_replace(BinaryHeap *bheap,
     return pDeleted;
 }
 
-void BinaryHeap_destroy(BinaryHeap **bheap,
-                        UserDataCallback freeData,
-                        EdsErrCode *err)
+void BTHeap_destroy(BTHeap **btheap,
+                    UserDataCallback freeData,
+                    EdsErrCode *err)
 {
     EdsErrCode tmp_err = EDS_SUCCESS;
 
-    if (bheap && *bheap) {
+    if (btheap && *btheap) {
 
-        BinaryHeapNode *curr = (*bheap)->root, *to_delete;
+        BTHeapNode *curr = (*btheap)->root, *to_delete;
 
         //basically my iterative version of post-order
         while (curr) {
@@ -494,8 +526,8 @@ void BinaryHeap_destroy(BinaryHeap **bheap,
             }
         }
 
-        EdsFree(*bheap);
-        *bheap = NULL;
+        EdsFree(*btheap);
+        *btheap = NULL;
     } else
         tmp_err = EDS_INVALID_ARGS;
 

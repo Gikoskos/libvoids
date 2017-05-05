@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_HASHFUNCTIONS_H
-#define __EduDS_HASHFUNCTIONS_H
+#ifndef EduDS_H__ASHFUNCTIONS_H__
+#define EduDS_H__ASHFUNCTIONS_H__
 
 
 #ifdef __cplusplus
@@ -30,4 +30,4 @@ EduDS_API size_t HashMult(size_t key_hash, size_t array_len);
 }
 #endif
 
-#endif //__EduDS_HASHFUNCTIONS_H
+#endif //EduDS_H__ASHFUNCTIONS_H__

@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_QUADRATICHASHTABLE_H
-#define __EduDS_QUADRATICHASHTABLE_H
+#ifndef EduDS_QUADRATICHASHTABLE_H__
+#define EduDS_QUADRATICHASHTABLE_H__
 
 
 #ifdef __cplusplus
@@ -60,4 +60,4 @@ EduDS_API void QuadHash_destroy(QuadHashtable **table,
 }
 #endif
 
-#endif //__EduDS_QUADRATICHASHTABLE_H
+#endif //EduDS_QUADRATICHASHTABLE_H__

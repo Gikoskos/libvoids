@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_CHAINEDHASHTABLE_H
-#define __EduDS_CHAINEDHASHTABLE_H
+#ifndef EduDS_CHAINEDHASHTABLE_H__
+#define EduDS_CHAINEDHASHTABLE_H__
 
 
 #ifdef __cplusplus
@@ -58,4 +58,4 @@ EduDS_API void ChainedHash_destroy(ChainedHashtable **table,
 }
 #endif
 
-#endif //__EduDS_CHAINEDHASHTABLE_H
+#endif //EduDS_CHAINEDHASHTABLE_H__

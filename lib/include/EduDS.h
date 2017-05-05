@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef _EduDS_SINGLE_INCLUDE_HEADER__
-#define _EduDS_SINGLE_INCLUDE_HEADER__
+#ifndef EduDS_SINGLE_INCLUDE_HEADER__
+#define EduDS_SINGLE_INCLUDE_HEADER__
 
 #include "EduDS/Common.h"
 
@@ -33,8 +33,9 @@
 #include "EduDS/RedBlackTree.h"
 #include "EduDS/FIFOqueue.h"
 #include "EduDS/LIFOstack.h"
-#include "EduDS/BinaryHeap.h"
+#include "EduDS/BinaryTreeHeap.h"
 #include "EduDS/ArrayHeap.h"
 #include "EduDS/BinomialHeap.h"
+#include "EduDS/LeftistHeap.h"
 
-#endif //_EduDS_SINGLE_INCLUDE_HEADER__
+#endif //EduDS_SINGLE_INCLUDE_HEADER__

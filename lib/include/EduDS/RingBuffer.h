@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_CIRCULAR_BUFF_H
-#define __EduDS_CIRCULAR_BUFF_H
+#ifndef EduDS_CIRCULAR_BUFF_H__
+#define EduDS_CIRCULAR_BUFF_H__
 
 
 #ifdef __cplusplus
@@ -49,4 +49,4 @@ EduDS_API void RingBuffer_destroy(RingBuffer **cBuff,
 }
 #endif
 
-#endif //__EduDS_CIRCULAR_BUFF_H
+#endif //EduDS_CIRCULAR_BUFF_H__

@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_TREAP_H
-#define __EduDS_TREAP_H
+#ifndef EduDS_TREAP_H__
+#define EduDS_TREAP_H__
 
 
 #ifdef __cplusplus
@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 #include "Common.h"
-#include "BinaryHeap.h" //for HeapPropertyType
+#include "BinaryTreeHeap.h" //for HeapPropertyType
 #include "RandomState.h"
 
 
@@ -75,4 +75,4 @@ EduDS_API void Treap_destroy(Treap **treap,
 }
 #endif
 
-#endif //__EduDS_TREAP_H
+#endif //EduDS_TREAP_H__

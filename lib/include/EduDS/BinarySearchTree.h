@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_BSTREE_H
-#define __EduDS_BSTREE_H
+#ifndef EduDS_BSTREE_H__
+#define EduDS_BSTREE_H__
 
 
 #ifdef __cplusplus
@@ -69,4 +69,4 @@ EduDS_API void BSTree_destroy(BSTree **bst,
 }
 #endif
 
-#endif //__EduDS_BSTREE_H
+#endif //EduDS_BSTREE_H__

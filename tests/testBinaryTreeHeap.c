@@ -5,18 +5,20 @@
 
 
 #define EduDS_ERR_FATAL(func, err) \
+do { \
     func; \
     if (err != EDS_SUCCESS) { \
         printf("Function call \"%s\" failed with error \"%s\"\n", #func, EdsErrString(err)); \
         return 1; \
-    }
+    } \
+} while (0)
 
 void printIntData(void *param)
 {
     printf("node %d\n", *(int*)param);
 }
 
-void in_orderTraversal(BinaryHeapNode *bheapNode, UserDataCallback callback)
+void in_orderTraversal(BTHeapNode *bheapNode, UserDataCallback callback)
 {
     if (bheapNode) {
         in_orderTraversal(bheapNode->left, callback);
@@ -25,7 +27,7 @@ void in_orderTraversal(BinaryHeapNode *bheapNode, UserDataCallback callback)
     }
 }
 
-void pre_orderTraversal(BinaryHeapNode *bheapNode, UserDataCallback callback)
+void pre_orderTraversal(BTHeapNode *bheapNode, UserDataCallback callback)
 {
     if (bheapNode) {
         callback(bheapNode->pData);
@@ -44,13 +46,13 @@ int main(int argc, char *argv[])
 {
     int arr[] = {4 , 51, 6, 222, 43, 40, 4, 11, 1, 55, 10, 3, 666, 89, 99, 7, 12};
     EdsErrCode err;
-    BinaryHeap *bheap;
+    BTHeap *bheap;
 
-    EduDS_ERR_FATAL(bheap = BinaryHeap_init(compareInts, EDS_MAX_HEAP, &err), err);
+    EduDS_ERR_FATAL(bheap = BTHeap_init(compareInts, EDS_MAX_HEAP, &err), err);
 
     printf("=== TESTING MAX HEAP ===\n");
     for (size_t i = 0; i < sizeof arr / sizeof *arr; i++) {
-        EduDS_ERR_FATAL(BinaryHeap_push(bheap, &arr[i], &err), err);
+        EduDS_ERR_FATAL(BTHeap_push(bheap, &arr[i], &err), err);
         printf("\nInserted %d! PRINTING INORDER\n", arr[i]);
         in_orderTraversal(bheap->root, printIntData);
 
@@ -62,8 +64,8 @@ int main(int argc, char *argv[])
 
     for (size_t i = 0; i < sizeof arr / sizeof *arr; i++) {
         int z;
-        EduDS_ERR_FATAL(z = *(int*)BinaryHeap_pop(bheap, &err), err);
-        printf("%d ", z);
+        EduDS_ERR_FATAL(z = *(int*)BTHeap_pop(bheap, &err), err);
+        //printf("popped %d!\n", z);
     }
     printf("\n\n");
 
@@ -72,7 +74,7 @@ int main(int argc, char *argv[])
     bheap->property = EDS_MIN_HEAP;
 
     for (size_t i = 0; i < sizeof arr / sizeof *arr; i++) {
-        EduDS_ERR_FATAL(BinaryHeap_push(bheap, &arr[i], &err), err);
+        EduDS_ERR_FATAL(BTHeap_push(bheap, &arr[i], &err), err);
         printf("Inserted %d!\n", arr[i]);
         in_orderTraversal(bheap->root, printIntData);
         printf("\n");
@@ -80,12 +82,12 @@ int main(int argc, char *argv[])
 
     for (size_t i = 0; i < sizeof arr / sizeof *arr; i++) {
         int z;
-        EduDS_ERR_FATAL(z = *(int*)BinaryHeap_pop(bheap, &err), err);
+        EduDS_ERR_FATAL(z = *(int*)BTHeap_pop(bheap, &err), err);
         printf("%d ", z);
     }
     printf("\n");
 
-    EduDS_ERR_FATAL(BinaryHeap_destroy(&bheap, NULL, &err), err);
+    EduDS_ERR_FATAL(BTHeap_destroy(&bheap, NULL, &err), err);
 
     return 0;
 }

@@ -8,8 +8,8 @@
  * All rights reserved.
   ***********************************************************************************/
 
-#ifndef __EduDS_ASSOCIATION_LIST_H
-#define __EduDS_ASSOCIATION_LIST_H
+#ifndef EduDS_ASSOCIATION_LIST_H__
+#define EduDS_ASSOCIATION_LIST_H__
 
 
 #ifdef __cplusplus
@@ -66,4 +66,4 @@ EduDS_API void DictList_destroy(DictListNode **dictListHead,
 }
 #endif
 
-#endif //__EduDS_ASSOCIATION_LIST_H
+#endif //EduDS_ASSOCIATION_LIST_H__

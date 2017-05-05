@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_RANDOMSTATE_H
-#define __EduDS_RANDOMSTATE_H
+#ifndef EduDS_RANDOMSTATE_H__
+#define EduDS_RANDOMSTATE_H__
 
 
 #ifdef __cplusplus
@@ -37,4 +37,4 @@ EduDS_LOCAL void RandomState_destroy(void **state, EdsErrCode *err);
 }
 #endif
 
-#endif //__EduDS_RANDOMSTATE_H
+#endif //EduDS_RANDOMSTATE_H__

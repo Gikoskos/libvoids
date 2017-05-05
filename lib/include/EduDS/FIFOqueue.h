@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_FIFO_QUEUE_H
-#define __EduDS_FIFO_QUEUE_H
+#ifndef EduDS_FIFO_QUEUE_H__
+#define EduDS_FIFO_QUEUE_H__
 
 
 #ifdef __cplusplus
@@ -53,4 +53,4 @@ EduDS_API void FIFO_traverse(FIFOqueue *queue,
 }
 #endif
 
-#endif //__EduDS_FIFO_QUEUE_H
+#endif //EduDS_FIFO_QUEUE_H__

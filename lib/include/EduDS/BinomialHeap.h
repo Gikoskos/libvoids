@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_BINOMIALHEAP_H
-#define __EduDS_BINOMIALHEAP_H
+#ifndef EduDS_BINOMIALHEAP_H__
+#define EduDS_BINOMIALHEAP_H__
 
 
 #ifdef __cplusplus
@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 #include "Common.h"
-#include "BinaryHeap.h" //HeapPropertyType
+#include "BinaryTreeHeap.h" //HeapPropertyType
 
 
 typedef struct _BinomialTree {
@@ -63,4 +63,4 @@ EduDS_API void BinomialHeap_destroy(BinomialHeap **binheap,
 }
 #endif
 
-#endif //__EduDS_BINOMIALHEAP_H
+#endif //EduDS_BINOMIALHEAP_H__

@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_SENT_SL_LIST_H
-#define __EduDS_SENT_SL_LIST_H
+#ifndef EduDS_SENT_SL_LIST_H__
+#define EduDS_SENT_SL_LIST_H__
 
 
 #ifdef __cplusplus
@@ -70,4 +70,4 @@ EduDS_API void SSLList_destroy(SSLList **ssllList,
 }
 #endif
 
-#endif //__EduDS_SENT_SL_LIST_H
+#endif //EduDS_SENT_SL_LIST_H__

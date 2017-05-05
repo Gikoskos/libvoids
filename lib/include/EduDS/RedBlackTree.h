@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_REDBLACKTREE_H
-#define __EduDS_REDBLACKTREE_H
+#ifndef EduDS_REDBLACKTREE_H__
+#define EduDS_REDBLACKTREE_H__
 
 
 #ifdef __cplusplus
@@ -73,4 +73,4 @@ EduDS_API void RBTree_destroy(RedBlackTree **rbt,
 }
 #endif
 
-#endif //__EduDS_REDBLACKTREE_H
+#endif //EduDS_REDBLACKTREE_H__

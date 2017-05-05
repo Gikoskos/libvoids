@@ -11,15 +11,19 @@
 
 //LIBRARY INTERNAL HEADER. DO NOT INCLUDE THIS SEPARATELY.
 
-#ifndef __EduDS_COMMON_H
-#define __EduDS_COMMON_H
+#ifndef EduDS_COMMON_H__
+#define EduDS_COMMON_H__
 
+//if we're compiling on windows
 #ifdef _WIN32
-# ifdef _MSC_VER //disable compiler warning bug on MSVC where it warns about
-#  pragma warning(disable : 4127) //do{}while(0) macros
-# endif //_MSC_VER
 
+//if we're building the library and this header isn't
+//just included from someone who uses the library
 # ifdef BUILD_EduDS_LIB
+
+#  ifdef _MSC_VER //disable compiler warning bug on MSVC where it warns about
+#   pragma warning(disable : 4127) //do{}while(0) macros
+#  endif //_MSC_VER
 
 #  ifdef EXPORT_API_EduDS_DLL
 #   define EduDS_API __declspec(dllexport)
@@ -27,6 +31,7 @@
 #   define EduDS_API
 #  endif //not EXPORT_API_EduDS_DLL
 
+//if the library is included on a project that uses it
 # else //BUILD_EduDS_LIB
 
 #  ifdef IMPORT_API_EduDS_DLL
@@ -56,7 +61,7 @@
 
 #endif //not _WIN32
 
-//global macros are library internal and shouldn't pollute the user's namespace
+//global macros are library internal and shouldn't pollute the user's macro namespace
 #ifdef BUILD_EduDS_LIB
 
 #define EDUDS_SALT 8999 //using a prime number as seed for xxhash and mersenne twister
@@ -66,6 +71,7 @@
         *(err) = tmp_err;
 
 #endif //BUILD_EduDS_LIB
+
 
 #include <stddef.h>
 
@@ -98,4 +104,4 @@ typedef enum _EdsErrCode {
 //ErrorHandling.c functions are declared here instead of using another header file
 EduDS_API const char *EdsErrString(EdsErrCode err);
 
-#endif //__EduDS_COMMON_H
+#endif //EduDS_COMMON_H__

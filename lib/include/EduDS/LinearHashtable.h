@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_LINEARHASHTABLE_H
-#define __EduDS_LINEARHASHTABLE_H
+#ifndef EduDS_LINEARHASHTABLE_H__
+#define EduDS_LINEARHASHTABLE_H__
 
 
 #ifdef __cplusplus
@@ -20,7 +20,7 @@ extern "C" {
 #include "Common.h"
 
 
-typedef struct _HashArrayElement {
+typedef struct _H__ashArrayElement {
     KeyValuePair item;
     unsigned char state;
     size_t key_hash; //saving this to make rehashing slightly faster
@@ -67,4 +67,4 @@ EduDS_API void LinHash_destroy(LinHashtable **table,
 }
 #endif
 
-#endif //__EduDS_LINEARHASHTABLE_H
+#endif //EduDS_LINEARHASHTABLE_H__

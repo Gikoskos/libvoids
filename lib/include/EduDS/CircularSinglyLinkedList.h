@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_CSL_LIST_H
-#define __EduDS_CSL_LIST_H
+#ifndef EduDS_CSL_LIST_H__
+#define EduDS_CSL_LIST_H__
 
 
 #ifdef __cplusplus
@@ -73,4 +73,4 @@ EduDS_API void CSLList_destroy(CSLListNode **csllHead,
 }
 #endif
 
-#endif //__EduDS_CSL_LIST_H
+#endif //EduDS_CSL_LIST_H__

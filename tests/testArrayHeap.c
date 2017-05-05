@@ -42,21 +42,6 @@ void printInt(void *param)
     printf("(%d) ", x);
 }
 
-/*EduDS_API ArrayHeap *ArrayHeap_init(UserCompareCallback DataCmp,
-                                    HeapPropertyType property,
-                                    size_t size,
-                                    EdsErrCode *err);
-
-EduDS_API void *ArrayHeap_push(ArrayHeap *arrheap,
-                               void *pData,
-                               EdsErrCode *err);
-
-EduDS_API void *ArrayHeap_pop(ArrayHeap *arrheap,
-                              EdsErrCode *err);
-
-EduDS_API void ArrayHeap_destroy(ArrayHeap **arrheap,
-                                 UserDataCallback freeData,
-                                 EdsErrCode *err);*/
 void printArrayHeap(ArrayHeap *heap, UserDataCallback printData)
 {
     if (printData) {

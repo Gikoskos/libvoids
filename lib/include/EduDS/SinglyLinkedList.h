@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_SL_LIST_H
-#define __EduDS_SL_LIST_H
+#ifndef EduDS_SL_LIST_H__
+#define EduDS_SL_LIST_H__
 
 
 #ifdef __cplusplus
@@ -73,4 +73,4 @@ EduDS_API void SLList_destroy(SLListNode **sllHead,
 }
 #endif
 
-#endif //__EduDS_SL_LIST_H
+#endif //EduDS_SL_LIST_H__

@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_LIFO_STACK_H
-#define __EduDS_LIFO_STACK_H
+#ifndef EduDS_LIFO_STACK_H__
+#define EduDS_LIFO_STACK_H__
 
 
 #ifdef __cplusplus
@@ -53,4 +53,4 @@ EduDS_API void LIFO_traverse(LIFOstack *stack,
 }
 #endif
 
-#endif //__EduDS_LIFO_STACK_H
+#endif //EduDS_LIFO_STACK_H__

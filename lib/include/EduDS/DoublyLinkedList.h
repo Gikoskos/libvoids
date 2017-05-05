@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_DL_LIST_H
-#define __EduDS_DL_LIST_H
+#ifndef EduDS_DL_LIST_H__
+#define EduDS_DL_LIST_H__
 
 
 #ifdef __cplusplus
@@ -73,4 +73,4 @@ EduDS_API void DLList_destroy(DLListNode **dllHead,
 }
 #endif
 
-#endif //__EduDS_DL_LIST_H
+#endif //EduDS_DL_LIST_H__

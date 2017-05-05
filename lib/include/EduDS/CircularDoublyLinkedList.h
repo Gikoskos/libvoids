@@ -9,8 +9,8 @@
   ***********************************************************************************/
 
 
-#ifndef __EduDS_CDL_LIST_H
-#define __EduDS_CDL_LIST_H
+#ifndef EduDS_CDL_LIST_H__
+#define EduDS_CDL_LIST_H__
 
 
 #ifdef __cplusplus
@@ -73,4 +73,4 @@ EduDS_API void CDLList_destroy(CDLListNode **cdllHead,
 }
 #endif
 
-#endif //__EduDS_CDL_LIST_H
+#endif //EduDS_CDL_LIST_H__

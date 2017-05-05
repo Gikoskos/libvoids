@@ -57,11 +57,12 @@ cmake .. -DCMAKE_BUILD_TYPE=Debug
 * [x] Treap
 * [ ] Trie
 * [ ] \(a,b\) tree
-* [x] Binary heap
-* [x] Array heap
+* [x] Binary heap implemented as a binary tree
+* [x] Binary heap implemented as an array
 * [x] Binomial heap
 * [ ] Fibonacci heap
-* [ ] B-tree
+* [ ] Height-biased Leftist heap
+* [ ] Skew heap
 * [x] Red black tree
 * [x] Association List
 * [x] Hashing with chaining
