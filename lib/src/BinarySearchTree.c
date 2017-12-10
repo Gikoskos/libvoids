@@ -253,7 +253,7 @@ void *BSTree_findData(BSTree *bst,
 }
 
 void BSTree_traverse(BSTree *bst,
-                     TreeTraversalMethod traversal,
+                     vdsTreeTraversal traversal,
                      vdsUserDataFunc callback,
                      vdsErrCode *err)
 {

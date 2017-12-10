@@ -15,7 +15,7 @@
 
 ChainedHashtable *ChainedHash_init(size_t size,
                                    vdsUserCompareFunc KeyCmp,
-                                   UserHashFuncCallback Hash,
+                                   vdsUserHashFunc Hash,
                                    vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
@@ -27,7 +27,7 @@ ChainedHashtable *ChainedHash_init(size_t size,
 
         if (chtable) {
 
-            chtable->chains = EdsCalloc(size, sizeof(DictListNode*));
+            chtable->chains = VdsCalloc(size, sizeof(DictListNode*));
 
             if (chtable->chains) {
                 //if the user didn't give a custom hashing algorithm, we default to either

@@ -20,7 +20,7 @@ extern "C" {
 
 
 typedef struct _AVLTreeNode {
-    vdsKeyValuePair item;
+    KeyValuePair item;
     struct _AVLTreeNode *left, *right, *parent;
     int height; //count of edges (not nodes)
 } AVLTreeNode;
@@ -39,11 +39,11 @@ VOIDS_API AVLTreeNode *AVLTree_insert(AVLTree *avlt,
                                       void *pData,
                                       vdsErrCode *err);
 
-VOIDS_API vdsKeyValuePair AVLTree_deleteNode(AVLTree *avlt,
+VOIDS_API KeyValuePair AVLTree_deleteNode(AVLTree *avlt,
                                           AVLTreeNode *avltToDelete,
                                           vdsErrCode *err);
 
-VOIDS_API vdsKeyValuePair AVLTree_deleteByKey(AVLTree *avlt,
+VOIDS_API KeyValuePair AVLTree_deleteByKey(AVLTree *avlt,
                                            void *pKey,
                                            vdsErrCode *err);
 

@@ -399,6 +399,7 @@ KeyValuePair BinomialHeap_pop(BinomialHeap *binheap,
             binheap->forest = merge_heaps_min(binheap, make_children_forest(top_tree));
 
             VdsFree(top_tree);
+            break;
         default:
             tmp_err = VDS_INVALID_ARGS;
             break;

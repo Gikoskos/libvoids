@@ -20,7 +20,7 @@ SDLList *SDLList_init(vdsErrCode *err)
 
     if (newList) {
 
-        newList->head = EdsCalloc(1, sizeof(DLListNode));
+        newList->head = VdsCalloc(1, sizeof(DLListNode));
 
         if (newList->head) {
             newList->sentinel = newList->head;

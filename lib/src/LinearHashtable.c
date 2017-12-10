@@ -24,7 +24,7 @@ static int rehash(LinHashtable *table, vdsUserDataFunc freeData);
 
 LinHashtable *LinHash_init(size_t size,
                            vdsUserCompareFunc KeyCmp,
-                           UserHashFuncCallback Hash,
+                           vdsUserHashFunc Hash,
                            int rehash,
                            vdsErrCode *err)
 {
@@ -37,7 +37,7 @@ LinHashtable *LinHash_init(size_t size,
 
         if (lintable) {
 
-            lintable->array = EdsCalloc(size, sizeof(HashArrayElement));
+            lintable->array = VdsCalloc(size, sizeof(HashArrayElement));
 
             if (lintable->array) {
                 //if the user didn't give a custom hashing algorithm, we default to either
@@ -84,7 +84,7 @@ int rehash(LinHashtable *table, vdsUserDataFunc freeData)
     table->size *= 2;
 
     //allocate the new array that has twice the size
-    table->array = EdsCalloc(table->size, sizeof(HashArrayElement));
+    table->array = VdsCalloc(table->size, sizeof(HashArrayElement));
     if (!table->array) {
         table->array = old_array;
         return 0;

@@ -450,7 +450,7 @@ void *AVLTree_findData(AVLTree *avlt,
 }
 
 void AVLTree_traverse(AVLTree *avlt,
-                      TreeTraversalMethod traversal,
+                      vdsTreeTraversal traversal,
                       vdsUserDataFunc callback,
                       vdsErrCode *err)
 {

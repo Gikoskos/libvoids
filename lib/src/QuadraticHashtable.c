@@ -24,7 +24,7 @@ static int rehash(QuadHashtable *table, vdsUserDataFunc freeData);
 
 QuadHashtable *QuadHash_init(size_t size,
                              vdsUserCompareFunc KeyCmp,
-                             UserHashFuncCallback Hash,
+                             vdsUserHashFunc Hash,
                              vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
@@ -36,7 +36,7 @@ QuadHashtable *QuadHash_init(size_t size,
 
         if (quadtable) {
 
-            quadtable->array = EdsCalloc(size, sizeof(HashArrayElement));
+            quadtable->array = VdsCalloc(size, sizeof(HashArrayElement));
 
             if (quadtable->array) {
                 //if the user didn't give a custom hashing algorithm, we default to either
@@ -80,7 +80,7 @@ int rehash(QuadHashtable *table, vdsUserDataFunc freeData)
 
     table->size *= 2;
 
-    table->array = EdsCalloc(table->size, sizeof(HashArrayElement));
+    table->array = VdsCalloc(table->size, sizeof(HashArrayElement));
     if (!table->array) {
         table->array = old_array;
         return 0;

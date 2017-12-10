@@ -16,7 +16,7 @@ Dequeue *Dequeue_init(vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
 
-    Dequeue *newDequeue = EdsCalloc(1, sizeof(Dequeue));
+    Dequeue *newDequeue = VdsCalloc(1, sizeof(Dequeue));
 
     if (!newDequeue)
         tmp_err = VDS_MALLOC_FAIL;

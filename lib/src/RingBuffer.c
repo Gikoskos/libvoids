@@ -20,7 +20,7 @@ RingBuffer *RingBuffer_init(size_t buff_size,
 
     if (buff_size) {
 
-        cBuffNew = EdsCalloc(1, sizeof(RingBuffer));
+        cBuffNew = VdsCalloc(1, sizeof(RingBuffer));
 
         if (cBuffNew) {
 

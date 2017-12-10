@@ -20,7 +20,7 @@ extern "C" {
 
 
 typedef struct _DictListNode {
-    vdsKeyValuePair item;
+    KeyValuePair item;
     struct _DictListNode *nxt;
 } DictListNode;
 
@@ -43,7 +43,7 @@ VOIDS_API DictListNode *DictList_insertAfter(DictListNode *dictListPrev,
                                              void *pKey,
                                              vdsErrCode *err);
 
-VOIDS_API vdsKeyValuePair DictList_deleteByKey(DictListNode **dictListHead,
+VOIDS_API KeyValuePair DictList_deleteByKey(DictListNode **dictListHead,
                                             void *pKey,
                                             vdsUserCompareFunc KeyCmp,
                                             vdsErrCode *err);

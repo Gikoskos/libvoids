@@ -20,7 +20,7 @@ extern "C" {
 
 
 typedef struct _RedBlackTreeNode {
-    vdsKeyValuePair item;
+    KeyValuePair item;
     struct _RedBlackTreeNode *left, *right, *parent;
     char color;
 } RedBlackTreeNode;
@@ -39,13 +39,13 @@ VOIDS_API RedBlackTreeNode *RBTree_insert(RedBlackTree *rbt,
                                           void *pData,
                                           vdsErrCode *err);
 
-VOIDS_API vdsKeyValuePair RBTree_deleteNode(RedBlackTree *rbt,
-                                            RedBlackTreeNode *rbtToDelete,
-                                            vdsErrCode *err);
+VOIDS_API KeyValuePair RBTree_deleteNode(RedBlackTree *rbt,
+                                         RedBlackTreeNode *rbtToDelete,
+                                         vdsErrCode *err);
 
-VOIDS_API vdsKeyValuePair RBTree_deleteByKey(RedBlackTree *rbt,
-                                             void *pKey,
-                                             vdsErrCode *err);
+VOIDS_API KeyValuePair RBTree_deleteByKey(RedBlackTree *rbt,
+                                          void *pKey,
+                                          vdsErrCode *err);
 
 VOIDS_API RedBlackTreeNode *RBTree_findNode(RedBlackTree *rbt,
                                             void *pKey,

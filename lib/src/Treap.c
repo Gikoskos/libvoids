@@ -404,7 +404,7 @@ void *Treap_findData(Treap *treap,
 }
 
 void Treap_traverse(Treap *treap,
-                    TreeTraversalMethod traversal,
+                    vdsTreeTraversal traversal,
                     vdsUserDataFunc callback,
                     vdsErrCode *err)
 {

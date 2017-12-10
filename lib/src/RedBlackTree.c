@@ -637,7 +637,7 @@ void *RBTree_findData(RedBlackTree *rbt,
     return (curr) ? curr->item.pData : NULL;
 }
 void RBTree_traverse(RedBlackTree *rbt,
-                     TreeTraversalMethod traversal,
+                     vdsTreeTraversal traversal,
                      vdsUserDataFunc callback,
                      vdsErrCode *err)
 

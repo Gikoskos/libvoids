@@ -31,7 +31,7 @@ static LIFOnode *newLIFOnode(void *node_data)
 LIFOstack *LIFO_init(vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    LIFOstack *newstack = EdsCalloc(1, sizeof(LIFOstack));
+    LIFOstack *newstack = VdsCalloc(1, sizeof(LIFOstack));
 
     if (!newstack)
         tmp_err = VDS_MALLOC_FAIL;

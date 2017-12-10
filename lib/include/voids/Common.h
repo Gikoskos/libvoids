@@ -86,10 +86,10 @@ typedef size_t (*vdsUserHashFunc)(size_t key_hash, size_t array_len);
 
 typedef enum _vdsTreeTraversal {
     VDS_PRE_ORDER,
-    VDS_VDS_IN_ORDER,
-    VDS_VDS_POST_ORDER,
-    VDS_VDS_BREADTH_FIRST, //level-order
-    VDS_VDS_EULER
+    VDS_IN_ORDER,
+    VDS_POST_ORDER,
+    VDS_BREADTH_FIRST, //level-order
+    VDS_EULER
 } vdsTreeTraversal;
 
 typedef enum _vdsHeapProperty {
