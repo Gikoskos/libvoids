@@ -1,8 +1,7 @@
  /********************
  *  BinarySearchTree.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -15,30 +14,30 @@
 #define isLeafNode(x) ( !(x->right || x->left) )
 #define isLeftNode(x) ( (x) == (x)->parent->left )
 
-static void pre_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback);
-static void in_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback);
-static void post_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback);
-static int breadth_firstTraversal(BSTreeNode *bstRoot, UserDataCallback callback);
-static void eulerTraversal(BSTreeNode *bstNode, UserDataCallback callback);
+static void pre_orderTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback);
+static void in_orderTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback);
+static void post_orderTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback);
+static int breadth_firstTraversal(BSTreeNode *bstRoot, vdsUserDataFunc callback);
+static void eulerTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback);
 
 
 
-BSTree *BSTree_init(UserCompareCallback KeyCmp,
-                    EdsErrCode *err)
+BSTree *BSTree_init(vdsUserCompareFunc KeyCmp,
+                    vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     BSTree *bst = NULL;
 
     if (KeyCmp) {
-        bst = EdsMalloc(sizeof(BSTree));
+        bst = VdsMalloc(sizeof(BSTree));
 
         if (bst) {
             bst->root = NULL;
             bst->KeyCmp = KeyCmp;
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -48,14 +47,14 @@ BSTree *BSTree_init(UserCompareCallback KeyCmp,
 BSTreeNode *BSTree_insert(BSTree *bst,
                           void *pData,
                           void *pKey,
-                          EdsErrCode *err)
+                          vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     BSTreeNode *new_node = NULL;
 
     if (bst && pKey) {
 
-        new_node = EdsMalloc(sizeof(BSTreeNode));
+        new_node = VdsMalloc(sizeof(BSTreeNode));
 
         if (new_node) {
 
@@ -97,18 +96,18 @@ BSTreeNode *BSTree_insert(BSTree *bst,
                         }
 
                     } else { //if there's another node with the same key already on the tree
-                        EdsFree(new_node); //return without doing anything
+                        VdsFree(new_node); //return without doing anything
                         new_node = NULL;
-                        tmp_err = EDS_KEY_EXISTS;
+                        tmp_err = VDS_KEY_EXISTS;
                         break;
                     }
                 }
             }
 
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -117,9 +116,9 @@ BSTreeNode *BSTree_insert(BSTree *bst,
 
 KeyValuePair BSTree_deleteNode(BSTree *bst,
                                BSTreeNode *bstToDelete,
-                               EdsErrCode *err)
+                               vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     KeyValuePair item = { 0 };
 
     if (bst && bst->root && bstToDelete) {
@@ -175,9 +174,9 @@ KeyValuePair BSTree_deleteNode(BSTree *bst,
 
         //delete the node because we don't need it anymore
         //and no other nodes point to it
-        EdsFree(bstToDelete);
+        VdsFree(bstToDelete);
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -186,16 +185,16 @@ KeyValuePair BSTree_deleteNode(BSTree *bst,
 
 KeyValuePair BSTree_deleteByKey(BSTree *bst,
                                 void *pKey,
-                                EdsErrCode *err)
+                                vdsErrCode *err)
 {
     return BSTree_deleteNode(bst, BSTree_findNode(bst, pKey, err), err);
 }
 
 BSTreeNode *BSTree_findNode(BSTree *bst,
                             void *pKey,
-                            EdsErrCode *err)
+                            vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     BSTreeNode *curr = bst->root;
 
     if (bst && pKey) {
@@ -215,7 +214,7 @@ BSTreeNode *BSTree_findNode(BSTree *bst,
                 curr = curr->left;
         }
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -224,9 +223,9 @@ BSTreeNode *BSTree_findNode(BSTree *bst,
 
 void *BSTree_findData(BSTree *bst,
                       void *pKey,
-                      EdsErrCode *err)
+                      vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     BSTreeNode *curr = bst->root;
 
     if (bst && pKey) {
@@ -246,7 +245,7 @@ void *BSTree_findData(BSTree *bst,
                 curr = curr->left;
         }
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -255,43 +254,43 @@ void *BSTree_findData(BSTree *bst,
 
 void BSTree_traverse(BSTree *bst,
                      TreeTraversalMethod traversal,
-                     UserDataCallback callback,
-                     EdsErrCode *err)
+                     vdsUserDataFunc callback,
+                     vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (bst && bst->root && callback) {
         switch (traversal) {
-        case EDS_PRE_ORDER:
+        case VDS_PRE_ORDER:
             pre_orderTraversal(bst->root, callback);
             break;
-        case EDS_IN_ORDER:
+        case VDS_IN_ORDER:
             in_orderTraversal(bst->root, callback);
             break;
-        case EDS_POST_ORDER:
+        case VDS_POST_ORDER:
             post_orderTraversal(bst->root, callback);
             break;
-        case EDS_BREADTH_FIRST:
+        case VDS_BREADTH_FIRST:
             if (!breadth_firstTraversal(bst->root, callback))
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
             break;
-        case EDS_EULER:
+        case VDS_EULER:
             eulerTraversal(bst->root, callback);
             break;
         default:
             break;
         }
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
 
 void BSTree_destroy(BSTree **bst,
-                    UserDataCallback freeData,
-                    EdsErrCode *err)
+                    vdsUserDataFunc freeData,
+                    vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (bst && *bst) {
 
@@ -320,24 +319,24 @@ void BSTree_destroy(BSTree **bst,
                 if (curr) {
 
                     if (curr->right == to_delete) {
-                        EdsFree(curr->right);
+                        VdsFree(curr->right);
                         curr->right = NULL;
                     } else {
-                        EdsFree(curr->left);
+                        VdsFree(curr->left);
                         curr->left = NULL;
                     }
 
                 } else { //if curr is NULL, it means that to_delete holds the root node
-                    EdsFree(to_delete);
+                    VdsFree(to_delete);
                 }
             }
         }
 
-        EdsFree(*bst);
+        VdsFree(*bst);
         //this line is the reason for the double pointer parameter **
         *bst = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
@@ -348,7 +347,7 @@ void BSTree_destroy(BSTree **bst,
 
 #include "FIFOqueue.h"
 
-void pre_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback)
+void pre_orderTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback)
 {
     if (bstNode) {
         callback((void *)&bstNode->item);
@@ -357,7 +356,7 @@ void pre_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback)
     }
 }
 
-void in_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback)
+void in_orderTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback)
 {
     if (bstNode) {
         in_orderTraversal(bstNode->left, callback);
@@ -366,7 +365,7 @@ void in_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback)
     }
 }
 
-void post_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback)
+void post_orderTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback)
 {
     if (bstNode) {
         post_orderTraversal(bstNode->left, callback);
@@ -375,16 +374,16 @@ void post_orderTraversal(BSTreeNode *bstNode, UserDataCallback callback)
     }
 }
 
-int breadth_firstTraversal(BSTreeNode *bstNode, UserDataCallback callback)
+int breadth_firstTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback)
 {
-    EdsErrCode err;
+    vdsErrCode err;
     BSTreeNode *curr;
     FIFOqueue *levelFIFO = FIFO_init(&err);
 
     if (levelFIFO) {
         FIFO_enqueue(levelFIFO, (void *)bstNode, &err);
 
-        if (err == EDS_SUCCESS) {
+        if (err == VDS_SUCCESS) {
 
             while (levelFIFO->total_nodes) {
                 curr = (BSTreeNode *)FIFO_dequeue(levelFIFO, NULL);
@@ -394,14 +393,14 @@ int breadth_firstTraversal(BSTreeNode *bstNode, UserDataCallback callback)
                 if (curr->right) {
                     FIFO_enqueue(levelFIFO, curr->right, &err);
 
-                    if (err != EDS_SUCCESS)
+                    if (err != VDS_SUCCESS)
                         break;
                 }
 
                 if (curr->left) {
                     FIFO_enqueue(levelFIFO, curr->left, &err);
 
-                    if (err != EDS_SUCCESS)
+                    if (err != VDS_SUCCESS)
                         break;
                 }
             }
@@ -411,13 +410,13 @@ int breadth_firstTraversal(BSTreeNode *bstNode, UserDataCallback callback)
         }
     }
 
-    if (err == EDS_SUCCESS)
+    if (err == VDS_SUCCESS)
         return 1;
 
     return 0;
 }
 
-void eulerTraversal(BSTreeNode *bstNode, UserDataCallback callback)
+void eulerTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback)
 {
     if (bstNode) {
         callback((void *)&bstNode->item);

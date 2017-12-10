@@ -1,8 +1,7 @@
  /********************
  *  ErrorHandling.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -12,18 +11,20 @@
 #include "Common.h"
 
 
-const char *EdsErrString(EdsErrCode err)
+const char *EdsErrString(vdsErrCode err)
 {
     switch (err) {
-    case EDS_SUCCESS:
+    case VDS_SUCCESS:
         return "Operation was successful";
-    case EDS_MALLOC_FAIL:
+    case VDS_MALLOC_FAIL:
         return "Memory allocation failure";
-    case EDS_KEY_EXISTS:
-        return "All keys have to be unique, in this data structure";
-    case EDS_INVALID_ARGS:
+    case VDS_KEY_EXISTS:
+        return "Key already exists; all keys have to be unique in this data structure";
+    case VDS_BUFFER_FULL:
+        return "Buffer has reached capacity; pop elements in order to push again";
+    case VDS_INVALID_ARGS:
         return "Invalid parameters given to the function";
     default:
-        return "Unknown EduDS error code";
+        return "Unknown libvoids error code";
     }
 }

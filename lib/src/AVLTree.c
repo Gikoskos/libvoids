@@ -1,8 +1,7 @@
  /********************
  *  AVLTree.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -55,33 +54,33 @@
 
 
 
-static void pre_orderTraversal(AVLTreeNode *avltNode, UserDataCallback callback);
-static void in_orderTraversal(AVLTreeNode *avltNode, UserDataCallback callback);
-static void post_orderTraversal(AVLTreeNode *avltNode, UserDataCallback callback);
-static int breadth_firstTraversal(AVLTreeNode *avltRoot, UserDataCallback callback);
-static void eulerTraversal(AVLTreeNode *avltNode, UserDataCallback callback);
+static void pre_orderTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback);
+static void in_orderTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback);
+static void post_orderTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback);
+static int breadth_firstTraversal(AVLTreeNode *avltRoot, vdsUserDataFunc callback);
+static void eulerTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback);
 
 static int balanceFactor(AVLTreeNode *avltNode);
 static void correctNodeHeight(AVLTreeNode *avltNode);
 static void rebalance(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode);
 
 
-AVLTree *AVLTree_init(UserCompareCallback KeyCmp,
-                      EdsErrCode *err)
+AVLTree *AVLTree_init(vdsUserCompareFunc KeyCmp,
+                      vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     AVLTree *avlt = NULL;
 
     if (KeyCmp) {
-        avlt = EdsMalloc(sizeof(AVLTree));
+        avlt = VdsMalloc(sizeof(AVLTree));
 
         if (avlt) {
             avlt->root = NULL;
             avlt->KeyCmp = KeyCmp;
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -91,14 +90,14 @@ AVLTree *AVLTree_init(UserCompareCallback KeyCmp,
 AVLTreeNode *AVLTree_insert(AVLTree *avlt,
                             void *pKey,
                             void *pData,
-                            EdsErrCode *err)
+                            vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     AVLTreeNode *new_node = NULL;
 
     if (avlt && pKey) {
 
-        new_node = EdsMalloc(sizeof(AVLTreeNode));
+        new_node = VdsMalloc(sizeof(AVLTreeNode));
 
         if (new_node) {
 
@@ -141,9 +140,9 @@ AVLTreeNode *AVLTree_insert(AVLTree *avlt,
                         }
 
                     } else { //if there's another node with the same key already on the tree
-                        EdsFree(new_node); //return without doing anything
+                        VdsFree(new_node); //return without doing anything
                         parent = new_node = NULL; //nullify the parent so that the rebalancing call below won't do anything
-                        tmp_err = EDS_KEY_EXISTS;
+                        tmp_err = VDS_KEY_EXISTS;
                         break;
                     }
 
@@ -153,9 +152,9 @@ AVLTreeNode *AVLTree_insert(AVLTree *avlt,
 
             }
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -314,9 +313,9 @@ void rebalance(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
 
 KeyValuePair AVLTree_deleteNode(AVLTree *avlt,
                                 AVLTreeNode *avltToDelete,
-                                EdsErrCode *err)
+                                vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     KeyValuePair item = { 0 };
 
     if (avlt && avlt->root && avltToDelete) {
@@ -372,11 +371,11 @@ KeyValuePair AVLTree_deleteNode(AVLTree *avlt,
 
         //delete the node because we don't need it anymore
         //and no other nodes point to it
-        EdsFree(avltToDelete);
+        VdsFree(avltToDelete);
 
         rebalance(&avlt->root, parent);
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -385,16 +384,16 @@ KeyValuePair AVLTree_deleteNode(AVLTree *avlt,
 
 KeyValuePair AVLTree_deleteByKey(AVLTree *avlt,
                                  void *pKey,
-                                 EdsErrCode *err)
+                                 vdsErrCode *err)
 {
     return AVLTree_deleteNode(avlt, AVLTree_findNode(avlt, pKey, err), err);
 }
 
 AVLTreeNode *AVLTree_findNode(AVLTree *avlt,
                               void *pKey,
-                              EdsErrCode *err)
+                              vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     AVLTreeNode *curr = NULL;
 
     if (avlt && pKey) {
@@ -403,7 +402,7 @@ AVLTreeNode *AVLTree_findNode(AVLTree *avlt,
 
         while (curr) {
             cmp_res = avlt->KeyCmp(pKey, curr->item.pKey);
-            
+
             if (!cmp_res)
                 break;
 
@@ -413,7 +412,7 @@ AVLTreeNode *AVLTree_findNode(AVLTree *avlt,
                 curr = curr->left;
         }
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -422,9 +421,9 @@ AVLTreeNode *AVLTree_findNode(AVLTree *avlt,
 
 void *AVLTree_findData(AVLTree *avlt,
                        void *pKey,
-                       EdsErrCode *err)
+                       vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     AVLTreeNode *curr = NULL;
 
     if (avlt && pKey) {
@@ -433,7 +432,7 @@ void *AVLTree_findData(AVLTree *avlt,
 
         while (curr) {
             cmp_res = avlt->KeyCmp(pKey, curr->item.pKey);
-            
+
             if (!cmp_res)
                 break;
 
@@ -443,7 +442,7 @@ void *AVLTree_findData(AVLTree *avlt,
                 curr = curr->left;
         }
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -452,45 +451,45 @@ void *AVLTree_findData(AVLTree *avlt,
 
 void AVLTree_traverse(AVLTree *avlt,
                       TreeTraversalMethod traversal,
-                      UserDataCallback callback,
-                      EdsErrCode *err)
+                      vdsUserDataFunc callback,
+                      vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (callback && avlt && avlt->root) {
         switch (traversal) {
-        case EDS_PRE_ORDER:
+        case VDS_PRE_ORDER:
             pre_orderTraversal(avlt->root, callback);
             break;
-        case EDS_IN_ORDER:
+        case VDS_IN_ORDER:
             in_orderTraversal(avlt->root, callback);
             break;
-        case EDS_POST_ORDER:
+        case VDS_POST_ORDER:
             post_orderTraversal(avlt->root, callback);
             break;
-        case EDS_BREADTH_FIRST:
+        case VDS_BREADTH_FIRST:
             if (!breadth_firstTraversal(avlt->root, callback))
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
             break;
-        case EDS_EULER:
+        case VDS_EULER:
             eulerTraversal(avlt->root, callback);
             break;
         default:
-            tmp_err = EDS_INVALID_ARGS;
+            tmp_err = VDS_INVALID_ARGS;
             break;
         }
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
 }
 
 void AVLTree_destroy(AVLTree **avlt,
-                     UserDataCallback freeData,
-                     EdsErrCode *err)
+                     vdsUserDataFunc freeData,
+                     vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (avlt && *avlt) {
 
@@ -519,23 +518,23 @@ void AVLTree_destroy(AVLTree **avlt,
                 if (curr) {
 
                     if (curr->right == to_delete) {
-                        EdsFree(curr->right);
+                        VdsFree(curr->right);
                         curr->right = NULL;
                     } else {
-                        EdsFree(curr->left);
+                        VdsFree(curr->left);
                         curr->left = NULL;
                     }
 
                 } else { //if curr is NULL, it means that to_delete holds the root node
-                    EdsFree(to_delete);
+                    VdsFree(to_delete);
                 }
             }
         }
 
-        EdsFree(*avlt);
+        VdsFree(*avlt);
         *avlt = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -547,7 +546,7 @@ void AVLTree_destroy(AVLTree **avlt,
 
 #include "FIFOqueue.h"
 
-void pre_orderTraversal(AVLTreeNode *avltNode, UserDataCallback callback)
+void pre_orderTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback)
 {
     if (avltNode) {
         callback((void *)&avltNode->item);
@@ -556,7 +555,7 @@ void pre_orderTraversal(AVLTreeNode *avltNode, UserDataCallback callback)
     }
 }
 
-void in_orderTraversal(AVLTreeNode *avltNode, UserDataCallback callback)
+void in_orderTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback)
 {
     if (avltNode) {
         in_orderTraversal(avltNode->left, callback);
@@ -565,7 +564,7 @@ void in_orderTraversal(AVLTreeNode *avltNode, UserDataCallback callback)
     }
 }
 
-void post_orderTraversal(AVLTreeNode *avltNode, UserDataCallback callback)
+void post_orderTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback)
 {
     if (avltNode) {
         post_orderTraversal(avltNode->left, callback);
@@ -574,16 +573,16 @@ void post_orderTraversal(AVLTreeNode *avltNode, UserDataCallback callback)
     }
 }
 
-int breadth_firstTraversal(AVLTreeNode *avltRoot, UserDataCallback callback)
+int breadth_firstTraversal(AVLTreeNode *avltRoot, vdsUserDataFunc callback)
 {
-    EdsErrCode err;
+    vdsErrCode err;
     AVLTreeNode *curr;
     FIFOqueue *levelFIFO = FIFO_init(&err);
 
     if (levelFIFO) {
         FIFO_enqueue(levelFIFO, (void *)avltRoot, &err);
 
-        if (err == EDS_SUCCESS) {
+        if (err == VDS_SUCCESS) {
 
             while (levelFIFO->total_nodes) {
                 curr = (AVLTreeNode *)FIFO_dequeue(levelFIFO, NULL);
@@ -593,14 +592,14 @@ int breadth_firstTraversal(AVLTreeNode *avltRoot, UserDataCallback callback)
                 if (curr->right) {
                     FIFO_enqueue(levelFIFO, curr->right, &err);
 
-                    if (err != EDS_SUCCESS)
+                    if (err != VDS_SUCCESS)
                         break;
                 }
 
                 if (curr->left) {
                     FIFO_enqueue(levelFIFO, curr->left, &err);
 
-                    if (err != EDS_SUCCESS)
+                    if (err != VDS_SUCCESS)
                         break;
                 }
             }
@@ -610,13 +609,13 @@ int breadth_firstTraversal(AVLTreeNode *avltRoot, UserDataCallback callback)
         }
     }
 
-    if (err == EDS_SUCCESS)
+    if (err == VDS_SUCCESS)
         return 1;
 
     return 0;
 }
 
-void eulerTraversal(AVLTreeNode *avltNode, UserDataCallback callback)
+void eulerTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback)
 {
     if (avltNode) {
         callback((void *)&avltNode->item);

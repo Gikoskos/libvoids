@@ -1,8 +1,7 @@
  /********************
  *  DoubleEndedQueue.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -13,14 +12,14 @@
 #include "DoubleEndedQueue.h"
 
 
-Dequeue *Dequeue_init(EdsErrCode *err)
+Dequeue *Dequeue_init(vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     Dequeue *newDequeue = EdsCalloc(1, sizeof(Dequeue));
 
     if (!newDequeue)
-        tmp_err = EDS_MALLOC_FAIL;
+        tmp_err = VDS_MALLOC_FAIL;
 
     SAVE_ERR(err, tmp_err);
 
@@ -29,13 +28,13 @@ Dequeue *Dequeue_init(EdsErrCode *err)
 
 DLListNode *Dequeue_push(Dequeue *dequeue,
                          void *pData,
-                         EdsErrCode *err)
+                         vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     DLListNode *new_node = NULL;
 
     if (dequeue && pData) {
-        new_node = EdsMalloc(sizeof(DLListNode));
+        new_node = VdsMalloc(sizeof(DLListNode));
 
         if (new_node) {
             new_node->pData = pData;
@@ -50,10 +49,10 @@ DLListNode *Dequeue_push(Dequeue *dequeue,
             dequeue->head = new_node;
 
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -62,9 +61,9 @@ DLListNode *Dequeue_push(Dequeue *dequeue,
 
 DLListNode *Dequeue_inject(Dequeue *dequeue,
                            void *pData,
-                           EdsErrCode *err)
+                           vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     DLListNode *new_node = NULL;
 
     if (dequeue && pData) {
@@ -72,7 +71,7 @@ DLListNode *Dequeue_inject(Dequeue *dequeue,
         if (!dequeue->tail) {
             new_node = Dequeue_push(dequeue, pData, &tmp_err);
         } else {
-            new_node = EdsMalloc(sizeof(DLListNode));
+            new_node = VdsMalloc(sizeof(DLListNode));
 
             if (new_node) {
                 new_node->pData = pData;
@@ -82,10 +81,10 @@ DLListNode *Dequeue_inject(Dequeue *dequeue,
                 dequeue->tail->nxt = new_node;
                 dequeue->tail = new_node;
             } else
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
         }
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -93,9 +92,9 @@ DLListNode *Dequeue_inject(Dequeue *dequeue,
 }
 
 void *Dequeue_eject(Dequeue *dequeue,
-                    EdsErrCode *err)
+                    vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     void *pEjected = NULL;
 
     if (dequeue && dequeue->head) {
@@ -110,9 +109,9 @@ void *Dequeue_eject(Dequeue *dequeue,
         else
             dequeue->head = NULL;
 
-        EdsFree(tmp);
+        VdsFree(tmp);
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -120,9 +119,9 @@ void *Dequeue_eject(Dequeue *dequeue,
 }
 
 void *Dequeue_pop(Dequeue *dequeue,
-                  EdsErrCode *err)
+                  vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     void *pPopped = NULL;
 
     if (dequeue && dequeue->head) {
@@ -137,9 +136,9 @@ void *Dequeue_pop(Dequeue *dequeue,
         else
             dequeue->tail = NULL;
 
-        EdsFree(tmp);
+        VdsFree(tmp);
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -147,10 +146,10 @@ void *Dequeue_pop(Dequeue *dequeue,
 }
 
 void Dequeue_destroy(Dequeue **dequeue,
-                     UserDataCallback freeData,
-                     EdsErrCode *err)
+                     vdsUserDataFunc freeData,
+                     vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (dequeue && *dequeue) {
 
@@ -162,14 +161,14 @@ void Dequeue_destroy(Dequeue **dequeue,
 
             tmp = curr;
             curr = curr->nxt;
-            EdsFree(tmp);
+            VdsFree(tmp);
         }
 
-        EdsFree(*dequeue);
+        VdsFree(*dequeue);
         *dequeue = NULL;
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

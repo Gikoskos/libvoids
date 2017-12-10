@@ -1,8 +1,7 @@
  /********************
  *  CircularSinglyLinkedList.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -15,13 +14,13 @@
 
 CSLListNode *CSLList_insert(CSLListNode **csllHead,
                             void *pData,
-                            EdsErrCode *err)
+                            vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     CSLListNode *new_node = NULL;
 
     if (csllHead) {
-        new_node = EdsMalloc(sizeof(CSLListNode));
+        new_node = VdsMalloc(sizeof(CSLListNode));
 
         if (new_node) {
             new_node->pData = pData;
@@ -40,9 +39,9 @@ CSLListNode *CSLList_insert(CSLListNode **csllHead,
 
             *csllHead = new_node;
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -51,9 +50,9 @@ CSLListNode *CSLList_insert(CSLListNode **csllHead,
 
 CSLListNode *CSLList_append(CSLListNode **csllHead,
                             void *pData,
-                            EdsErrCode *err)
+                            vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     CSLListNode *new_node = NULL;
 
     if (csllHead) {
@@ -61,7 +60,7 @@ CSLListNode *CSLList_append(CSLListNode **csllHead,
         if (!(*csllHead)) {
             new_node = CSLList_insert(csllHead, pData, &tmp_err);
         } else {
-            new_node = EdsMalloc(sizeof(CSLListNode));
+            new_node = VdsMalloc(sizeof(CSLListNode));
 
             if (new_node) {
 
@@ -75,10 +74,10 @@ CSLListNode *CSLList_append(CSLListNode **csllHead,
                 curr->nxt = new_node;
 
             } else
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
         }
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -87,9 +86,9 @@ CSLListNode *CSLList_append(CSLListNode **csllHead,
 
 CSLListNode *CSLList_concat(CSLListNode *csll_1,
                             CSLListNode *csll_2,
-                            EdsErrCode *err)
+                            vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     CSLListNode *ret = NULL;
 
     if (csll_1 && csll_2) {
@@ -103,7 +102,7 @@ CSLListNode *CSLList_concat(CSLListNode *csll_1,
 
         ret = csll_1;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -112,13 +111,13 @@ CSLListNode *CSLList_concat(CSLListNode *csll_1,
 
 CSLListNode *CSLList_insertAfter(CSLListNode *csllPrev,
                                  void *pData,
-                                 EdsErrCode *err)
+                                 vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     CSLListNode *new_node = NULL;
 
     if (csllPrev) {
-        new_node = EdsMalloc(sizeof(CSLListNode));
+        new_node = VdsMalloc(sizeof(CSLListNode));
 
         if (new_node) {
             new_node->pData = pData;
@@ -126,9 +125,9 @@ CSLListNode *CSLList_insertAfter(CSLListNode *csllPrev,
 
             csllPrev->nxt = new_node;
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -137,9 +136,9 @@ CSLListNode *CSLList_insertAfter(CSLListNode *csllPrev,
 
 void *CSLList_deleteNode(CSLListNode **csllHead,
                          CSLListNode *csllToDelete,
-                         EdsErrCode *err)
+                         vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_INVALID_ARGS;
+    vdsErrCode tmp_err = VDS_INVALID_ARGS;
     void *pRet = NULL;
 
     if (csllHead && *csllHead && csllToDelete) {
@@ -166,9 +165,9 @@ void *CSLList_deleteNode(CSLListNode **csllHead,
                     }
                 }
 
-                EdsFree(curr);
+                VdsFree(curr);
 
-                tmp_err = EDS_SUCCESS;
+                tmp_err = VDS_SUCCESS;
                 break;
             }
 
@@ -184,10 +183,10 @@ void *CSLList_deleteNode(CSLListNode **csllHead,
 
 void *CSLList_deleteData(CSLListNode **csllHead,
                          void *pToDelete,
-                         UserCompareCallback DataCmp,
-                         EdsErrCode *err)
+                         vdsUserCompareFunc DataCmp,
+                         vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_INVALID_ARGS;
+    vdsErrCode tmp_err = VDS_INVALID_ARGS;
     void *pRet = NULL;
 
     if (csllHead && *csllHead && DataCmp) {
@@ -214,9 +213,9 @@ void *CSLList_deleteData(CSLListNode **csllHead,
                         *csllHead = curr->nxt;
                 }
 
-                EdsFree(curr);
+                VdsFree(curr);
 
-                tmp_err = EDS_SUCCESS;
+                tmp_err = VDS_SUCCESS;
                 break;
             }
 
@@ -232,9 +231,9 @@ void *CSLList_deleteData(CSLListNode **csllHead,
 
 CSLListNode *CSLList_at(CSLListNode *csllHead,
                         size_t idx,
-                        EdsErrCode *err)
+                        vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     CSLListNode *curr = NULL;
 
     if (csllHead) {
@@ -255,7 +254,7 @@ CSLListNode *CSLList_at(CSLListNode *csllHead,
         }
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -264,10 +263,10 @@ CSLListNode *CSLList_at(CSLListNode *csllHead,
 
 CSLListNode *CSLList_find(CSLListNode *csllHead,
                           void *pToFind,
-                          UserCompareCallback DataCmp,
-                          EdsErrCode *err)
+                          vdsUserCompareFunc DataCmp,
+                          vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     CSLListNode *curr = NULL;
 
     if (csllHead && DataCmp) {
@@ -281,7 +280,7 @@ CSLListNode *CSLList_find(CSLListNode *csllHead,
         } while (curr != csllHead);
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -289,10 +288,10 @@ CSLListNode *CSLList_find(CSLListNode *csllHead,
 }
 
 void CSLList_traverse(CSLListNode *csllHead,
-                      UserDataCallback handleData,
-                      EdsErrCode *err)
+                      vdsUserDataFunc handleData,
+                      vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (csllHead && handleData) {
         CSLListNode *curr = csllHead;
@@ -302,16 +301,16 @@ void CSLList_traverse(CSLListNode *csllHead,
             curr = curr->nxt;
         } while (curr != csllHead);
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
 
 void CSLList_destroy(CSLListNode **csllHead,
-                     UserDataCallback freeData,
-                     EdsErrCode *err)
+                     vdsUserDataFunc freeData,
+                     vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (csllHead && *csllHead) {
         CSLListNode *curr, *tmp;
@@ -322,13 +321,13 @@ void CSLList_destroy(CSLListNode **csllHead,
 
             tmp = curr;
             curr = curr->nxt;
-            EdsFree(tmp);
+            VdsFree(tmp);
         }
 
-        EdsFree(*csllHead);
+        VdsFree(*csllHead);
         *csllHead = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

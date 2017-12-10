@@ -1,16 +1,15 @@
  /********************
  *  RandomState.h
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
   ***********************************************************************************/
 
 
-#ifndef EduDS_RANDOMSTATE_H__
-#define EduDS_RANDOMSTATE_H__
+#ifndef VOIDS_RANDOMSTATE_H__
+#define VOIDS_RANDOMSTATE_H__
 
 
 #ifdef __cplusplus
@@ -25,16 +24,16 @@ extern "C" {
 //code in the data structures, just the implementations in RandomFunctions.c
 
 
-EduDS_LOCAL void *RandomState_init(unsigned int seed, EdsErrCode *err);
+VOIDS_LOCAL void *RandomState_init(unsigned int seed, vdsErrCode *err);
 
-EduDS_LOCAL unsigned int RandomState_genUInt(void *state, EdsErrCode *err);
+VOIDS_LOCAL unsigned int RandomState_genUInt(void *state, vdsErrCode *err);
 
-EduDS_LOCAL int RandomState_genInt(void *state, EdsErrCode *err);
+VOIDS_LOCAL int RandomState_genInt(void *state, vdsErrCode *err);
 
-EduDS_LOCAL void RandomState_destroy(void **state, EdsErrCode *err);
+VOIDS_LOCAL void RandomState_destroy(void **state, vdsErrCode *err);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //EduDS_RANDOMSTATE_H__
+#endif //VOIDS_RANDOMSTATE_H__

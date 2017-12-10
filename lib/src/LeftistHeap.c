@@ -1,8 +1,7 @@
  /********************
  *  LeftistHeap.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -17,34 +16,34 @@ static LeftistHeap *merge_heaps_max(LeftistHeap *lheap1, LeftistHeapNode *lheap2
 static LeftistHeap *merge_heaps_min(LeftistHeap *lheap1, LeftistHeapNode *lheap2_root);
 
 
-LeftistHeap *LeftistHeap_init(UserCompareCallback DataCmp,
-                              HeapPropertyType property,
-                              EdsErrCode *err)
+LeftistHeap *LeftistHeap_init(vdsUserCompareFunc DataCmp,
+                              vdsHeapProperty property,
+                              vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     LeftistHeap *lheap = NULL;
 
     if (DataCmp) {
 
         switch (property) {
-        case EDS_MAX_HEAP:
-        case EDS_MIN_HEAP:
-            lheap = EdsMalloc(sizeof(LeftistHeap));
+        case VDS_MAX_HEAP:
+        case VDS_MIN_HEAP:
+            lheap = VdsMalloc(sizeof(LeftistHeap));
 
             if (lheap) {
                 lheap->property = property;
                 lheap->root = NULL;
                 lheap->DataCmp = DataCmp;
             } else
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
             break;
         default:
-            tmp_err = EDS_INVALID_ARGS;
+            tmp_err = VDS_INVALID_ARGS;
             break;
         }
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -53,14 +52,14 @@ LeftistHeap *LeftistHeap_init(UserCompareCallback DataCmp,
 
 LeftistHeapNode *LeftistHeap_push(LeftistHeap *lheap,
                                   void *pData,
-                                  EdsErrCode *err)
+                                  vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     LeftistHeapNode *new_node = NULL;
 
     if (lheap && pData) {
 
-        new_node = EdsMalloc(sizeof(LeftistHeapNode));
+        new_node = VdsMalloc(sizeof(LeftistHeapNode));
 
         if (new_node) {
 
@@ -74,24 +73,24 @@ LeftistHeapNode *LeftistHeap_push(LeftistHeap *lheap,
             } else {
 
                 switch (lheap->property) {
-                case EDS_MAX_HEAP:
+                case VDS_MAX_HEAP:
                     merge_heaps_max(lheap, new_node);
                     break;
-                case EDS_MIN_HEAP:
+                case VDS_MIN_HEAP:
                     merge_heaps_min(lheap, new_node);
                     break;
                 default:
-                    tmp_err = EDS_INVALID_ARGS;
+                    tmp_err = VDS_INVALID_ARGS;
                     break;
                 }
 
             }
 
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -135,9 +134,9 @@ LeftistHeap *merge_heaps_min(LeftistHeap *lheap1, LeftistHeapNode *lheap2_root)
 }
 
 void *LeftistHeap_pop(LeftistHeap *lheap,
-                      EdsErrCode *err)
+                      vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     void *pDeleted = NULL;
 
     if (bheap && bheap->root) {
@@ -147,7 +146,7 @@ void *LeftistHeap_pop(LeftistHeap *lheap,
         //if there's only one node on the tree
         if (!bheap->root->left && !bheap->root->right) {
 
-            EdsFree(bheap->root);
+            VdsFree(bheap->root);
             bheap->root = NULL;
 
         } else {
@@ -167,28 +166,28 @@ void *LeftistHeap_pop(LeftistHeap *lheap,
                 else
                     last_node->parent->right = NULL;
 
-                EdsFree(last_node);
+                VdsFree(last_node);
 
                 //restore the property of the heap
                 switch (bheap->property) {
-                case EDS_MAX_HEAP:
+                case VDS_MAX_HEAP:
                     fix_pop_max(bheap->root, bheap->DataCmp);
                     break;
-                case EDS_MIN_HEAP:
+                case VDS_MIN_HEAP:
                     fix_pop_min(bheap->root, bheap->DataCmp);
                     break;
                 default:
-                    tmp_err = EDS_INVALID_ARGS;
+                    tmp_err = VDS_INVALID_ARGS;
                     break;
                 }
 
             } else
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
 
         }
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -196,10 +195,10 @@ void *LeftistHeap_pop(LeftistHeap *lheap,
 }
 
 void LeftistHeap_destroy(LeftistHeap **lheap,
-                         UserDataCallback freeData,
-                         EdsErrCode *err)
+                         vdsUserDataFunc freeData,
+                         vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (lheap && *lheap) {
 
@@ -228,23 +227,23 @@ void LeftistHeap_destroy(LeftistHeap **lheap,
                 if (curr) {
 
                     if (curr->right == to_delete) {
-                        EdsFree(curr->right);
+                        VdsFree(curr->right);
                         curr->right = NULL;
                     } else {
-                        EdsFree(curr->left);
+                        VdsFree(curr->left);
                         curr->left = NULL;
                     }
 
                 } else { //if curr is NULL, it means that to_delete holds the root node
-                    EdsFree(to_delete);
+                    VdsFree(to_delete);
                 }
             }
         }
 
-        EdsFree(*lheap);
+        VdsFree(*lheap);
         *lheap = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

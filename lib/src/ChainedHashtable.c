@@ -1,8 +1,7 @@
  /********************
  *  ChainedHashTable.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -15,16 +14,16 @@
 
 
 ChainedHashtable *ChainedHash_init(size_t size,
-                                   UserCompareCallback KeyCmp,
+                                   vdsUserCompareFunc KeyCmp,
                                    UserHashFuncCallback Hash,
-                                   EdsErrCode *err)
+                                   vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     ChainedHashtable *chtable = NULL;
 
     if (KeyCmp && size > 3) {
 
-        chtable = EdsMalloc(sizeof(ChainedHashtable));
+        chtable = VdsMalloc(sizeof(ChainedHashtable));
 
         if (chtable) {
 
@@ -49,15 +48,15 @@ ChainedHashtable *ChainedHash_init(size_t size,
                 chtable->size = size;
 
             } else {
-                tmp_err = EDS_MALLOC_FAIL;
-                EdsFree(chtable);
+                tmp_err = VDS_MALLOC_FAIL;
+                VdsFree(chtable);
                 chtable = NULL;
             }
 
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -68,15 +67,15 @@ DictListNode *ChainedHash_insert(ChainedHashtable *table,
                                  void *pData,
                                  void *pKey,
                                  size_t key_size,
-                                 EdsErrCode *err)
+                                 vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     DictListNode *new_node = NULL;
 
     if (table && pKey && key_size)
         new_node = DictList_insert(&table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pData, pKey, table->KeyCmp, &tmp_err);
     else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -86,15 +85,15 @@ DictListNode *ChainedHash_insert(ChainedHashtable *table,
 KeyValuePair ChainedHash_delete(ChainedHashtable *table,
                                 void *pKey,
                                 size_t key_size,
-                                EdsErrCode *err)
+                                vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     KeyValuePair item = { 0 };
 
     if (table && pKey && key_size)
         item = DictList_deleteByKey(&table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pKey, table->KeyCmp, &tmp_err);
     else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -104,15 +103,15 @@ KeyValuePair ChainedHash_delete(ChainedHashtable *table,
 DictListNode *ChainedHash_find(ChainedHashtable *table,
                                void *pKey,
                                size_t key_size,
-                               EdsErrCode *err)
+                               vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     DictListNode *to_find = NULL;
 
     if (table && pKey && key_size)
         to_find = DictList_findByKey(table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pKey, table->KeyCmp, &tmp_err);
     else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -120,20 +119,20 @@ DictListNode *ChainedHash_find(ChainedHashtable *table,
 }
 
 void ChainedHash_destroy(ChainedHashtable **table,
-                         UserDataCallback freeData,
-                         EdsErrCode *err)
+                         vdsUserDataFunc freeData,
+                         vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     if (table && *table) {
 
         for (size_t i = 0; i < (*table)->size; i++)
             DictList_destroy(&(*table)->chains[i], freeData, NULL);
 
-        EdsFree((*table)->chains);
-        EdsFree(*table);
+        VdsFree((*table)->chains);
+        VdsFree(*table);
         *table = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

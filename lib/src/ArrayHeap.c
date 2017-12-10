@@ -1,8 +1,7 @@
  /********************
  *  ArrayHeap.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -19,24 +18,24 @@ static void fix_pop_max(ArrayHeap *heap);
 static void fix_pop_min(ArrayHeap *heap);
 
 
-ArrayHeap *ArrayHeap_init(UserCompareCallback DataCmp,
-                          HeapPropertyType property,
+ArrayHeap *ArrayHeap_init(vdsUserCompareFunc DataCmp,
+                          vdsHeapProperty property,
                           size_t size,
-                          EdsErrCode *err)
+                          vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     ArrayHeap *arrheap = NULL;
 
     if (DataCmp && size > 0) {
 
         switch (property) {
-        case EDS_MAX_HEAP:
-        case EDS_MIN_HEAP:
-            arrheap = EdsMalloc(sizeof(ArrayHeap));
+        case VDS_MAX_HEAP:
+        case VDS_MIN_HEAP:
+            arrheap = VdsMalloc(sizeof(ArrayHeap));
 
             if (arrheap) {
 
-                arrheap->array = EdsMalloc(sizeof(void*) * size);
+                arrheap->array = VdsMalloc(sizeof(void*) * size);
 
                 if (arrheap->array) {
 
@@ -46,18 +45,18 @@ ArrayHeap *ArrayHeap_init(UserCompareCallback DataCmp,
                     arrheap->idx = 0;
 
                 } else
-                    tmp_err = EDS_MALLOC_FAIL;
+                    tmp_err = VDS_MALLOC_FAIL;
 
             } else
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
             break;
         default:
-            tmp_err = EDS_INVALID_ARGS;
+            tmp_err = VDS_INVALID_ARGS;
             break;
         }
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -66,9 +65,9 @@ ArrayHeap *ArrayHeap_init(UserCompareCallback DataCmp,
 
 void *ArrayHeap_push(ArrayHeap *arrheap,
                      void *pData,
-                     EdsErrCode *err)
+                     vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     void *pRet = NULL;
 
     if (arrheap && pData && (arrheap->idx < arrheap->size)) {
@@ -76,21 +75,21 @@ void *ArrayHeap_push(ArrayHeap *arrheap,
         arrheap->array[arrheap->idx] = pRet = pData;
 
         switch (arrheap->property) {
-        case EDS_MAX_HEAP:
+        case VDS_MAX_HEAP:
             fix_push_max(arrheap);
             break;
-        case EDS_MIN_HEAP:
+        case VDS_MIN_HEAP:
             fix_push_min(arrheap);
             break;
         default:
-            tmp_err = EDS_INVALID_ARGS;
+            tmp_err = VDS_INVALID_ARGS;
             break;
         }
 
         arrheap->idx++;
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -142,9 +141,9 @@ void fix_push_min(ArrayHeap *heap)
 }
 
 void *ArrayHeap_pop(ArrayHeap *arrheap,
-                    EdsErrCode *err)
+                    vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     void *pDeleted = NULL;
 
     if (arrheap && arrheap->idx) {
@@ -160,21 +159,21 @@ void *ArrayHeap_pop(ArrayHeap *arrheap,
         if (arrheap->idx) {
 
             switch (arrheap->property) {
-            case EDS_MAX_HEAP:
+            case VDS_MAX_HEAP:
                 fix_pop_max(arrheap);
                 break;
-            case EDS_MIN_HEAP:
+            case VDS_MIN_HEAP:
                 fix_pop_min(arrheap);
                 break;
             default:
-                tmp_err = EDS_INVALID_ARGS;
+                tmp_err = VDS_INVALID_ARGS;
                 break;
             }
 
         }
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -274,10 +273,10 @@ void fix_pop_min(ArrayHeap *heap)
 }
 
 void ArrayHeap_destroy(ArrayHeap **arrheap,
-                       UserDataCallback freeData,
-                       EdsErrCode *err)
+                       vdsUserDataFunc freeData,
+                       vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (arrheap && *arrheap) {
 
@@ -286,11 +285,11 @@ void ArrayHeap_destroy(ArrayHeap **arrheap,
                 freeData((*arrheap)->array[i]);
         }
 
-        EdsFree((*arrheap)->array);
-        EdsFree(*arrheap);
+        VdsFree((*arrheap)->array);
+        VdsFree(*arrheap);
         *arrheap = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

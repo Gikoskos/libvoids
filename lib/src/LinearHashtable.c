@@ -1,8 +1,7 @@
  /********************
  *  LinearHashtable.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -20,21 +19,21 @@
 #define IS_DELETED(x) ((x) == 2)
 
 
-static int rehash(LinHashtable *table, UserDataCallback freeData);
+static int rehash(LinHashtable *table, vdsUserDataFunc freeData);
 
 
 LinHashtable *LinHash_init(size_t size,
-                           UserCompareCallback KeyCmp,
+                           vdsUserCompareFunc KeyCmp,
                            UserHashFuncCallback Hash,
                            int rehash,
-                           EdsErrCode *err)
+                           vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     LinHashtable *lintable = NULL;
 
     if (KeyCmp && size > 3) {
 
-        lintable = EdsMalloc(sizeof(LinHashtable));
+        lintable = VdsMalloc(sizeof(LinHashtable));
 
         if (lintable) {
 
@@ -61,15 +60,15 @@ LinHashtable *LinHash_init(size_t size,
                 lintable->total_elements = 0;
 
             } else {
-                EdsFree(lintable);
+                VdsFree(lintable);
                 lintable = NULL;
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
             }
 
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -77,7 +76,7 @@ LinHashtable *LinHash_init(size_t size,
     return lintable;
 }
 
-int rehash(LinHashtable *table, UserDataCallback freeData)
+int rehash(LinHashtable *table, vdsUserDataFunc freeData)
 {
     HashArrayElement *old_array = table->array; //save the old array
     size_t old_size = table->size;
@@ -123,7 +122,7 @@ int rehash(LinHashtable *table, UserDataCallback freeData)
 
     }
 
-    EdsFree(old_array);
+    VdsFree(old_array);
 
     return 1;
 }
@@ -132,10 +131,10 @@ void *LinHash_insert(LinHashtable *table,
                      void *pData,
                      void *pKey,
                      size_t key_size,
-                     UserDataCallback freeData,
-                     EdsErrCode *err)
+                     vdsUserDataFunc freeData,
+                     vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     void *new_key = NULL;
 
     if (table && pKey && key_size && (table->total_elements < table->size)) {
@@ -182,10 +181,10 @@ void *LinHash_insert(LinHashtable *table,
         if (table->rehash) //if the load factor is greater than 0.5 we rehash the table
             if ( ((float)table->total_elements / table->size) >= 0.5 )
                 if (!rehash(table, freeData))
-                    tmp_err = EDS_MALLOC_FAIL;
+                    tmp_err = VDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
         
@@ -196,9 +195,9 @@ void *LinHash_insert(LinHashtable *table,
 KeyValuePair LinHash_delete(LinHashtable *table,
                             void *pKey,
                             size_t key_size,
-                            EdsErrCode *err)
+                            vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     KeyValuePair item = { 0 };
 
     if (table && pKey && key_size) {
@@ -223,7 +222,7 @@ KeyValuePair LinHash_delete(LinHashtable *table,
         } while (offset < table->size);
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -233,9 +232,9 @@ KeyValuePair LinHash_delete(LinHashtable *table,
 HashArrayElement *LinHash_find(LinHashtable *table,
                                void *pKey,
                                size_t key_size,
-                               EdsErrCode *err)
+                               vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     HashArrayElement *to_find = NULL;
 
     if (table && pKey && key_size) {
@@ -258,7 +257,7 @@ HashArrayElement *LinHash_find(LinHashtable *table,
         } while (offset < table->size);
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -266,10 +265,10 @@ HashArrayElement *LinHash_find(LinHashtable *table,
 }
 
 void LinHash_destroy(LinHashtable **table,
-                     UserDataCallback freeData,
-                     EdsErrCode *err)
+                     vdsUserDataFunc freeData,
+                     vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (table && *table) {
 
@@ -278,11 +277,11 @@ void LinHash_destroy(LinHashtable **table,
                 (IS_OCCUPIED((*table)->array[i].state) || IS_DELETED((*table)->array[i].state)))
                 freeData((void *)&(*table)->array[i].item);
 
-        EdsFree((*table)->array);
-        EdsFree(*table);
+        VdsFree((*table)->array);
+        VdsFree(*table);
         *table = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

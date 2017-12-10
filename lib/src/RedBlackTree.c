@@ -1,8 +1,7 @@
  /********************
  *  RedBlackTree.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -15,6 +14,9 @@
 #define isLeafNode(x)    ( ((x)->item.pKey == NULL) )
 #define isRootNode(T, x) ( (x)->parent == (T)->nil )
 #define isLeftNode(x)    ( (x) == (x)->parent->left )
+
+#define BLACK_NODE 0
+#define RED_NODE 1
 
 #define RotateRight(T, x, y) \
     do { \
@@ -56,27 +58,27 @@
 
 
 
-static void pre_orderTraversal(RedBlackTreeNode *rbtNode, UserDataCallback callback);
-static void in_orderTraversal(RedBlackTreeNode *rbtNode, UserDataCallback callback);
-static void post_orderTraversal(RedBlackTreeNode *rbtNode, UserDataCallback callback);
-static int breadth_firstTraversal(RedBlackTreeNode *rbtRoot, UserDataCallback callback);
-static void eulerTraversal(RedBlackTreeNode *rbtNode, UserDataCallback callback);
+static void pre_orderTraversal(RedBlackTreeNode *rbtNode, vdsUserDataFunc callback);
+static void in_orderTraversal(RedBlackTreeNode *rbtNode, vdsUserDataFunc callback);
+static void post_orderTraversal(RedBlackTreeNode *rbtNode, vdsUserDataFunc callback);
+static int breadth_firstTraversal(RedBlackTreeNode *rbtRoot, vdsUserDataFunc callback);
+static void eulerTraversal(RedBlackTreeNode *rbtNode, vdsUserDataFunc callback);
 
 static void rebalance_insertion(RedBlackTree *rbt, RedBlackTreeNode *curr);
 static void rebalance_deletion(RedBlackTree *rbt, RedBlackTreeNode *curr);
 
 
-RedBlackTree *RBTree_init(UserCompareCallback KeyCmp,
-                          EdsErrCode *err)
+RedBlackTree *RBTree_init(vdsUserCompareFunc KeyCmp,
+                          vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     RedBlackTree *rbt = NULL;
 
     if (KeyCmp) {
-        rbt = EdsMalloc(sizeof(RedBlackTree));
+        rbt = VdsMalloc(sizeof(RedBlackTree));
 
         if (rbt) {
-            rbt->nil = EdsMalloc(sizeof(RedBlackTreeNode));
+            rbt->nil = VdsMalloc(sizeof(RedBlackTreeNode));
 
             if (rbt->nil) {
                 rbt->root = NULL;
@@ -85,15 +87,15 @@ RedBlackTree *RBTree_init(UserCompareCallback KeyCmp,
                 rbt->nil->color = BLACK_NODE; //this is needed in fixup functions
                 rbt->KeyCmp = KeyCmp;
             } else {
-                EdsFree(rbt);
+                VdsFree(rbt);
                 rbt = NULL;
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
             }
 
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -103,14 +105,14 @@ RedBlackTree *RBTree_init(UserCompareCallback KeyCmp,
 RedBlackTreeNode *RBTree_insert(RedBlackTree *rbt,
                                 void *pKey,
                                 void *pData,
-                                EdsErrCode *err)
+                                vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     RedBlackTreeNode *new_node = NULL;
 
     if (rbt && pKey) {
 
-        new_node = EdsMalloc(sizeof(RedBlackTreeNode));
+        new_node = VdsMalloc(sizeof(RedBlackTreeNode));
 
         if (new_node) {
 
@@ -156,9 +158,9 @@ RedBlackTreeNode *RBTree_insert(RedBlackTree *rbt,
                         }
 
                     } else { //if there's another node with the same key already on the tree
-                        EdsFree(new_node); //return without doing anything
+                        VdsFree(new_node); //return without doing anything
                         new_node = NULL;
-                        tmp_err = EDS_KEY_EXISTS;
+                        tmp_err = VDS_KEY_EXISTS;
                         break;
                     }
 
@@ -168,10 +170,10 @@ RedBlackTreeNode *RBTree_insert(RedBlackTree *rbt,
 
             }
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -345,9 +347,9 @@ void rebalance_insertion(RedBlackTree *rbt, RedBlackTreeNode *curr)
 
 KeyValuePair RBTree_deleteNode(RedBlackTree *rbt,
                                RedBlackTreeNode *rbtToDelete,
-                               EdsErrCode *err)
+                               vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     KeyValuePair item = { 0 };
 
     if (rbt && rbt->root && rbtToDelete) {
@@ -431,10 +433,10 @@ KeyValuePair RBTree_deleteNode(RedBlackTree *rbt,
 
         //delete the node because we don't need it anymore
         //and no other nodes point to it
-        EdsFree(rbtToDelete);
+        VdsFree(rbtToDelete);
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -556,16 +558,16 @@ void rebalance_deletion(RedBlackTree *rbt, RedBlackTreeNode *curr)
 
 KeyValuePair RBTree_deleteByKey(RedBlackTree *rbt,
                                 void *pKey,
-                                EdsErrCode *err)
+                                vdsErrCode *err)
 {
     return RBTree_deleteNode(rbt, RBTree_findNode(rbt, pKey, err), err);
 }
 
 RedBlackTreeNode *RBTree_findNode(RedBlackTree *rbt,
                                   void *pKey,
-                                  EdsErrCode *err)
+                                  vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     RedBlackTreeNode *curr = NULL;
 
     if (rbt && rbt->root && pKey) {
@@ -591,7 +593,7 @@ RedBlackTreeNode *RBTree_findNode(RedBlackTree *rbt,
         if (!curr->item.pKey)
             curr = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -600,9 +602,9 @@ RedBlackTreeNode *RBTree_findNode(RedBlackTree *rbt,
 
 void *RBTree_findData(RedBlackTree *rbt,
                       void *pKey,
-                      EdsErrCode *err)
+                      vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     RedBlackTreeNode *curr = NULL;
 
     if (rbt && rbt->root && pKey) {
@@ -613,7 +615,7 @@ void *RBTree_findData(RedBlackTree *rbt,
 
         while (curr->item.pKey) {
             cmp_res = rbt->KeyCmp(pKey, curr->item.pKey);
-            
+
             if (!cmp_res)
                 break;
 
@@ -628,7 +630,7 @@ void *RBTree_findData(RedBlackTree *rbt,
         if (!curr->item.pKey)
             curr = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -636,11 +638,11 @@ void *RBTree_findData(RedBlackTree *rbt,
 }
 void RBTree_traverse(RedBlackTree *rbt,
                      TreeTraversalMethod traversal,
-                     UserDataCallback callback,
-                     EdsErrCode *err)
+                     vdsUserDataFunc callback,
+                     vdsErrCode *err)
 
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (callback && rbt && rbt->root) {
         //To make recursion work just by passing two arguments on each traversal function, I'll
@@ -648,36 +650,36 @@ void RBTree_traverse(RedBlackTree *rbt,
         rbt->nil->item.pKey = NULL;
 
         switch (traversal) {
-        case EDS_PRE_ORDER:
+        case VDS_PRE_ORDER:
             pre_orderTraversal(rbt->root, callback);
             break;
-        case EDS_IN_ORDER:
+        case VDS_IN_ORDER:
             in_orderTraversal(rbt->root, callback);
             break;
-        case EDS_POST_ORDER:
+        case VDS_POST_ORDER:
             post_orderTraversal(rbt->root, callback);
             break;
-        case EDS_BREADTH_FIRST:
+        case VDS_BREADTH_FIRST:
             if (!breadth_firstTraversal(rbt->root, callback))
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
             break;
-        case EDS_EULER:
+        case VDS_EULER:
             eulerTraversal(rbt->root, callback);
             break;
         default:
             break;
         }
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
 
 void RBTree_destroy(RedBlackTree **rbt,
-                    UserDataCallback freeData,
-                    EdsErrCode *err)
+                    vdsUserDataFunc freeData,
+                    vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (rbt && *rbt) {
 
@@ -707,25 +709,25 @@ void RBTree_destroy(RedBlackTree **rbt,
                 if (curr->item.pKey) {
 
                     if (curr->right == to_delete) {
-                        EdsFree(curr->right);
+                        VdsFree(curr->right);
                         curr->right = (*rbt)->nil;
                     } else {
-                        EdsFree(curr->left);
+                        VdsFree(curr->left);
                         curr->left = (*rbt)->nil;
                     }
 
                 } else { //if curr is nil, it means that to_delete holds the root node
-                    EdsFree(to_delete);
+                    VdsFree(to_delete);
                 }
             }
         }
 
-        EdsFree((*rbt)->nil);
-        EdsFree(*rbt);
+        VdsFree((*rbt)->nil);
+        VdsFree(*rbt);
         *rbt = NULL;
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
@@ -736,7 +738,7 @@ void RBTree_destroy(RedBlackTree **rbt,
 
 #include "FIFOqueue.h"
 
-void pre_orderTraversal(RedBlackTreeNode *rbtNode, UserDataCallback callback)
+void pre_orderTraversal(RedBlackTreeNode *rbtNode, vdsUserDataFunc callback)
 {
     if (rbtNode->item.pKey) {
         callback((void *)&rbtNode->item);
@@ -745,7 +747,7 @@ void pre_orderTraversal(RedBlackTreeNode *rbtNode, UserDataCallback callback)
     }
 }
 
-void in_orderTraversal(RedBlackTreeNode *rbtNode, UserDataCallback callback)
+void in_orderTraversal(RedBlackTreeNode *rbtNode, vdsUserDataFunc callback)
 {
     if (rbtNode->item.pKey) {
         in_orderTraversal(rbtNode->left, callback);
@@ -754,7 +756,7 @@ void in_orderTraversal(RedBlackTreeNode *rbtNode, UserDataCallback callback)
     }
 }
 
-void post_orderTraversal(RedBlackTreeNode *rbtNode, UserDataCallback callback)
+void post_orderTraversal(RedBlackTreeNode *rbtNode, vdsUserDataFunc callback)
 {
     if (rbtNode->item.pKey) {
         post_orderTraversal(rbtNode->left, callback);
@@ -763,16 +765,16 @@ void post_orderTraversal(RedBlackTreeNode *rbtNode, UserDataCallback callback)
     }
 }
 
-int breadth_firstTraversal(RedBlackTreeNode *rbtNode, UserDataCallback callback)
+int breadth_firstTraversal(RedBlackTreeNode *rbtNode, vdsUserDataFunc callback)
 {
-    EdsErrCode err;
+    vdsErrCode err;
     RedBlackTreeNode *curr;
     FIFOqueue *levelFIFO = FIFO_init(&err);
 
     if (levelFIFO) {
         FIFO_enqueue(levelFIFO, (void *)rbtNode, &err);
 
-        if (err == EDS_SUCCESS) {
+        if (err == VDS_SUCCESS) {
 
             while (levelFIFO->total_nodes) {
                 curr = (RedBlackTreeNode *)FIFO_dequeue(levelFIFO, NULL);
@@ -782,14 +784,14 @@ int breadth_firstTraversal(RedBlackTreeNode *rbtNode, UserDataCallback callback)
                 if (curr->right) {
                     FIFO_enqueue(levelFIFO, curr->right, &err);
 
-                    if (err != EDS_SUCCESS)
+                    if (err != VDS_SUCCESS)
                         break;
                 }
 
                 if (curr->left) {
                     FIFO_enqueue(levelFIFO, curr->left, &err);
 
-                    if (err != EDS_SUCCESS)
+                    if (err != VDS_SUCCESS)
                         break;
                 }
             }
@@ -799,13 +801,13 @@ int breadth_firstTraversal(RedBlackTreeNode *rbtNode, UserDataCallback callback)
         }
     }
 
-    if (err == EDS_SUCCESS)
+    if (err == VDS_SUCCESS)
         return 1;
 
     return 0;
 }
 
-void eulerTraversal(RedBlackTreeNode *rbtNode, UserDataCallback callback)
+void eulerTraversal(RedBlackTreeNode *rbtNode, vdsUserDataFunc callback)
 {
     if (rbtNode->item.pKey) {
         callback((void *)&rbtNode->item);

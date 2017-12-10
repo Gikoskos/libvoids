@@ -1,8 +1,7 @@
  /********************
  *  BinaryTreeHeap.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -17,27 +16,27 @@
 
 
 static void recur_insert(BTHeapNode *subtree, unsigned int total_nodes, BTHeapNode *new_node);
-static void fix_push_max(BTHeapNode *curr, UserCompareCallback DataCmp);
-static void fix_push_min(BTHeapNode *curr, UserCompareCallback DataCmp);
+static void fix_push_max(BTHeapNode *curr, vdsUserCompareFunc DataCmp);
+static void fix_push_min(BTHeapNode *curr, vdsUserCompareFunc DataCmp);
 static BTHeapNode *breadth_first_get_last(BTHeap *btheap);
 static BTHeapNode *recur_get_last(BTHeapNode *subtree, unsigned int total_nodes);
-static void fix_pop_max(BTHeapNode *curr, UserCompareCallback DataCmp);
-static void fix_pop_min(BTHeapNode *curr, UserCompareCallback DataCmp);
+static void fix_pop_max(BTHeapNode *curr, vdsUserCompareFunc DataCmp);
+static void fix_pop_min(BTHeapNode *curr, vdsUserCompareFunc DataCmp);
 
 
-BTHeap *BTHeap_init(UserCompareCallback DataCmp,
-                    HeapPropertyType property,
-                    EdsErrCode *err)
+BTHeap *BTHeap_init(vdsUserCompareFunc DataCmp,
+                    vdsHeapProperty property,
+                    vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     BTHeap *btheap = NULL;
 
     if (DataCmp) {
 
         switch (property) {
-        case EDS_MAX_HEAP:
-        case EDS_MIN_HEAP:
-            btheap = EdsMalloc(sizeof(BTHeap));
+        case VDS_MAX_HEAP:
+        case VDS_MIN_HEAP:
+            btheap = VdsMalloc(sizeof(BTHeap));
 
             if (btheap) {
                 btheap->property = property;
@@ -45,15 +44,15 @@ BTHeap *BTHeap_init(UserCompareCallback DataCmp,
                 btheap->total_nodes = 0;
                 btheap->DataCmp = DataCmp;
             } else
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
             break;
         default:
-            tmp_err = EDS_INVALID_ARGS;
+            tmp_err = VDS_INVALID_ARGS;
             break;
         }
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -62,14 +61,14 @@ BTHeap *BTHeap_init(UserCompareCallback DataCmp,
 
 BTHeapNode *BTHeap_push(BTHeap *btheap,
                         void *pData,
-                        EdsErrCode *err)
+                        vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     BTHeapNode *new_node = NULL;
 
     if (btheap && pData) {
 
-        new_node = EdsMalloc(sizeof(BTHeapNode));
+        new_node = VdsMalloc(sizeof(BTHeapNode));
 
         if (new_node) {
 
@@ -86,31 +85,31 @@ BTHeapNode *BTHeap_push(BTHeap *btheap,
                 btheap->total_nodes++;
 
                 switch (btheap->property) {
-                case EDS_MAX_HEAP:
+                case VDS_MAX_HEAP:
                     fix_push_max(new_node, btheap->DataCmp);
                     break;
-                case EDS_MIN_HEAP:
+                case VDS_MIN_HEAP:
                     fix_push_min(new_node, btheap->DataCmp);
                     break;
                 default:
-                    tmp_err = EDS_INVALID_ARGS;
+                    tmp_err = VDS_INVALID_ARGS;
                     break;
                 }
 
             }
 
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
     return new_node;
 }
 
-void fix_push_max(BTHeapNode *curr, UserCompareCallback DataCmp)
+void fix_push_max(BTHeapNode *curr, vdsUserCompareFunc DataCmp)
 {
     int cmp_res;
     void *pTmp;
@@ -128,7 +127,7 @@ void fix_push_max(BTHeapNode *curr, UserCompareCallback DataCmp)
     }
 }
 
-void fix_push_min(BTHeapNode *curr, UserCompareCallback DataCmp)
+void fix_push_min(BTHeapNode *curr, vdsUserCompareFunc DataCmp)
 {
     int cmp_res;
     void *pTmp;
@@ -189,9 +188,9 @@ void recur_insert(BTHeapNode *subtree, unsigned int total_nodes, BTHeapNode *new
 }
 
 void *BTHeap_pop(BTHeap *btheap,
-                 EdsErrCode *err)
+                 vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     void *pDeleted = NULL;
 
     if (btheap && btheap->root) {
@@ -201,7 +200,7 @@ void *BTHeap_pop(BTHeap *btheap,
         //if there's only one node on the tree
         if (!btheap->root->left && !btheap->root->right) {
 
-            EdsFree(btheap->root);
+            VdsFree(btheap->root);
             btheap->root = NULL;
 
         } else {
@@ -221,35 +220,35 @@ void *BTHeap_pop(BTHeap *btheap,
                 else
                     last_node->parent->right = NULL;
 
-                EdsFree(last_node);
+                VdsFree(last_node);
 
                 //restore the property of the heap
                 switch (btheap->property) {
-                case EDS_MAX_HEAP:
+                case VDS_MAX_HEAP:
                     fix_pop_max(btheap->root, btheap->DataCmp);
                     break;
-                case EDS_MIN_HEAP:
+                case VDS_MIN_HEAP:
                     fix_pop_min(btheap->root, btheap->DataCmp);
                     break;
                 default:
-                    tmp_err = EDS_INVALID_ARGS;
+                    tmp_err = VDS_INVALID_ARGS;
                     break;
                 }
 
             } else
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
 
         }
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
     return pDeleted;
 }
 
-void fix_pop_max(BTHeapNode *curr, UserCompareCallback DataCmp)
+void fix_pop_max(BTHeapNode *curr, vdsUserCompareFunc DataCmp)
 {
     int cmp_res;
     void *pTmp;
@@ -310,7 +309,7 @@ void fix_pop_max(BTHeapNode *curr, UserCompareCallback DataCmp)
     }
 }
 
-void fix_pop_min(BTHeapNode *curr, UserCompareCallback DataCmp)
+void fix_pop_min(BTHeapNode *curr, vdsUserCompareFunc DataCmp)
 {
     int cmp_res;
     void *pTmp;
@@ -405,14 +404,14 @@ BTHeapNode *recur_get_last(BTHeapNode *subtree, unsigned int total_nodes)
 
 BTHeapNode *breadth_first_get_last(BTHeap *btheap)
 {
-    EdsErrCode err;
+    vdsErrCode err;
     BTHeapNode *curr = NULL;
     FIFOqueue *levelFIFO = FIFO_init(&err);
 
     if (levelFIFO) {
         FIFO_enqueue(levelFIFO, (void *)btheap->root, &err);
 
-        if (err == EDS_SUCCESS) {
+        if (err == VDS_SUCCESS) {
 
             do {
                 curr = (BTHeapNode *)FIFO_dequeue(levelFIFO, NULL);
@@ -420,20 +419,20 @@ BTHeapNode *breadth_first_get_last(BTHeap *btheap)
                 if (curr->left) {
                     FIFO_enqueue(levelFIFO, curr->left, &err);
 
-                    if (err != EDS_SUCCESS)
+                    if (err != VDS_SUCCESS)
                         break;
                 }
 
                 if (curr->right) {
                     FIFO_enqueue(levelFIFO, curr->right, &err);
 
-                    if (err != EDS_SUCCESS)
+                    if (err != VDS_SUCCESS)
                         break;
                 }
 
             } while (levelFIFO->total_nodes > 1);
 
-            if (err == EDS_SUCCESS)
+            if (err == VDS_SUCCESS)
                 curr = (BTHeapNode *)FIFO_dequeue(levelFIFO, NULL);
 
             FIFO_destroy(&levelFIFO, NULL, NULL);
@@ -442,7 +441,7 @@ BTHeapNode *breadth_first_get_last(BTHeap *btheap)
 
     }
 
-    if (err == EDS_SUCCESS)
+    if (err == VDS_SUCCESS)
         return curr;
 
     return NULL;
@@ -450,9 +449,9 @@ BTHeapNode *breadth_first_get_last(BTHeap *btheap)
 
 void *BTHeap_replace(BTHeap *btheap,
                      void *pData,
-                     EdsErrCode *err)
+                     vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     void *pDeleted = NULL;
 
     if (btheap && btheap->root && pData) {
@@ -461,19 +460,19 @@ void *BTHeap_replace(BTHeap *btheap,
         btheap->root->pData = pData;
 
         switch (btheap->property) {
-        case EDS_MAX_HEAP:
+        case VDS_MAX_HEAP:
             fix_pop_max(btheap->root, btheap->DataCmp);
             break;
-        case EDS_MIN_HEAP:
+        case VDS_MIN_HEAP:
             fix_pop_min(btheap->root, btheap->DataCmp);
             break;
         default:
-            tmp_err = EDS_INVALID_ARGS;
+            tmp_err = VDS_INVALID_ARGS;
             break;
         }
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -481,10 +480,10 @@ void *BTHeap_replace(BTHeap *btheap,
 }
 
 void BTHeap_destroy(BTHeap **btheap,
-                    UserDataCallback freeData,
-                    EdsErrCode *err)
+                    vdsUserDataFunc freeData,
+                    vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (btheap && *btheap) {
 
@@ -513,23 +512,23 @@ void BTHeap_destroy(BTHeap **btheap,
                 if (curr) {
 
                     if (curr->right == to_delete) {
-                        EdsFree(curr->right);
+                        VdsFree(curr->right);
                         curr->right = NULL;
                     } else {
-                        EdsFree(curr->left);
+                        VdsFree(curr->left);
                         curr->left = NULL;
                     }
 
                 } else { //if curr is NULL, it means that to_delete holds the root node
-                    EdsFree(to_delete);
+                    VdsFree(to_delete);
                 }
             }
         }
 
-        EdsFree(*btheap);
+        VdsFree(*btheap);
         *btheap = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

@@ -1,43 +1,43 @@
 
-#EduDS_SRC is all the .c modules
-file(GLOB_RECURSE EduDS_SRC src//*.c external//*.c)
-#EduDS_INC is all the .h header files
-file(GLOB_RECURSE EduDS_INC include//*.h)
+#LIBVOIDS_SRC is all the .c modules
+file(GLOB_RECURSE LIBVOIDS_SRC src//*.c external//*.c)
+#LIBVOIDS_INC is all the .h header files
+file(GLOB_RECURSE LIBVOIDS_INC include//*.h)
 
 include_directories(include external//xxHash)
 include_directories(include external//SFMT)
-include_directories(include include//EduDS)
+include_directories(include include//voids)
 
 #if we're building a windows .dll, we add the resource file
-#with the DLL versioning information, to the EduDS_SRC modules
+#with the DLL versioning information, to the LIBVOIDS_SRC modules
 if(BUILD_SHARED_LIBS AND WIN32)
-    list(APPEND EduDS_SRC src//EduDS_DLLversion.rc)
+    list(APPEND LIBVOIDS_SRC src//libvoids_DLLversion.rc)
 endif(BUILD_SHARED_LIBS AND WIN32)
 
-add_library(EduDS ${EduDS_SRC} ${EduDS_INC})
+add_library(libvoids ${LIBVOIDS_SRC} ${LIBVOIDS_INC})
 
 #if we're building a dynamic library we want to export all symbols
 if(BUILD_SHARED_LIBS)
-    target_compile_definitions(EduDS PRIVATE EXPORT_API_EduDS_DLL)
+    target_compile_definitions(libvoids PRIVATE EXPORT_API_VOIDS_DLL)
 endif(BUILD_SHARED_LIBS)
 
-target_compile_definitions(EduDS PRIVATE BUILD_EduDS_LIB)
+target_compile_definitions(libvoids PRIVATE BUILD_VOIDS_LIB)
 
 #set gcc specific flags
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     #maximum gcc warnings
-    target_compile_options(EduDS PRIVATE -Wall -Wextra -pedantic)
+    target_compile_options(libvoids PRIVATE -Wall -Wextra -pedantic)
     #add debugging flags for GCC if we're building the debug build
     if(CMAKE_BUILD_TYPE MATCHES Debug)
-        target_compile_options(EduDS BEFORE PRIVATE -g)
+        target_compile_options(libvoids BEFORE PRIVATE -g)
     endif(CMAKE_BUILD_TYPE MATCHES Debug)
     #link to math library (for gcc on linux mostly)
-    target_link_libraries(EduDS m)
+    target_link_libraries(libvoids m)
 #set cl.exe specific flags
 elseif(MSVC)
     #set maximum warning levels for cl.exe
-    target_compile_options(EduDS PRIVATE /W4)
+    target_compile_options(libvoids PRIVATE /W4)
     #no need to enable explicitly debugging symbols on the visual studio debug build
 endif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 
-set_property(TARGET EduDS PROPERTY C_STANDARD 99)
+set_property(TARGET libvoids PROPERTY C_STANDARD 99)

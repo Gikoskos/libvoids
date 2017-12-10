@@ -1,8 +1,7 @@
  /********************
  *  CircularDoublyLinkedList.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -15,13 +14,13 @@
 
 CDLListNode *CDLList_insert(CDLListNode **cdllHead,
                             void *pData,
-                            EdsErrCode *err)
+                            vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     CDLListNode *new_node = NULL;
 
     if (cdllHead) {
-        new_node = EdsMalloc(sizeof(CDLListNode));
+        new_node = VdsMalloc(sizeof(CDLListNode));
 
         if (new_node) {
             new_node->pData = pData;
@@ -38,9 +37,9 @@ CDLListNode *CDLList_insert(CDLListNode **cdllHead,
             *cdllHead = new_node;
 
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -49,9 +48,9 @@ CDLListNode *CDLList_insert(CDLListNode **cdllHead,
 
 CDLListNode *CDLList_append(CDLListNode **cdllHead,
                             void *pData,
-                            EdsErrCode *err)
+                            vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     CDLListNode *new_node = NULL;
 
     if (cdllHead) {
@@ -59,7 +58,7 @@ CDLListNode *CDLList_append(CDLListNode **cdllHead,
         if (!(*cdllHead)) {
             new_node = CDLList_insert(cdllHead, pData, &tmp_err);
         } else {
-            new_node = EdsMalloc(sizeof(CDLListNode));
+            new_node = VdsMalloc(sizeof(CDLListNode));
 
             if (new_node) {
                 new_node->pData = pData;
@@ -68,11 +67,11 @@ CDLListNode *CDLList_append(CDLListNode **cdllHead,
                 (*cdllHead)->prv->nxt = new_node;
                 (*cdllHead)->prv = new_node;
             } else
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
         }
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -81,9 +80,9 @@ CDLListNode *CDLList_append(CDLListNode **cdllHead,
 
 CDLListNode *CDLList_concat(CDLListNode *cdll_1,
                             CDLListNode *cdll_2,
-                            EdsErrCode *err)
+                            vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     CDLListNode *ret = NULL;
 
     if (cdll_1 && cdll_2) {
@@ -96,7 +95,7 @@ CDLListNode *CDLList_concat(CDLListNode *cdll_1,
 
         ret = cdll_1;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -105,13 +104,13 @@ CDLListNode *CDLList_concat(CDLListNode *cdll_1,
 
 CDLListNode *CDLList_insertAfter(CDLListNode *cdllPrev,
                                  void *pData,
-                                 EdsErrCode *err)
+                                 vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     CDLListNode *new_node = NULL;
 
     if (cdllPrev) {
-        new_node = EdsMalloc(sizeof(CDLListNode));
+        new_node = VdsMalloc(sizeof(CDLListNode));
 
         if (new_node) {
             new_node->pData = pData;
@@ -120,9 +119,9 @@ CDLListNode *CDLList_insertAfter(CDLListNode *cdllPrev,
 
             cdllPrev->nxt = new_node;
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -131,9 +130,9 @@ CDLListNode *CDLList_insertAfter(CDLListNode *cdllPrev,
 
 void *CDLList_deleteNode(CDLListNode **cdllHead,
                          CDLListNode *cdllToDelete,
-                         EdsErrCode *err)
+                         vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_INVALID_ARGS;
+    vdsErrCode tmp_err = VDS_INVALID_ARGS;
     void *pRet = NULL;
 
     if (cdllHead && *cdllHead && cdllToDelete) {
@@ -153,9 +152,9 @@ void *CDLList_deleteNode(CDLListNode **cdllHead,
                 curr->prv->nxt = curr->nxt;
 
                 pRet = curr->pData;
-                EdsFree(curr);
+                VdsFree(curr);
 
-                tmp_err = EDS_SUCCESS;
+                tmp_err = VDS_SUCCESS;
 
                 break;
             }
@@ -172,10 +171,10 @@ void *CDLList_deleteNode(CDLListNode **cdllHead,
 
 void *CDLList_deleteData(CDLListNode **cdllHead,
                          void *pToDelete,
-                         UserCompareCallback DataCmp,
-                         EdsErrCode *err)
+                         vdsUserCompareFunc DataCmp,
+                         vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_INVALID_ARGS;
+    vdsErrCode tmp_err = VDS_INVALID_ARGS;
     void *pRet = NULL;
 
     if (cdllHead && *cdllHead && DataCmp) {
@@ -195,9 +194,9 @@ void *CDLList_deleteData(CDLListNode **cdllHead,
                 curr->prv->nxt = curr->nxt;
 
                 pRet = curr->pData;
-                EdsFree(curr);
+                VdsFree(curr);
 
-                tmp_err = EDS_SUCCESS;
+                tmp_err = VDS_SUCCESS;
 
                 break;
             }
@@ -213,9 +212,9 @@ void *CDLList_deleteData(CDLListNode **cdllHead,
 
 CDLListNode *CDLList_at(CDLListNode *cdllHead,
                         size_t idx,
-                        EdsErrCode *err)
+                        vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     CDLListNode *curr = NULL;
 
     if (cdllHead) {
@@ -232,7 +231,7 @@ CDLListNode *CDLList_at(CDLListNode *cdllHead,
         if (i != idx)
             curr = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -241,10 +240,10 @@ CDLListNode *CDLList_at(CDLListNode *cdllHead,
 
 CDLListNode *CDLList_find(CDLListNode *cdllHead,
                           void *pToFind,
-                          UserCompareCallback DataCmp,
-                          EdsErrCode *err)
+                          vdsUserCompareFunc DataCmp,
+                          vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     CDLListNode *ret = NULL;
 
     if (cdllHead && DataCmp) {
@@ -261,7 +260,7 @@ CDLListNode *CDLList_find(CDLListNode *cdllHead,
 
         
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -269,10 +268,10 @@ CDLListNode *CDLList_find(CDLListNode *cdllHead,
 }
 
 void CDLList_traverse(CDLListNode *cdllHead,
-                      UserDataCallback handleData,
-                      EdsErrCode *err)
+                      vdsUserDataFunc handleData,
+                      vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (cdllHead && handleData) {
         CDLListNode *curr = cdllHead;
@@ -282,16 +281,16 @@ void CDLList_traverse(CDLListNode *cdllHead,
             curr = curr->nxt;
         } while (curr != cdllHead);
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
 
 void CDLList_destroy(CDLListNode **cdllHead,
-                     UserDataCallback freeData,
-                     EdsErrCode *err)
+                     vdsUserDataFunc freeData,
+                     vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (cdllHead && *cdllHead) {
         CDLListNode *curr, *tmp;
@@ -306,12 +305,12 @@ void CDLList_destroy(CDLListNode **cdllHead,
 
             tmp = curr;
             curr = curr->nxt;
-            EdsFree(tmp);
+            VdsFree(tmp);
         }
 
         *cdllHead = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

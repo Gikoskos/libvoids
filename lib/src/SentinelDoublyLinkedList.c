@@ -1,8 +1,7 @@
  /********************
  *  SentinelDoublyLinkedList.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -13,11 +12,11 @@
 #include "SentinelDoublyLinkedList.h"
 
 
-SDLList *SDLList_init(EdsErrCode *err)
+SDLList *SDLList_init(vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
-    SDLList *newList = EdsMalloc(sizeof(SDLList));
+    SDLList *newList = VdsMalloc(sizeof(SDLList));
 
     if (newList) {
 
@@ -26,13 +25,13 @@ SDLList *SDLList_init(EdsErrCode *err)
         if (newList->head) {
             newList->sentinel = newList->head;
         } else {
-            EdsFree(newList);
+            VdsFree(newList);
             newList = NULL;
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
         }
 
     } else
-        tmp_err = EDS_MALLOC_FAIL;
+        tmp_err = VDS_MALLOC_FAIL;
 
     SAVE_ERR(err, tmp_err);
 
@@ -41,13 +40,13 @@ SDLList *SDLList_init(EdsErrCode *err)
 
 DLListNode *SDLList_insert(SDLList *sdllList,
                            void *pData,
-                           EdsErrCode *err)
+                           vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     DLListNode *new_node = NULL;
 
     if (sdllList) {
-        new_node = EdsMalloc(sizeof(DLListNode));
+        new_node = VdsMalloc(sizeof(DLListNode));
 
         if (new_node) {
 
@@ -59,10 +58,10 @@ DLListNode *SDLList_insert(SDLList *sdllList,
             sdllList->head = new_node;
 
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -71,9 +70,9 @@ DLListNode *SDLList_insert(SDLList *sdllList,
 
 DLListNode *SDLList_append(SDLList *sdllList,
                            void *pData,
-                           EdsErrCode *err)
+                           vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     DLListNode *new_node = NULL;
 
     if (sdllList) {
@@ -83,7 +82,7 @@ DLListNode *SDLList_append(SDLList *sdllList,
             new_node = SDLList_insert(sdllList, pData, &tmp_err);
 
         } else {
-            new_node = EdsMalloc(sizeof(DLListNode));
+            new_node = VdsMalloc(sizeof(DLListNode));
             new_node->pData = pData;
             new_node->nxt = sdllList->sentinel;
             new_node->prv = sdllList->sentinel->prv;
@@ -92,7 +91,7 @@ DLListNode *SDLList_append(SDLList *sdllList,
         }
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -101,9 +100,9 @@ DLListNode *SDLList_append(SDLList *sdllList,
 
 void *SDLList_deleteNode(SDLList *sdllList,
                          DLListNode *sdllToDelete,
-                         EdsErrCode *err)
+                         vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_INVALID_ARGS;
+    vdsErrCode tmp_err = VDS_INVALID_ARGS;
     void *pRet = NULL;
 
     if (sdllList) {
@@ -121,8 +120,8 @@ void *SDLList_deleteNode(SDLList *sdllList,
             else
                 sdllList->head = curr->nxt;
 
-            EdsFree(curr);
-            tmp_err = EDS_SUCCESS;
+            VdsFree(curr);
+            tmp_err = VDS_SUCCESS;
         }
     }
 
@@ -133,10 +132,10 @@ void *SDLList_deleteNode(SDLList *sdllList,
 
 void *SDLList_deleteData(SDLList *sdllList,
                          void *pToDelete,
-                         UserCompareCallback DataCmp,
-                         EdsErrCode *err)
+                         vdsUserCompareFunc DataCmp,
+                         vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_INVALID_ARGS;
+    vdsErrCode tmp_err = VDS_INVALID_ARGS;
     void *pRet = NULL;
 
     if (sdllList) {
@@ -155,8 +154,8 @@ void *SDLList_deleteData(SDLList *sdllList,
             else
                 sdllList->head = curr->nxt;
 
-            EdsFree(curr);
-            tmp_err = EDS_SUCCESS;
+            VdsFree(curr);
+            tmp_err = VDS_SUCCESS;
         }
     }
 
@@ -167,9 +166,9 @@ void *SDLList_deleteData(SDLList *sdllList,
 
 DLListNode *SDLList_at(SDLList *sdllList,
                        size_t idx,
-                       EdsErrCode *err)
+                       vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     DLListNode *curr = NULL;
 
     if (sdllList) {
@@ -180,7 +179,7 @@ DLListNode *SDLList_at(SDLList *sdllList,
         if (curr == sdllList->sentinel)
             curr = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -189,9 +188,9 @@ DLListNode *SDLList_at(SDLList *sdllList,
 
 SDLList *SDLList_concat(SDLList *sdll1,
                         SDLList *sdll2,
-                        EdsErrCode *err)
+                        vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     SDLList *ret = NULL;
 
     if (sdll1 && sdll2) {
@@ -205,18 +204,18 @@ SDLList *SDLList_concat(SDLList *sdll1,
             tail1->nxt = sdll2->head;
             sdll2->head->prv = tail1;
 
-            //order of EdsFree()'s is important here
-            EdsFree(sdll1->sentinel);
+            //order of VdsFree()'s is important here
+            VdsFree(sdll1->sentinel);
 
             sdll1->sentinel = sdll2->sentinel;
 
-            EdsFree(sdll2);
+            VdsFree(sdll2);
 
             ret = sdll1;
         }
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -225,10 +224,10 @@ SDLList *SDLList_concat(SDLList *sdll1,
 
 DLListNode *SDLList_find(SDLList *sdllList,
                          void *pToFind,
-                         UserCompareCallback DataCmp,
-                         EdsErrCode *err)
+                         vdsUserCompareFunc DataCmp,
+                         vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     DLListNode *curr = NULL;
 
     if (sdllList) {
@@ -242,7 +241,7 @@ DLListNode *SDLList_find(SDLList *sdllList,
 
         }
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -250,25 +249,25 @@ DLListNode *SDLList_find(SDLList *sdllList,
 }
 
 void SDLList_traverse(SDLList *sdllList,
-                      UserDataCallback handleData,
-                      EdsErrCode *err)
+                      vdsUserDataFunc handleData,
+                      vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (sdllList && handleData)
         for (DLListNode *curr = sdllList->head; curr != sdllList->sentinel; curr = curr->nxt)
             handleData(curr->pData);
     else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
 
 void SDLList_destroy(SDLList **sdllList,
-                     UserDataCallback freeData,
-                     EdsErrCode *err)
+                     vdsUserDataFunc freeData,
+                     vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (sdllList && *sdllList) {
 
@@ -280,15 +279,15 @@ void SDLList_destroy(SDLList **sdllList,
 
             tmp = curr;
             curr = curr->nxt;
-            EdsFree(tmp);
+            VdsFree(tmp);
         }
 
-        EdsFree((*sdllList)->sentinel);
-        EdsFree(*sdllList);
+        VdsFree((*sdllList)->sentinel);
+        VdsFree(*sdllList);
         *sdllList = NULL;
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

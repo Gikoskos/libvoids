@@ -1,6 +1,6 @@
-# EduDS
+# libvoids
 
-A collection of data structures implemented in C \(EduDS = Educational Data Structures\).
+A collection of data structures implemented in C.
 
 ## Building
 
@@ -87,5 +87,5 @@ C99 standard library
 
 `LICENSE.txt` for all the other files
 
-EduDS \(c\) 2016-2017 [georgekoskerid@outlook.com](mailto:georgekoskerid@outlook.com)
+libvoids \(c\) 2016-2017 [georgekoskerid@outlook.com](mailto:georgekoskerid@outlook.com)
 

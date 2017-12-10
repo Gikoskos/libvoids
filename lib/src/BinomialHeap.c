@@ -1,8 +1,7 @@
  /********************
  *  BinomialHeap.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -17,23 +16,23 @@ static BinomialTree *merge_forests(BinomialTree *forest1, BinomialTree *forest2)
 static BinomialTree *merge_heaps_max(BinomialHeap *binheap1, BinomialTree *forest2);
 static BinomialTree *merge_heaps_min(BinomialHeap *binheap1, BinomialTree *forest2);
 static BinomialTree *make_children_forest(BinomialTree *root);
-static void destroy_recur_user(BinomialTree *curr, UserDataCallback freeData);
+static void destroy_recur_user(BinomialTree *curr, vdsUserDataFunc freeData);
 static void destroy_recur_plain(BinomialTree *curr);
 
 
-BinomialHeap *BinomialHeap_init(UserCompareCallback KeyCmp,
-                                HeapPropertyType property,
-                                EdsErrCode *err)
+BinomialHeap *BinomialHeap_init(vdsUserCompareFunc KeyCmp,
+                                vdsHeapProperty property,
+                                vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     BinomialHeap *binheap = NULL;
 
     if (KeyCmp) {
 
         switch (property) {
-        case EDS_MAX_HEAP:
-        case EDS_MIN_HEAP:
-            binheap = EdsMalloc(sizeof(BinomialHeap));
+        case VDS_MAX_HEAP:
+        case VDS_MIN_HEAP:
+            binheap = VdsMalloc(sizeof(BinomialHeap));
 
             if (binheap) {
 
@@ -42,15 +41,15 @@ BinomialHeap *BinomialHeap_init(UserCompareCallback KeyCmp,
                 binheap->KeyCmp = KeyCmp;
 
             } else
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
 
             break;
         default:
-            tmp_err = EDS_INVALID_ARGS;
+            tmp_err = VDS_INVALID_ARGS;
             break;
         }
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -60,17 +59,17 @@ BinomialHeap *BinomialHeap_init(UserCompareCallback KeyCmp,
 BinomialTree *BinomialHeap_push(BinomialHeap *binheap,
                                 void *pData,
                                 void *pKey,
-                                EdsErrCode *err)
+                                vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     BinomialTree *new_tree = NULL;
 
     if (binheap && pKey) {
 
         //create the new binomial tree root that will hold the user's data
-        new_tree = EdsMalloc(sizeof(BinomialTree));
+        new_tree = VdsMalloc(sizeof(BinomialTree));
 
-        //if EdsMalloc succeeded
+        //if VdsMalloc succeeded
         if (new_tree) {
 
             //create a binomial tree of order 0 that holds the new item
@@ -91,23 +90,23 @@ BinomialTree *BinomialHeap_push(BinomialHeap *binheap,
                 //if we're at this point, then the creation of the temporary heap has succeeded.
                 //All that remains, is to merge the new/temporary heap with the user's heap.
                 switch (binheap->property) {
-                case EDS_MAX_HEAP:
+                case VDS_MAX_HEAP:
                     binheap->forest = merge_heaps_max(binheap, new_tree);
                     break;
-                case EDS_MIN_HEAP:
+                case VDS_MIN_HEAP:
                     binheap->forest = merge_heaps_min(binheap, new_tree);
                     break;
                 default:
-                    tmp_err = EDS_INVALID_ARGS;
+                    tmp_err = VDS_INVALID_ARGS;
                     break;
                 }
             }
 
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -335,9 +334,9 @@ BinomialTree *make_children_forest(BinomialTree *root)
 }
 
 KeyValuePair BinomialHeap_pop(BinomialHeap *binheap,
-                              EdsErrCode *err)
+                              vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     KeyValuePair popped = { 0 };
 
     if (binheap && binheap->forest) {
@@ -349,7 +348,7 @@ KeyValuePair BinomialHeap_pop(BinomialHeap *binheap,
         prev_root = top_tree = binheap->forest;
 
         switch (binheap->property) {
-        case EDS_MAX_HEAP:
+        case VDS_MAX_HEAP:
 
             while (curr_root) {
 
@@ -373,9 +372,9 @@ KeyValuePair BinomialHeap_pop(BinomialHeap *binheap,
 
             binheap->forest = merge_heaps_max(binheap, make_children_forest(top_tree));
 
-            EdsFree(top_tree);
+            VdsFree(top_tree);
             break;
-        case EDS_MIN_HEAP:
+        case VDS_MIN_HEAP:
 
             while (curr_root) {
 
@@ -399,14 +398,14 @@ KeyValuePair BinomialHeap_pop(BinomialHeap *binheap,
 
             binheap->forest = merge_heaps_min(binheap, make_children_forest(top_tree));
 
-            EdsFree(top_tree);
+            VdsFree(top_tree);
         default:
-            tmp_err = EDS_INVALID_ARGS;
+            tmp_err = VDS_INVALID_ARGS;
             break;
         }
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -414,9 +413,9 @@ KeyValuePair BinomialHeap_pop(BinomialHeap *binheap,
 }
 
 KeyValuePair BinomialHeap_getTop(BinomialHeap *binheap,
-                                 EdsErrCode *err)
+                                 vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     KeyValuePair top = { 0 };
 
     if (binheap && binheap->forest) {
@@ -424,7 +423,7 @@ KeyValuePair BinomialHeap_getTop(BinomialHeap *binheap,
         BinomialTree *top_tree = binheap->forest;
 
         switch (binheap->property) {
-        case EDS_MAX_HEAP:
+        case VDS_MAX_HEAP:
 
             for (BinomialTree *curr_root = binheap->forest->sibling; curr_root; curr_root = curr_root->sibling)
                 if (binheap->KeyCmp(top_tree->item.pKey, curr_root->item.pKey) < 0)
@@ -432,7 +431,7 @@ KeyValuePair BinomialHeap_getTop(BinomialHeap *binheap,
 
             top = top_tree->item;
             break;
-        case EDS_MIN_HEAP:
+        case VDS_MIN_HEAP:
 
             for (BinomialTree *curr_root = binheap->forest->sibling; curr_root; curr_root = curr_root->sibling)
                 if (binheap->KeyCmp(top_tree->item.pKey, curr_root->item.pKey) > 0)
@@ -441,12 +440,12 @@ KeyValuePair BinomialHeap_getTop(BinomialHeap *binheap,
             top = top_tree->item;
             break;
         default:
-            tmp_err = EDS_INVALID_ARGS;
+            tmp_err = VDS_INVALID_ARGS;
             break;
         }
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -456,15 +455,15 @@ KeyValuePair BinomialHeap_getTop(BinomialHeap *binheap,
 void *BinomialHeap_replaceKey(BinomialHeap *binheap,
                               BinomialTree *tree,
                               void *pNewKey,
-                              EdsErrCode *err)
+                              vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     void *pOldKey = NULL;
 
     if (binheap && tree && pNewKey) {
 
         switch (binheap->property) {
-        case EDS_MAX_HEAP:
+        case VDS_MAX_HEAP:
 
             if (binheap->KeyCmp(pNewKey, tree->item.pKey) > 0) {
 
@@ -488,10 +487,10 @@ void *BinomialHeap_replaceKey(BinomialHeap *binheap,
                 }
 
             } else
-                tmp_err = EDS_INVALID_ARGS;
+                tmp_err = VDS_INVALID_ARGS;
 
             break;
-        case EDS_MIN_HEAP:
+        case VDS_MIN_HEAP:
 
             if (binheap->KeyCmp(pNewKey, tree->item.pKey) < 0) {
 
@@ -515,23 +514,23 @@ void *BinomialHeap_replaceKey(BinomialHeap *binheap,
                 }
 
             } else
-                tmp_err = EDS_INVALID_ARGS;
+                tmp_err = VDS_INVALID_ARGS;
 
             break;
         default:
-            tmp_err = EDS_INVALID_ARGS;
+            tmp_err = VDS_INVALID_ARGS;
             break;
         }
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
     return pOldKey;
 }
 
-void destroy_recur_user(BinomialTree *curr, UserDataCallback freeData)
+void destroy_recur_user(BinomialTree *curr, vdsUserDataFunc freeData)
 {
     if (curr) {
         destroy_recur_user(curr->sibling, freeData);
@@ -545,7 +544,7 @@ void destroy_recur_user(BinomialTree *curr, UserDataCallback freeData)
 
         freeData((void *)&curr->item);
 
-        EdsFree(curr);
+        VdsFree(curr);
     }
 }
 
@@ -561,15 +560,15 @@ void destroy_recur_plain(BinomialTree *curr)
                 curr->parent->sibling = NULL;
         }
 
-        EdsFree(curr);
+        VdsFree(curr);
     }
 }
 
 void BinomialHeap_destroy(BinomialHeap **binheap,
-                          UserDataCallback freeData,
-                          EdsErrCode *err)
+                          vdsUserDataFunc freeData,
+                          vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (binheap && *binheap) {
 
@@ -578,11 +577,11 @@ void BinomialHeap_destroy(BinomialHeap **binheap,
         else
             destroy_recur_plain((*binheap)->forest);
 
-        EdsFree(*binheap);
+        VdsFree(*binheap);
         *binheap = NULL;
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

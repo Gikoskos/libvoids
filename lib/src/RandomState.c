@@ -1,8 +1,7 @@
  /********************
  *  RandomState.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -18,17 +17,17 @@
 
 
 void *RandomState_init(unsigned int seed,
-                       EdsErrCode *err)
+                       vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     sfmt_t *sfmt_state;
 
-    sfmt_state = EdsMalloc(sizeof(sfmt_t));
+    sfmt_state = VdsMalloc(sizeof(sfmt_t));
 
     if (sfmt_state)
-        sfmt_init_gen_rand(sfmt_state, (seed) ? seed : EDUDS_SALT);
+        sfmt_init_gen_rand(sfmt_state, (seed) ? seed : VOIDS_SALT);
     else
-        tmp_err = EDS_MALLOC_FAIL;
+        tmp_err = VDS_MALLOC_FAIL;
 
     SAVE_ERR(err, tmp_err);
 
@@ -36,16 +35,16 @@ void *RandomState_init(unsigned int seed,
 }
 
 unsigned int RandomState_genUInt(void *state,
-                                 EdsErrCode *err)
+                                 vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     unsigned int ret = 0;
     sfmt_t *sfmt_state = (state) ? (sfmt_t*)state : NULL;
 
     if (sfmt_state)
         ret = (unsigned int)sfmt_genrand_uint32(sfmt_state);
     else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -53,16 +52,16 @@ unsigned int RandomState_genUInt(void *state,
 }
 
 int RandomState_genInt(void *state,
-                       EdsErrCode *err)
+                       vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     int ret = 0;
     sfmt_t *sfmt_state = (state) ? (sfmt_t*)state : NULL;
 
     if (sfmt_state)
         ret = (int)sfmt_genrand_uint32(sfmt_state);
     else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -70,16 +69,16 @@ int RandomState_genInt(void *state,
 }
 
 void RandomState_destroy(void **state,
-                         EdsErrCode *err)
+                         vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     sfmt_t **sfmt_state = (state) ? (sfmt_t**)state : NULL;
 
     if (sfmt_state && *sfmt_state) {
-        EdsFree(*sfmt_state);
+        VdsFree(*sfmt_state);
         *sfmt_state = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

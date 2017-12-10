@@ -1,8 +1,7 @@
  /********************
  *  SinglyLinkedList.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -15,13 +14,13 @@
 
 SLListNode *SLList_insert(SLListNode **sllHead,
                           void *pData,
-                          EdsErrCode *err)
+                          vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     SLListNode *new_node = NULL;
 
     if (sllHead) {
-        new_node = EdsMalloc(sizeof(SLListNode));
+        new_node = VdsMalloc(sizeof(SLListNode));
 
         if (new_node) {
 
@@ -31,9 +30,9 @@ SLListNode *SLList_insert(SLListNode **sllHead,
             *sllHead = new_node;
 
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -42,13 +41,13 @@ SLListNode *SLList_insert(SLListNode **sllHead,
 
 SLListNode *SLList_append(SLListNode **sllHead,
                           void *pData,
-                          EdsErrCode *err)
+                          vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     SLListNode *new_node = NULL;
 
     if (sllHead) {
-        new_node = EdsMalloc(sizeof(SLListNode));
+        new_node = VdsMalloc(sizeof(SLListNode));
 
         if (new_node) {
 
@@ -66,9 +65,9 @@ SLListNode *SLList_append(SLListNode **sllHead,
             }
 
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -77,13 +76,13 @@ SLListNode *SLList_append(SLListNode **sllHead,
 
 SLListNode *SLList_insertAfter(SLListNode *sllPrev,
                                void *pData,
-                               EdsErrCode *err)
+                               vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     SLListNode *new_node = NULL;
 
     if (sllPrev) {
-        new_node = EdsMalloc(sizeof(SLListNode));
+        new_node = VdsMalloc(sizeof(SLListNode));
 
         if (new_node) {
 
@@ -93,10 +92,10 @@ SLListNode *SLList_insertAfter(SLListNode *sllPrev,
             sllPrev->nxt = new_node;
 
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -105,9 +104,9 @@ SLListNode *SLList_insertAfter(SLListNode *sllPrev,
 
 void *SLList_deleteNode(SLListNode **sllHead,
                         SLListNode *sllToDelete,
-                        EdsErrCode *err)
+                        vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_INVALID_ARGS;
+    vdsErrCode tmp_err = VDS_INVALID_ARGS;
     void *pRet = NULL;
 
     if (sllHead && sllToDelete) {
@@ -124,8 +123,8 @@ void *SLList_deleteNode(SLListNode **sllHead,
             else
                 *sllHead = curr->nxt;
 
-            EdsFree(curr);
-            tmp_err = EDS_SUCCESS;
+            VdsFree(curr);
+            tmp_err = VDS_SUCCESS;
         }
     }
 
@@ -136,10 +135,10 @@ void *SLList_deleteNode(SLListNode **sllHead,
 
 void *SLList_deleteData(SLListNode **sllHead,
                         void *pData,
-                        UserCompareCallback DataCmp,
-                        EdsErrCode *err)
+                        vdsUserCompareFunc DataCmp,
+                        vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_INVALID_ARGS;
+    vdsErrCode tmp_err = VDS_INVALID_ARGS;
     void *pRet = NULL;
 
     if (sllHead && *sllHead && DataCmp) {
@@ -156,8 +155,8 @@ void *SLList_deleteData(SLListNode **sllHead,
             else
                 *sllHead = curr->nxt;
 
-            EdsFree(curr);
-            tmp_err = EDS_SUCCESS;
+            VdsFree(curr);
+            tmp_err = VDS_SUCCESS;
         }
     }
 
@@ -168,16 +167,16 @@ void *SLList_deleteData(SLListNode **sllHead,
 
 SLListNode *SLList_at(SLListNode *sllHead,
                       size_t idx,
-                      EdsErrCode *err)
+                      vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     SLListNode *curr = NULL;
 
     if (sllHead) {
         size_t i = 0;
         for (curr = sllHead; curr && i < idx; curr = curr->nxt, i++);
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -186,9 +185,9 @@ SLListNode *SLList_at(SLListNode *sllHead,
 
 SLListNode *SLList_concat(SLListNode *sll1,
                           SLListNode *sll2,
-                          EdsErrCode *err)
+                          vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     SLListNode *ret = NULL;
 
     if (sll1 && sll2) {
@@ -199,7 +198,7 @@ SLListNode *SLList_concat(SLListNode *sll1,
 
         ret = sll1;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -208,16 +207,16 @@ SLListNode *SLList_concat(SLListNode *sll1,
 
 SLListNode *SLList_find(SLListNode *sllHead,
                         void *pToFind,
-                        UserCompareCallback DataCmp,
-                        EdsErrCode *err)
+                        vdsUserCompareFunc DataCmp,
+                        vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     SLListNode *curr = NULL;
 
     if (sllHead && DataCmp)
         for (curr = sllHead; curr && DataCmp(curr->pData, pToFind); curr = curr->nxt);
     else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -225,25 +224,25 @@ SLListNode *SLList_find(SLListNode *sllHead,
 }
 
 void SLList_traverse(SLListNode *sllHead,
-                     UserDataCallback handleData,
-                     EdsErrCode *err)
+                     vdsUserDataFunc handleData,
+                     vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (sllHead && handleData)
         for (SLListNode *curr = sllHead; curr; curr = curr->nxt)
             handleData(curr->pData);
     else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
 
 void SLList_destroy(SLListNode **sllHead,
-                    UserDataCallback freeData,
-                    EdsErrCode *err)
+                    vdsUserDataFunc freeData,
+                    vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (sllHead) {
         SLListNode *curr, *tmp;
@@ -254,12 +253,12 @@ void SLList_destroy(SLListNode **sllHead,
 
             tmp = curr;
             curr = curr->nxt;
-            EdsFree(tmp);
+            VdsFree(tmp);
         }
 
         *sllHead = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

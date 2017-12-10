@@ -1,8 +1,7 @@
  /********************
  *  QuadraticHashtable.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -20,20 +19,20 @@
 #define IS_DELETED(x) ((x) == 2)
 
 
-static int rehash(QuadHashtable *table, UserDataCallback freeData);
+static int rehash(QuadHashtable *table, vdsUserDataFunc freeData);
 
 
 QuadHashtable *QuadHash_init(size_t size,
-                             UserCompareCallback KeyCmp,
+                             vdsUserCompareFunc KeyCmp,
                              UserHashFuncCallback Hash,
-                             EdsErrCode *err)
+                             vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     QuadHashtable *quadtable = NULL;
 
     if (KeyCmp && size > 3) {
 
-        quadtable = EdsMalloc(sizeof(QuadHashtable));
+        quadtable = VdsMalloc(sizeof(QuadHashtable));
 
         if (quadtable) {
 
@@ -59,22 +58,22 @@ QuadHashtable *QuadHash_init(size_t size,
                 quadtable->total_elements = 0;
 
             } else {
-                EdsFree(quadtable);
+                VdsFree(quadtable);
                 quadtable = NULL;
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
             }
 
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
     return quadtable;
 }
 
-int rehash(QuadHashtable *table, UserDataCallback freeData)
+int rehash(QuadHashtable *table, vdsUserDataFunc freeData)
 {
     HashArrayElement *old_array = table->array; //save the old array
     size_t old_size = table->size;
@@ -116,7 +115,7 @@ int rehash(QuadHashtable *table, UserDataCallback freeData)
 
     }
 
-    EdsFree(old_array);
+    VdsFree(old_array);
 
     return 1;
 }
@@ -125,10 +124,10 @@ void *QuadHash_insert(QuadHashtable *table,
                       void *pData,
                       void *pKey,
                       size_t key_size,
-                      UserDataCallback freeData,
-                      EdsErrCode *err)
+                      vdsUserDataFunc freeData,
+                      vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     void *new_key = NULL;
 
     if (table && pKey && key_size) {
@@ -171,10 +170,10 @@ void *QuadHash_insert(QuadHashtable *table,
 
         if ( ((float)table->total_elements / table->size) >= 0.5 )
             if (!rehash(table, freeData))
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);        
 
@@ -184,9 +183,9 @@ void *QuadHash_insert(QuadHashtable *table,
 KeyValuePair QuadHash_delete(QuadHashtable *table,
                              void *pKey,
                              size_t key_size,
-                             EdsErrCode *err)
+                             vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     KeyValuePair item = { 0 };
 
     if (table && pKey && key_size) {
@@ -211,7 +210,7 @@ KeyValuePair QuadHash_delete(QuadHashtable *table,
         } while (offset < table->size);
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -221,9 +220,9 @@ KeyValuePair QuadHash_delete(QuadHashtable *table,
 HashArrayElement *QuadHash_find(QuadHashtable *table,
                                 void *pKey,
                                 size_t key_size,
-                                EdsErrCode *err)
+                                vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     HashArrayElement *to_find = NULL;
 
     if (table && pKey && key_size) {
@@ -246,7 +245,7 @@ HashArrayElement *QuadHash_find(QuadHashtable *table,
         } while (offset < table->size);
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -254,10 +253,10 @@ HashArrayElement *QuadHash_find(QuadHashtable *table,
 }
 
 void QuadHash_destroy(QuadHashtable **table,
-                      UserDataCallback freeData,
-                      EdsErrCode *err)
+                      vdsUserDataFunc freeData,
+                      vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (table && *table) {
 
@@ -265,12 +264,12 @@ void QuadHash_destroy(QuadHashtable **table,
             if (freeData && (IS_OCCUPIED((*table)->array[i].state) || IS_DELETED((*table)->array[i].state)))
                 freeData((void *)&(*table)->array[i].item);
 
-        EdsFree((*table)->array);
-        EdsFree(*table);
+        VdsFree((*table)->array);
+        VdsFree(*table);
         *table = NULL;
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }

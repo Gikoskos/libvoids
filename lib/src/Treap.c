@@ -1,8 +1,7 @@
  /********************
  *  Treap.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -53,31 +52,31 @@
     } while (0)
 
 
-static void pre_orderTraversal(TreapNode *treapNode, UserDataCallback callback);
-static void in_orderTraversal(TreapNode *treapNode, UserDataCallback callback);
-static void post_orderTraversal(TreapNode *treapNode, UserDataCallback callback);
-static int breadth_firstTraversal(TreapNode *treapNode, UserDataCallback callback);
-static void eulerTraversal(TreapNode *treapNode, UserDataCallback callback);
+static void pre_orderTraversal(TreapNode *treapNode, vdsUserDataFunc callback);
+static void in_orderTraversal(TreapNode *treapNode, vdsUserDataFunc callback);
+static void post_orderTraversal(TreapNode *treapNode, vdsUserDataFunc callback);
+static int breadth_firstTraversal(TreapNode *treapNode, vdsUserDataFunc callback);
+static void eulerTraversal(TreapNode *treapNode, vdsUserDataFunc callback);
 
 static void fix_max_order(Treap *treap, TreapNode *curr);
 static void fix_min_order(Treap *treap, TreapNode *curr);
 
 
 
-Treap *Treap_init(UserCompareCallback KeyCmp,
-                  HeapPropertyType property,
+Treap *Treap_init(vdsUserCompareFunc KeyCmp,
+                  vdsHeapProperty property,
                   unsigned int seed,
-                  EdsErrCode *err)
+                  vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     Treap *treap = NULL;
 
     if (KeyCmp) {
 
         switch (property) {
-        case EDS_MAX_HEAP:
-        case EDS_MIN_HEAP:
-            treap = EdsMalloc(sizeof(Treap));
+        case VDS_MAX_HEAP:
+        case VDS_MIN_HEAP:
+            treap = VdsMalloc(sizeof(Treap));
 
             if (treap) {
 
@@ -87,21 +86,21 @@ Treap *Treap_init(UserCompareCallback KeyCmp,
 
                 treap->rand_gen_state = RandomState_init(seed, &tmp_err);
 
-                if (tmp_err != EDS_SUCCESS) {
-                    EdsFree(treap);
-                    tmp_err = EDS_MALLOC_FAIL;
+                if (tmp_err != VDS_SUCCESS) {
+                    VdsFree(treap);
+                    tmp_err = VDS_MALLOC_FAIL;
                 }
 
             } else
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
             break;
         default:
-            tmp_err = EDS_INVALID_ARGS;
+            tmp_err = VDS_INVALID_ARGS;
             break;
         }
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -111,14 +110,14 @@ Treap *Treap_init(UserCompareCallback KeyCmp,
 TreapNode *Treap_insert(Treap *treap,
                         void *pKey,
                         void *pData,
-                        EdsErrCode *err)
+                        vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     TreapNode *new_node = NULL;
 
     if (treap && pKey) {
 
-        new_node = EdsMalloc(sizeof(TreapNode));
+        new_node = VdsMalloc(sizeof(TreapNode));
 
         if (new_node) {
 
@@ -162,9 +161,9 @@ TreapNode *Treap_insert(Treap *treap,
                         }
 
                     } else { //if there's another node with the same key already on the tree
-                        EdsFree(new_node); //return without doing anything
+                        VdsFree(new_node); //return without doing anything
                         parent = new_node = NULL;
-                        tmp_err = EDS_KEY_EXISTS;
+                        tmp_err = VDS_KEY_EXISTS;
                         break;
                     }
 
@@ -174,14 +173,14 @@ TreapNode *Treap_insert(Treap *treap,
                 if (new_node) {
 
                     switch (treap->property) {
-                    case EDS_MAX_HEAP:
+                    case VDS_MAX_HEAP:
                         fix_max_order(treap, new_node);
                         break;
-                    case EDS_MIN_HEAP:
+                    case VDS_MIN_HEAP:
                         fix_min_order(treap, new_node);
                         break;
                     default:
-                        tmp_err = EDS_INVALID_ARGS;
+                        tmp_err = VDS_INVALID_ARGS;
                         break;
                     }
 
@@ -189,9 +188,9 @@ TreapNode *Treap_insert(Treap *treap,
 
             }
         } else
-            tmp_err = EDS_MALLOC_FAIL;
+            tmp_err = VDS_MALLOC_FAIL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -252,9 +251,9 @@ void fix_min_order(Treap *treap, TreapNode *curr)
 
 KeyValuePair Treap_deleteNode(Treap *treap,
                               TreapNode *treapNode,
-                              EdsErrCode *err)
+                              vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     int reorder = 0;
     KeyValuePair item = { 0 };
 
@@ -313,24 +312,24 @@ KeyValuePair Treap_deleteNode(Treap *treap,
 
         if (reorder) {
             switch (treap->property) {
-            case EDS_MAX_HEAP:
+            case VDS_MAX_HEAP:
                 fix_max_order(treap, treapNode->parent);
                 break;
-            case EDS_MIN_HEAP:
+            case VDS_MIN_HEAP:
                 fix_min_order(treap, treapNode->parent);
                 break;
             default:
-                tmp_err = EDS_INVALID_ARGS;
+                tmp_err = VDS_INVALID_ARGS;
                 break;
             }
         }
 
         //delete the node because we don't need it anymore
         //and no other nodes point to it
-        EdsFree(treapNode);
+        VdsFree(treapNode);
 
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -339,16 +338,16 @@ KeyValuePair Treap_deleteNode(Treap *treap,
 
 KeyValuePair Treap_deleteByKey(Treap *treap,
                                void *pKey,
-                               EdsErrCode *err)
+                               vdsErrCode *err)
 {
     return Treap_deleteNode(treap, Treap_findNode(treap, pKey, err), err);
 }
 
 TreapNode *Treap_findNode(Treap *treap,
                           void *pKey,
-                          EdsErrCode *err)
+                          vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     TreapNode *curr = NULL;
 
     if (treap && pKey) {
@@ -357,7 +356,7 @@ TreapNode *Treap_findNode(Treap *treap,
 
         while (curr) {
             cmp_res = treap->KeyCmp(pKey, curr->item.pKey);
-            
+
             if (!cmp_res)
                 break;
 
@@ -367,7 +366,7 @@ TreapNode *Treap_findNode(Treap *treap,
                 curr = curr->left;
         }
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -376,9 +375,9 @@ TreapNode *Treap_findNode(Treap *treap,
 
 void *Treap_findData(Treap *treap,
                        void *pKey,
-                       EdsErrCode *err)
+                       vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
     TreapNode *curr = NULL;
 
     if (treap && pKey) {
@@ -397,7 +396,7 @@ void *Treap_findData(Treap *treap,
                 curr = curr->left;
         }
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 
@@ -406,44 +405,44 @@ void *Treap_findData(Treap *treap,
 
 void Treap_traverse(Treap *treap,
                     TreeTraversalMethod traversal,
-                    UserDataCallback callback,
-                    EdsErrCode *err)
+                    vdsUserDataFunc callback,
+                    vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (callback && treap && treap->root) {
         switch (traversal) {
-        case EDS_PRE_ORDER:
+        case VDS_PRE_ORDER:
             pre_orderTraversal(treap->root, callback);
             break;
-        case EDS_IN_ORDER:
+        case VDS_IN_ORDER:
             in_orderTraversal(treap->root, callback);
             break;
-        case EDS_POST_ORDER:
+        case VDS_POST_ORDER:
             post_orderTraversal(treap->root, callback);
             break;
-        case EDS_BREADTH_FIRST:
+        case VDS_BREADTH_FIRST:
             if (!breadth_firstTraversal(treap->root, callback))
-                tmp_err = EDS_MALLOC_FAIL;
+                tmp_err = VDS_MALLOC_FAIL;
             break;
-        case EDS_EULER:
+        case VDS_EULER:
             eulerTraversal(treap->root, callback);
             break;
         default:
-            tmp_err = EDS_INVALID_ARGS;
+            tmp_err = VDS_INVALID_ARGS;
             break;
         }
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
 
 void Treap_destroy(Treap **treap,
-                   UserDataCallback freeData,
-                   EdsErrCode *err)
+                   vdsUserDataFunc freeData,
+                   vdsErrCode *err)
 {
-    EdsErrCode tmp_err = EDS_SUCCESS;
+    vdsErrCode tmp_err = VDS_SUCCESS;
 
     if (treap && *treap) {
 
@@ -472,24 +471,24 @@ void Treap_destroy(Treap **treap,
                 if (curr) {
 
                     if (curr->right == to_delete) {
-                        EdsFree(curr->right);
+                        VdsFree(curr->right);
                         curr->right = NULL;
                     } else {
-                        EdsFree(curr->left);
+                        VdsFree(curr->left);
                         curr->left = NULL;
                     }
 
                 } else { //if curr is NULL, it means that to_delete holds the root node
-                    EdsFree(to_delete);
+                    VdsFree(to_delete);
                 }
             }
         }
 
         RandomState_destroy(&(*treap)->rand_gen_state, NULL);
-        EdsFree(*treap);
+        VdsFree(*treap);
         *treap = NULL;
     } else
-        tmp_err = EDS_INVALID_ARGS;
+        tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
 }
@@ -500,7 +499,7 @@ void Treap_destroy(Treap **treap,
 
 #include "FIFOqueue.h"
 
-void pre_orderTraversal(TreapNode *treapNode, UserDataCallback callback)
+void pre_orderTraversal(TreapNode *treapNode, vdsUserDataFunc callback)
 {
     if (treapNode) {
         callback((void *)&treapNode->item);
@@ -509,7 +508,7 @@ void pre_orderTraversal(TreapNode *treapNode, UserDataCallback callback)
     }
 }
 
-void in_orderTraversal(TreapNode *treapNode, UserDataCallback callback)
+void in_orderTraversal(TreapNode *treapNode, vdsUserDataFunc callback)
 {
     if (treapNode) {
         in_orderTraversal(treapNode->left, callback);
@@ -518,7 +517,7 @@ void in_orderTraversal(TreapNode *treapNode, UserDataCallback callback)
     }
 }
 
-void post_orderTraversal(TreapNode *treapNode, UserDataCallback callback)
+void post_orderTraversal(TreapNode *treapNode, vdsUserDataFunc callback)
 {
     if (treapNode) {
         post_orderTraversal(treapNode->left, callback);
@@ -527,16 +526,16 @@ void post_orderTraversal(TreapNode *treapNode, UserDataCallback callback)
     }
 }
 
-int breadth_firstTraversal(TreapNode *treapRoot, UserDataCallback callback)
+int breadth_firstTraversal(TreapNode *treapRoot, vdsUserDataFunc callback)
 {
-    EdsErrCode err;
+    vdsErrCode err;
     TreapNode *curr;
     FIFOqueue *levelFIFO = FIFO_init(&err);
 
     if (levelFIFO) {
         FIFO_enqueue(levelFIFO, (void *)treapRoot, &err);
 
-        if (err == EDS_SUCCESS) {
+        if (err == VDS_SUCCESS) {
 
             while (levelFIFO->total_nodes) {
                 curr = (TreapNode *)FIFO_dequeue(levelFIFO, NULL);
@@ -546,14 +545,14 @@ int breadth_firstTraversal(TreapNode *treapRoot, UserDataCallback callback)
                 if (curr->right) {
                     FIFO_enqueue(levelFIFO, curr->right, &err);
 
-                    if (err != EDS_SUCCESS)
+                    if (err != VDS_SUCCESS)
                         break;
                 }
 
                 if (curr->left) {
                     FIFO_enqueue(levelFIFO, curr->left, &err);
 
-                    if (err != EDS_SUCCESS)
+                    if (err != VDS_SUCCESS)
                         break;
                 }
             }
@@ -563,13 +562,13 @@ int breadth_firstTraversal(TreapNode *treapRoot, UserDataCallback callback)
         }
     }
 
-    if (err == EDS_SUCCESS)
+    if (err == VDS_SUCCESS)
         return 1;
 
     return 0;
 }
 
-void eulerTraversal(TreapNode *treapNode, UserDataCallback callback)
+void eulerTraversal(TreapNode *treapNode, vdsUserDataFunc callback)
 {
     if (treapNode) {
         callback((void *)&treapNode->item);

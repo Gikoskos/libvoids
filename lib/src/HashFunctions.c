@@ -1,8 +1,7 @@
  /********************
  *  HashFunctions.c
  *
- * This file is part of EduDS data structure library which is licensed under
- * the 2-Clause BSD License
+ * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
  * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
@@ -19,7 +18,7 @@
 
 size_t HashCode(const void *pKey, size_t key_size)
 {
-    return (size_t)XXH32(pKey, key_size, EDUDS_SALT);
+    return (size_t)XXH32(pKey, key_size, VOIDS_SALT);
 }
 
 //Cormen's division method
