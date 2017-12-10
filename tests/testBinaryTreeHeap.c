@@ -8,7 +8,7 @@
 do { \
     func; \
     if (err != VDS_SUCCESS) { \
-        printf("Function call \"%s\" failed with error \"%s\"\n", #func, vdsErrString(err)); \
+        printf("Function call \"%s\" failed with error \"%s\"\n", #func, VdsErrString(err)); \
         return 1; \
     } \
 } while (0)

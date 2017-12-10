@@ -108,6 +108,6 @@ typedef enum _vdsErrCode {
 } vdsErrCode;
 
 //ErrorHandling.c functions are declared here instead of using another header file
-VOIDS_API const char *vdsErrString(vdsErrCode err);
+VOIDS_API const char *VdsErrString(vdsErrCode err);
 
 #endif //VOIDS_COMMON_H__

@@ -11,7 +11,7 @@
 #include "Common.h"
 
 
-const char *vdsErrString(vdsErrCode err)
+const char *VdsErrString(vdsErrCode err)
 {
     switch (err) {
     case VDS_SUCCESS:
