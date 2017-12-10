@@ -103,6 +103,7 @@ typedef enum _vdsErrCode {
     VDS_MALLOC_FAIL,
     VDS_KEY_EXISTS,
     VDS_BUFFER_FULL,
+    VDS_BUFFER_EMPTY,
     VDS_INVALID_ARGS
 } vdsErrCode;
 

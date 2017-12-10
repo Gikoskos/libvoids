@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <EduDS.h>
+#include <voids.h>
 
 
-#define EduDS_ERR_FATAL(func, err) \
+#define VDS_ERR_FATAL(func, err) \
     func; \
-    if (err != EDS_SUCCESS) { \
-        printf("Function call \"%s\" failed with error \"%s\"\n",  #func, EdsErrString(err)); \
+    if (err != VDS_SUCCESS) { \
+        printf("Function call \"%s\" failed with error \"%s\"\n",  #func, vdsErrString(err)); \
         return 1; \
     }
 
@@ -28,17 +28,17 @@ int compareInts(const void *key1, const void *key2)
 int main(int argc, char *argv[])
 {
     int arr[] = {4 , 51, 6, 222, 43, 40, 4, 11, 1};
-    EdsErrCode err;
+    vdsErrCode err;
     Treap *treap;
 
-    EduDS_ERR_FATAL(treap = Treap_init(compareInts, EDS_MAX_HEAP, 0, &err), err);
+    VDS_ERR_FATAL(treap = Treap_init(compareInts, VDS_MAX_HEAP, 0, &err), err);
 
     printf("=== TESTING MAX HEAP ===\n");
     printf("=== INSERTIONS ===\n");
     for (size_t i = 0; i < sizeof arr / sizeof *arr; i++) {
         Treap_insert(treap, &arr[i], NULL, &err);
         printf("Inserted %d!\n", arr[i]);
-        Treap_traverse(treap, EDS_IN_ORDER, printIntData, NULL);
+        Treap_traverse(treap, VDS_IN_ORDER, printIntData, NULL);
         printf("\n");
     }
 
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
         if (z.pKey) {
             printf("removed %d from the treap\n", *(int*)z.pKey);
             printf("In-order traversal of the treap!\n");
-            Treap_traverse(treap, EDS_IN_ORDER, printIntData, NULL);
+            Treap_traverse(treap, VDS_IN_ORDER, printIntData, NULL);
             putchar('\n');
         }
     }
@@ -57,13 +57,13 @@ int main(int argc, char *argv[])
 
 
     printf("=== TESTING MIN HEAP ===\n");
-    treap->property = EDS_MIN_HEAP;
+    treap->property = VDS_MIN_HEAP;
 
     printf("=== INSERTIONS ===\n");
     for (size_t i = 0; i < sizeof arr / sizeof *arr; i++) {
         Treap_insert(treap, &arr[i], NULL, &err);
         printf("Inserted %d!\n", arr[i]);
-        Treap_traverse(treap, EDS_IN_ORDER, printIntData, NULL);
+        Treap_traverse(treap, VDS_IN_ORDER, printIntData, NULL);
         printf("\n");
     }
 
@@ -74,13 +74,13 @@ int main(int argc, char *argv[])
         if (z.pKey) {
             printf("removed %d from the treap\n", *(int*)z.pKey);
             printf("In-order traversal of the treap!\n");
-            Treap_traverse(treap, EDS_IN_ORDER, printIntData, NULL);
+            Treap_traverse(treap, VDS_IN_ORDER, printIntData, NULL);
             putchar('\n');
         }
     }
     printf("\n");
 
-    EduDS_ERR_FATAL(Treap_destroy(&treap, NULL, &err), err);
+    VDS_ERR_FATAL(Treap_destroy(&treap, NULL, &err), err);
 
     return 0;
 }

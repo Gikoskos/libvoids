@@ -1,19 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <EduDS.h>
+#include <voids.h>
 
-#define EduDS_ERR_FATAL(func, err) \
+#define VDS_ERR_FATAL(func, err) \
     func; \
-    if (err != EDS_SUCCESS) { \
-        printf("Function call \"%s\" failed with error \"%s\"\n", #func, EdsErrString(err)); \
+    if (err != VDS_SUCCESS) { \
+        printf("Function call \"%s\" failed with error \"%s\"\n", #func, vdsErrString(err)); \
         return 1; \
     }
 
 #define EduDS_ERR_NON_FATAL(func, err) \
     func; \
-    if (err != EDS_SUCCESS) { \
-        printf("Function call \"%s\" failed with error \"%s\"\n", #func, EdsErrString(err)); \
+    if (err != VDS_SUCCESS) { \
+        printf("Function call \"%s\" failed with error \"%s\"\n", #func, vdsErrString(err)); \
     }
 
 
@@ -42,7 +42,7 @@ void printInt(void *param)
     printf("(%d) ", x);
 }
 
-void printArrayHeap(ArrayHeap *heap, UserDataCallback printData)
+void printArrayHeap(ArrayHeap *heap, vdsUserDataFunc printData)
 {
     if (printData) {
         for (size_t i = 0; i < heap->idx; i++) {
@@ -54,10 +54,10 @@ void printArrayHeap(ArrayHeap *heap, UserDataCallback printData)
 
 int main(int argc, char *argv[])
 {
-    EdsErrCode err;
+    vdsErrCode err;
     ArrayHeap *heap;
 
-    EduDS_ERR_FATAL(heap = ArrayHeap_init(compareInts, EDS_MAX_HEAP, 13, &err), err);
+    VDS_ERR_FATAL(heap = ArrayHeap_init(compareInts, VDS_MAX_HEAP, 13, &err), err);
 
     srand(time(NULL));
 
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 
         printf("\nTrying to push %d to the heap\n", *s);
         EduDS_ERR_NON_FATAL(ArrayHeap_push(heap, (void*)s, &err), err);
-        if (err != EDS_SUCCESS)
+        if (err != VDS_SUCCESS)
             free(s);
         else
             printArrayHeap(heap, printInt);
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
     }
 
     printf("\n===Switching heap order to minimum===\n");
-    heap->property = EDS_MIN_HEAP;
+    heap->property = VDS_MIN_HEAP;
 
     printf("===PUSHING DATA TO THE HEAP===\n");
     for (int i = 0; i < 20; i++) {
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 
         printf("\nTrying to push %d to the heap\n", *s);
         EduDS_ERR_NON_FATAL(ArrayHeap_push(heap, (void*)s, &err), err);
-        if (err != EDS_SUCCESS)
+        if (err != VDS_SUCCESS)
             free(s);
         else
             printArrayHeap(heap, printInt);
@@ -113,6 +113,6 @@ int main(int argc, char *argv[])
     }
 
 
-    EduDS_ERR_FATAL(ArrayHeap_destroy(&heap, free, &err), err);
+    VDS_ERR_FATAL(ArrayHeap_destroy(&heap, free, &err), err);
     return 0;
 }

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <EduDS.h>
+#include <voids.h>
 
 void printIntData(void *pData)
 {

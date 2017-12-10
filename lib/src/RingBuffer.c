@@ -122,7 +122,8 @@ void *RingBuffer_read(RingBuffer *cBuff,
             cBuff->read++;
             if (cBuff->read >= cBuff->size)
                 cBuff->read = 0;
-        }
+        } else
+            tmp_err = VDS_BUFFER_EMPTY;
 
     } else
         tmp_err = VDS_INVALID_ARGS;

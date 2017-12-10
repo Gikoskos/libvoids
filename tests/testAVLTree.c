@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <EduDS.h>
+#include <voids.h>
 
 
 void printIntData(void *param)
@@ -39,7 +39,7 @@ void freeKeyValuePair(void *param)
 
 int main(int argc, char *argv[])
 {
-    EdsErrCode err;
+    vdsErrCode err;
     AVLTree *avlt = AVLTree_init(compareInts, &err);
 
     srand(time(NULL));
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
         if (AVLTree_insert(avlt, (void*)new_key, (void*)new_data, &err)) {
             printf("Node was successfully inserted!\n");
         } else {
-            printf("Node insertion failed with error \"%s\"!\n\n", EdsErrString(err));
+            printf("Node insertion failed with error \"%s\"!\n\n", vdsErrString(err));
             free(new_key);
             free(new_data);
         }
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 
     printf("\n----PRINTING AVL TREE BEFORE STARTING TO DELETE ELEMENTS----\n");
     printf("in-order traversal (the node numbers should be in ascending order):\n");
-    AVLTree_traverse(avlt, EDS_IN_ORDER, printIntData, NULL);
+    AVLTree_traverse(avlt, VDS_IN_ORDER, printIntData, NULL);
 
     printf("\n----STARTING DELETIONS----\n");
     for (int i = 80; i >= 30; i--) {
@@ -77,9 +77,9 @@ int main(int argc, char *argv[])
             free(deleted.pKey);
             free(deleted.pData);
             printf("in-order traversal (the node numbers should be in ascending order):\n");
-            AVLTree_traverse(avlt, EDS_IN_ORDER, printIntData, NULL);
+            AVLTree_traverse(avlt, VDS_IN_ORDER, printIntData, NULL);
         } else {
-            printf("Node deletion of key %d failed with error \"%s\"!\n\n", i, EdsErrString(err));
+            printf("Node deletion of key %d failed with error \"%s\"!\n\n", i, vdsErrString(err));
         }
     }
     AVLTree_destroy(&avlt, freeKeyValuePair, NULL);

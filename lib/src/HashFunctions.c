@@ -18,7 +18,7 @@
 
 size_t HashCode(const void *pKey, size_t key_size)
 {
-    return (size_t)XXH32(pKey, key_size, VOIDS_SALT);
+    return (size_t)XXH64(pKey, key_size, VOIDS_SALT);
 }
 
 //Cormen's division method

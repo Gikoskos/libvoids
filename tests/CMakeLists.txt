@@ -10,7 +10,7 @@ function(new_libvoids_test target_name)
     endif(CMAKE_BUILD_TYPE MATCHES Release)
 
     target_include_directories(${target_name} PUBLIC "${PROJECT_SOURCE_DIR}/lib/include")
-    target_link_libraries(${target_name} libvoids)
+    target_link_libraries(${target_name} voids)
 
     if(BUILD_SHARED_LIBS)
         target_compile_definitions(${target_name} PRIVATE IMPORT_API_LIBVOIDS_DLL)

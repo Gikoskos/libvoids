@@ -5,3 +5,4 @@
 *.a
 *.def
 build/*
+.directory

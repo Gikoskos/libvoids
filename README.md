@@ -1,8 +1,10 @@
 # libvoids
 
-A collection of data structures implemented in C.
+A collection of data structures implemented in C. The data structures store data and keys that are of type pointer to void `void*`.
 
-## Building
+## How to build
+
+The build system is CMake.
 
 To build the static library, create a new `build` folder in the root of the repository, and run
 
@@ -34,11 +36,15 @@ If you'd like to get MinGW makefiles instead of Visual Studio project files on W
 cmake .. -G "MinGW Makefiles"
 ```
 
-The Debug build, builds all the tests together with the library, and not separately, and the final binary has debugging symbols:
+The Debug build builds all the tests together with the library, not separately, and the final binary has debugging symbols:
 
 ```
 cmake .. -DCMAKE_BUILD_TYPE=Debug
 ```
+
+## How to use
+
+TODO
 
 ## Data Structures
 

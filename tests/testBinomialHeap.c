@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <EduDS.h>
+#include <voids.h>
 
 #define ARRAY_LEN(x) (sizeof(x) / sizeof(*arr))
 
-#define EduDS_ERR_FATAL(func, err) \
+#define VDS_ERR_FATAL(func, err) \
     func; \
-    if (err != EDS_SUCCESS) { \
-        printf("Function call \"%s\" failed with error \"%s\"\n", #func, EdsErrString(err)); \
+    if (err != VDS_SUCCESS) { \
+        printf("Function call \"%s\" failed with error \"%s\"\n", #func, vdsErrString(err)); \
         return 1; \
     }
 
@@ -55,19 +55,19 @@ int main(int argc, char *argv[])
 #define REPLACED_KEY  7
 
     int arr[] = {4 , 51, 6, 222, 43, 40, 4, 11, 1};
-    EdsErrCode err;
+    vdsErrCode err;
     BinomialHeap *binheap;
     BinomialTree *tree_node; //i'm storing a node here to test replaceKey
 
-    EduDS_ERR_FATAL(binheap = BinomialHeap_init(compareInts, EDS_MAX_HEAP, &err), err);
+    VDS_ERR_FATAL(binheap = BinomialHeap_init(compareInts, VDS_MAX_HEAP, &err), err);
 
     printf("=== TESTING MAX HEAP ===\n");
     printf("\n=== TESTING INSERTIONS ===\n");
     for (size_t i = 0; i < ARRAY_LEN(arr); i++) {
         if (i == REPLACED_KEY) {
-            EduDS_ERR_FATAL(tree_node = BinomialHeap_push(binheap, NULL, &arr[i], &err), err);
+            VDS_ERR_FATAL(tree_node = BinomialHeap_push(binheap, NULL, &arr[i], &err), err);
         } else {
-            EduDS_ERR_FATAL(BinomialHeap_push(binheap, NULL, &arr[i], &err), err);
+            VDS_ERR_FATAL(BinomialHeap_push(binheap, NULL, &arr[i], &err), err);
         }
         printf("Inserted %d!\n", arr[i]);
         printBinomialHeap(binheap);
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 
     printf("\n=== TESTING DECREASE KEY ===\n");
     int new_key = 555;
-    EduDS_ERR_FATAL(BinomialHeap_replaceKey(binheap, tree_node, (void*)&new_key, &err), err);
+    VDS_ERR_FATAL(BinomialHeap_replaceKey(binheap, tree_node, (void*)&new_key, &err), err);
 
     printf("Replaced %d with %d!\n", arr[REPLACED_KEY], new_key);
     printBinomialHeap(binheap);
@@ -96,11 +96,11 @@ int main(int argc, char *argv[])
 
 
     printf("=== TESTING MIN HEAP ===\n");
-    binheap->property = EDS_MIN_HEAP;
+    binheap->property = VDS_MIN_HEAP;
 
     printf("\n=== TESTING INSERTIONS ===\n");
     for (size_t i = 0; i < ARRAY_LEN(arr); i++) {
-        EduDS_ERR_FATAL(BinomialHeap_push(binheap, NULL, &arr[i], &err), err);
+        VDS_ERR_FATAL(BinomialHeap_push(binheap, NULL, &arr[i], &err), err);
         printf("Inserted %d!\n", arr[i]);
         printBinomialHeap(binheap);
         printf("\n");
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
     }
     printf("\n\n");*/
 
-    EduDS_ERR_FATAL(BinomialHeap_destroy(&binheap, NULL, &err), err);
+    VDS_ERR_FATAL(BinomialHeap_destroy(&binheap, NULL, &err), err);
 
     return 0;
 }

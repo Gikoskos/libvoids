@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <EduDS.h>
+#include <voids.h>
 
 void printIntData(void *pData)
 {
@@ -50,11 +50,11 @@ int main(int argc, char *argv[])
     }
 
     for (int i = 5; i < 15; i++) {
-        EdsErrCode err;
+        vdsErrCode err;
         if (SDLList_find(myList, &i, IntCmp, &err)) {
-            printf("\nFound node %d \"%s\"!\n", i, EdsErrString(err));
+            printf("\nFound node %d \"%s\"!\n", i, vdsErrString(err));
         } else {
-            printf("\nFailed finding node %d with error \"%s\"!\n", i, EdsErrString(err));
+            printf("\nFailed finding node %d with error \"%s\"!\n", i, vdsErrString(err));
         }
     }
 
