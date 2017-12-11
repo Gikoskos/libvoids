@@ -157,16 +157,12 @@ void *QuadHash_insert(QuadHashtable *table,
 
             } else if (!table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
                 //if the same key is already in the table then the insertion has failed
-                break;
+                tmp_err = VDS_KEY_EXISTS;
             }
 
             offset++;
 
         } while (offset < table->size);
-
-        //@TODO: handle possible case where insertion fails and we have to rehash the table
-        //when offset >= table->size and try to re-insert the element with a recursive call
-        //to QuadHash_insert
 
         if ( ((float)table->total_elements / table->size) >= 0.5 )
             if (!rehash(table, freeData))
@@ -175,7 +171,7 @@ void *QuadHash_insert(QuadHashtable *table,
     } else
         tmp_err = VDS_INVALID_ARGS;
 
-    SAVE_ERR(err, tmp_err);        
+    SAVE_ERR(err, tmp_err);
 
     return new_key;
 }

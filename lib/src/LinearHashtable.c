@@ -167,7 +167,7 @@ void *LinHash_insert(LinHashtable *table,
 
             } else if (!table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
                 //if the same key is already in the table then the insertion has failed
-                break;
+                tmp_err = VDS_KEY_EXISTS;
             }
 
             offset++;
@@ -187,7 +187,6 @@ void *LinHash_insert(LinHashtable *table,
         tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);
-        
 
     return new_key;
 }
