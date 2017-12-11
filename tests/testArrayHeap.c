@@ -1,21 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <assert.h>
 #include <voids.h>
 
-#define VDS_ERR_FATAL(func, err) \
+#define VDS_EC(func, err) \
+do { \
     func; \
     if (err != VDS_SUCCESS) { \
-        printf("Function call \"%s\" failed with error \"%s\"\n", #func, VdsErrString(err)); \
-        return 1; \
-    }
+        fprintf(stderr, "Function call \"%s\" failed with error \"%s\"\n", #func, VdsErrString(err)); \
+        assert(err != VDS_MALLOC_FAIL && err != VDS_INVALID_ARGS); \
+    } \
+} while (0)
 
-#define EduDS_ERR_NON_FATAL(func, err) \
-    func; \
-    if (err != VDS_SUCCESS) { \
-        printf("Function call \"%s\" failed with error \"%s\"\n", #func, VdsErrString(err)); \
-    }
 
+#define MAX_ARRAY_SIZE 1000
 
 int *newRandInt(int range)
 {
@@ -42,77 +41,94 @@ void printInt(void *param)
     printf("(%d) ", x);
 }
 
-void printArrayHeap(ArrayHeap *heap, vdsUserDataFunc printData)
+void check_data_integrity(ArrayHeap *heap, int *data, size_t data_len)
 {
-    if (printData) {
-        for (size_t i = 0; i < heap->idx; i++) {
-            printData(heap->array[i]);
+    assert(heap);
+    assert(data);
+    for (size_t i = 0; i < heap->idx; i++) {
+        size_t j;
+        for (j = 0; j < data_len; j++) {
+            if ((*(int*)heap->array[i]) == data[j])
+                break;
         }
-        printf("\n");
+        assert(j < data_len);
     }
+}
+
+void mix_array(int *array, size_t len)
+{
+    assert(array);
+
+    int *mixed, tmp;
+    size_t idx;
+
+    assert(NULL != (mixed = malloc(sizeof(int) * len)));
+
+    for (int i = 0; i < len; i++) {
+        mixed[i] = i;
+    }
+
+    for (int i = 0; i < len; i++) {
+        idx = ((size_t)rand())%len;
+
+        tmp = mixed[i];
+        mixed[i] = mixed[idx];
+        mixed[idx] = tmp;
+    }
+}
+
+void testarrheap(vdsHeapProperty property)
+{
+    assert(property == VDS_MAX_HEAP || property == VDS_MIN_HEAP);
+
+    vdsErrCode err;
+    ArrayHeap *heap;
+    size_t dat_len = ((size_t)rand())%MAX_ARRAY_SIZE + 1;
+    int *data, *built;
+
+    assert(NULL != (data = malloc(sizeof(int) * dat_len)));
+    assert(NULL != (built = malloc(sizeof(int) * dat_len)));
+
+    for (int i = 0; i < dat_len; i++) {
+        do {
+            data[i] = rand();
+        } while (!data[i]);
+        built[i] = data[i];
+    }
+
+    VDS_EC(heap = ArrayHeap_init(compareInts, property, dat_len, &err), err);
+
+    for (int i = 0; i < dat_len; i++) {
+        VDS_EC(ArrayHeap_push(heap, (void*)&data[i], &err), err);
+        assert(heap->idx == i + 1);
+        check_data_integrity(heap, data, dat_len);
+    }
+
+    int prev = 0;
+    for (int i = dat_len; i != 0; i--) {
+        int *p;
+        VDS_EC(p = ArrayHeap_pop(heap, &err), err);
+        if (prev) {
+            if (property == VDS_MAX_HEAP)
+                assert(prev >= *p);
+            else
+                assert(prev <= *p);
+        }
+
+        assert(heap->idx == i - 1);
+        check_data_integrity(heap, data, dat_len);
+
+        prev = *p;
+    }
+
+    VDS_EC(ArrayHeap_destroy(&heap, NULL, &err), err);
+    free(data);
+    free(built);
 }
 
 int main(int argc, char *argv[])
 {
-    vdsErrCode err;
-    ArrayHeap *heap;
-
-    VDS_ERR_FATAL(heap = ArrayHeap_init(compareInts, VDS_MAX_HEAP, 13, &err), err);
-
-    srand(time(NULL));
-
-    printf("===PUSHING DATA TO THE HEAP===\n");
-    for (int i = 0; i < 20; i++) {
-        int *s = newRandInt(50);
-
-        printf("\nTrying to push %d to the heap\n", *s);
-        EduDS_ERR_NON_FATAL(ArrayHeap_push(heap, (void*)s, &err), err);
-        if (err != VDS_SUCCESS)
-            free(s);
-        else
-            printArrayHeap(heap, printInt);
-    }
-
-    printf("\n\n===POPPING DATA FROM THE HEAP===\n");
-    for (int i = 0; i < 20; i++) {
-        int *s;
-
-        EduDS_ERR_NON_FATAL(s = ArrayHeap_pop(heap, &err), err);
-        if (s) {
-            printf("\nPopped %d!\n", *s);
-            free(s);
-            printArrayHeap(heap, printInt);
-        }
-    }
-
-    printf("\n===Switching heap order to minimum===\n");
-    heap->property = VDS_MIN_HEAP;
-
-    printf("===PUSHING DATA TO THE HEAP===\n");
-    for (int i = 0; i < 20; i++) {
-        int *s = newRandInt(50);
-
-        printf("\nTrying to push %d to the heap\n", *s);
-        EduDS_ERR_NON_FATAL(ArrayHeap_push(heap, (void*)s, &err), err);
-        if (err != VDS_SUCCESS)
-            free(s);
-        else
-            printArrayHeap(heap, printInt);
-    }
-
-    printf("\n\n===POPPING DATA FROM THE HEAP===\n");
-    for (int i = 0; i < 20; i++) {
-        int *s;
-
-        EduDS_ERR_NON_FATAL(s = ArrayHeap_pop(heap, &err), err);
-        if (s) {
-            printf("\nPopped %d!\n", *s);
-            free(s);
-            printArrayHeap(heap, printInt);
-        }
-    }
-
-
-    VDS_ERR_FATAL(ArrayHeap_destroy(&heap, free, &err), err);
+    testarrheap(VDS_MAX_HEAP);
+    testarrheap(VDS_MIN_HEAP);
     return 0;
 }

@@ -10,10 +10,13 @@
 
 #include "MemoryAllocation.h"
 #include "LeftistHeap.h"
-/*
 
-static LeftistHeap *merge_heaps_max(LeftistHeap *lheap1, LeftistHeapNode *lheap2_root);
-static LeftistHeap *merge_heaps_min(LeftistHeap *lheap1, LeftistHeapNode *lheap2_root);
+#define isLeafNode(x)      ( (x)->item.pKey == NULL )
+#define isLeftNode(x)      ( (x) == (x)->parent->left )
+#define nullPathLength(x)  ( (x) ? (x)->npl : 0 )
+
+static void merge_heaps_max(LeftistHeap *lheap1, LeftistHeapNode *lheap2_root);
+static void merge_heaps_min(LeftistHeap *lheap1, LeftistHeapNode *lheap2_root);
 
 
 LeftistHeap *LeftistHeap_init(vdsUserCompareFunc DataCmp,
@@ -64,7 +67,7 @@ LeftistHeapNode *LeftistHeap_push(LeftistHeap *lheap,
         if (new_node) {
 
             new_node->pData = pData;
-            new_node->right = new_node->left = NULL;
+            new_node->parent = new_node->right = new_node->left = NULL;
             new_node->npl = 1;
 
             if (!lheap->root) {
@@ -97,40 +100,153 @@ LeftistHeapNode *LeftistHeap_push(LeftistHeap *lheap,
     return new_node;
 }
 
-unsigned int null_path_length(LeftistHeapNode *lheapnode)
+void merge_heaps_max(LeftistHeap *lheap1, LeftistHeapNode *lheap2_root)
 {
-    if (lheapnode)
-        return lheapnode->npl;
+    if (!lheap2_root) {
+        return;
+    } else if (!lheap1->root) {
+        lheap1->root = lheap2_root;
+        return;
+    }
 
-    return 0;
-}
-
-LeftistHeap *merge_heaps_max(LeftistHeap *lheap1, LeftistHeapNode *lheap2_root)
-{
-    //handle edge cases
-    if (!lheap1->root)
-        return lheap2_root;
-
-    if (!lheap2_root)
-        return curr;
-
-    LeftistHeapNode curr = lheap1->root;
+    LeftistHeapNode *curr1 = lheap1->root, *curr2 = lheap2_root, *tmp, *final_heap_root = NULL;
     int cmp_res;
 
-    while (1) {
+    while (curr2) {
 
-        cmp_res = lheap1->DataCmp(curr->pData, lheap2_root->pData);
+        cmp_res = lheap1->DataCmp(curr1->pData, curr2->pData);
 
         if (cmp_res > 0) {
-            
+            tmp = curr1->right;
+
+            if (tmp) {
+                tmp->parent = NULL;
+            }
+
+            //@FIXME: this check should only happen once before the loop
+            if (!curr1->parent) {
+                final_heap_root = curr1;
+            }
+
+            curr2->parent = curr1;
+            curr1->right = curr2;
+
+            curr1 = curr1->right;
+        } else {
+            tmp = curr2->right;
+
+            if (tmp) {
+                tmp->parent = NULL;
+            }
+
+            if (curr1->parent) {
+                curr1->parent->right = curr2;
+            } else {
+                final_heap_root = curr2;
+            }
+
+            curr1->parent = curr2;
+            curr2->right = curr1;
+
         }
 
+        curr2 = tmp;
     }
+
+    curr1 = curr1->parent;
+    unsigned int npl_r, npl_l;
+
+    while (curr1) {
+
+        npl_r = nullPathLength(curr1->right);
+        npl_l = nullPathLength(curr1->left);
+
+        if (npl_r > npl_l) {
+            tmp = curr1->right;
+            curr1->right = curr1->left;
+            curr1->left = tmp;
+        }
+
+        curr1->npl = (curr1->right) ? (curr1->right->npl + 1) : 1;
+
+        curr1 = curr1->parent;
+    }
+
+    lheap1->root = final_heap_root;
 }
 
-LeftistHeap *merge_heaps_min(LeftistHeap *lheap1, LeftistHeapNode *lheap2_root)
+void merge_heaps_min(LeftistHeap *lheap1, LeftistHeapNode *lheap2_root)
 {
-    
+    if (!lheap2_root) {
+        return;
+    } else if (!lheap1->root) {
+        lheap1->root = lheap2_root;
+        return;
+    }
+
+    LeftistHeapNode *curr1 = lheap1->root, *curr2 = lheap2_root, *tmp, *final_heap_root = NULL;
+    int cmp_res;
+
+    while (curr2) {
+
+        cmp_res = lheap1->DataCmp(curr1->pData, curr2->pData);
+
+        if (cmp_res < 0) {
+            tmp = curr1->right;
+
+            if (tmp) {
+                tmp->parent = NULL;
+            }
+
+            //@FIXME: this check should only happen once before the loop
+            if (!curr1->parent) {
+                final_heap_root = curr1;
+            }
+
+            curr2->parent = curr1;
+            curr1->right = curr2;
+
+            curr1 = curr1->right;
+        } else {
+            tmp = curr2->right;
+
+            if (tmp) {
+                tmp->parent = NULL;
+            }
+
+            if (curr1->parent) {
+                curr1->parent->right = curr2;
+            } else {
+                final_heap_root = curr2;
+            }
+
+            curr1->parent = curr2;
+            curr2->right = curr1;
+
+        }
+
+        curr2 = tmp;
+    }
+
+    curr1 = curr1->parent;
+    unsigned int npl_r, npl_l;
+
+    while (curr1) {
+
+        npl_r = nullPathLength(curr1->right);
+        npl_l = nullPathLength(curr1->left);
+
+        if (npl_r > npl_l) {
+            tmp = curr1->right;
+            curr1->right = curr1->left;
+            curr1->left = tmp;
+        }
+
+        curr1->npl = (curr1->right) ? (curr1->right->npl + 1) : 1;
+        curr1 = curr1->parent;
+    }
+
+    lheap1->root = final_heap_root;
 }
 
 void *LeftistHeap_pop(LeftistHeap *lheap,
@@ -139,50 +255,40 @@ void *LeftistHeap_pop(LeftistHeap *lheap,
     vdsErrCode tmp_err = VDS_SUCCESS;
     void *pDeleted = NULL;
 
-    if (bheap && bheap->root) {
+    if (lheap && lheap->root) {
         //save the data of the deleted node
-        pDeleted = bheap->root->pData;
+        pDeleted = lheap->root->pData;
 
         //if there's only one node on the tree
-        if (!bheap->root->left && !bheap->root->right) {
+        if (!lheap->root->left && !lheap->root->right) {
 
-            VdsFree(bheap->root);
-            bheap->root = NULL;
+            VdsFree(lheap->root);
+            lheap->root = NULL;
 
         } else {
 
-            BinaryHeapNode *last_node = breadth_first_get_last(bheap);
-            if (last_node) {
+            LeftistHeapNode *right_heap = lheap->root->right, *tmp = lheap->root;
 
-                void *pTmp = last_node->pData;
-                last_node->pData = bheap->root->pData;
-                bheap->root->pData = pTmp;
+            lheap->root = lheap->root->left;
+            if (right_heap)
+                right_heap->parent = NULL;
+            if (lheap->root)
+                lheap->root->parent = NULL;
 
-                //don't forget to NULL the parent of the last node (the node
-                //that will be technically deleted)
-                //if the last node is a left node
-                if (last_node->parent->left == last_node)
-                    last_node->parent->left = NULL;
-                else
-                    last_node->parent->right = NULL;
+            VdsFree(tmp);
 
-                VdsFree(last_node);
-
-                //restore the property of the heap
-                switch (bheap->property) {
-                case VDS_MAX_HEAP:
-                    fix_pop_max(bheap->root, bheap->DataCmp);
-                    break;
-                case VDS_MIN_HEAP:
-                    fix_pop_min(bheap->root, bheap->DataCmp);
-                    break;
-                default:
-                    tmp_err = VDS_INVALID_ARGS;
-                    break;
-                }
-
-            } else
-                tmp_err = VDS_MALLOC_FAIL;
+            //merge the two subtrees
+            switch (lheap->property) {
+            case VDS_MAX_HEAP:
+                merge_heaps_max(lheap, right_heap);
+                break;
+            case VDS_MIN_HEAP:
+                merge_heaps_min(lheap, right_heap);
+                break;
+            default:
+                tmp_err = VDS_INVALID_ARGS;
+                break;
+            }
 
         }
 
@@ -202,7 +308,7 @@ void LeftistHeap_destroy(LeftistHeap **lheap,
 
     if (lheap && *lheap) {
 
-        BinaryHeapNode *curr = (*lheap)->root, *to_delete;
+        LeftistHeapNode *curr = (*lheap)->root, *to_delete;
 
         //iterative version of post-order
         while (curr) {
@@ -247,4 +353,3 @@ void LeftistHeap_destroy(LeftistHeap **lheap,
 
     SAVE_ERR(err, tmp_err);
 }
-*/
