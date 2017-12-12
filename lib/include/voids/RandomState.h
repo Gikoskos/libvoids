@@ -24,13 +24,13 @@ extern "C" {
 //code in the data structures, just the implementations in RandomFunctions.c
 
 
-VOIDS_LOCAL void *RandomState_init(unsigned int seed, vdsErrCode *err);
+VOIDS_API void *RandomState_init(unsigned int seed, vdsErrCode *err);
 
-VOIDS_LOCAL unsigned int RandomState_genUInt(void *state, vdsErrCode *err);
+VOIDS_API unsigned int RandomState_genUInt(void *state, vdsErrCode *err);
 
-VOIDS_LOCAL int RandomState_genInt(void *state, vdsErrCode *err);
+VOIDS_API int RandomState_genInt(void *state, vdsErrCode *err);
 
-VOIDS_LOCAL void RandomState_destroy(void **state, vdsErrCode *err);
+VOIDS_API void RandomState_destroy(void **state, vdsErrCode *err);
 
 #ifdef __cplusplus
 }

@@ -258,7 +258,6 @@ CDLListNode *CDLList_find(CDLListNode *cdllHead,
             curr = curr->nxt;
         } while (curr != cdllHead);
 
-        
     } else
         tmp_err = VDS_INVALID_ARGS;
 

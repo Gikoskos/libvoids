@@ -19,13 +19,13 @@ extern "C" {
 #include "Common.h"
 
 
-VOIDS_LOCAL void *VdsMalloc(size_t size);
+VOIDS_API void *VdsMalloc(size_t size);
 
-VOIDS_LOCAL void VdsFree(void *ptr);
+VOIDS_API void VdsFree(void *ptr);
 
-VOIDS_LOCAL void *VdsCalloc(size_t nmemb, size_t size);
+VOIDS_API void *VdsCalloc(size_t nmemb, size_t size);
 
-VOIDS_LOCAL void *VdsRealloc(void *ptr, size_t size);
+VOIDS_API void *VdsRealloc(void *ptr, size_t size);
 
 #ifdef __cplusplus
 }

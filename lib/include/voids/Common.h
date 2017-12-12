@@ -41,21 +41,16 @@
 
 # endif //not BUILD_VOIDS_LIB
 
-# define VOIDS_LOCAL
-
 #else //_WIN32
 
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
 #   define VOIDS_API    __attribute__ ((visibility ("default")))
-#   define VOIDS_LOCAL  __attribute__ ((visibility ("hidden")))
 #  else
 #   define VOIDS_API
-#   define VOIDS_LOCAL
 #  endif
 # else //__GNUC__
 #  define VOIDS_API
-#  define VOIDS_LOCAL
 # endif //not __GNUC__
 
 #endif //not _WIN32
