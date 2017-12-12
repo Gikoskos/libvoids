@@ -157,7 +157,9 @@ void *QuadHash_insert(QuadHashtable *table,
 
             } else if (!table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
                 //if the same key is already in the table then the insertion has failed
+                new_key = pKey;
                 tmp_err = VDS_KEY_EXISTS;
+                break;
             }
 
             offset++;

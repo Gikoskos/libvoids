@@ -24,7 +24,7 @@ DictListNode *DictList_insert(DictListNode **dictListHead,
     if (dictListHead && pKey && KeyCmp) {
 
         //insert the new node ONLY if a node with the same key doesn't exist already in the list
-        if (!DictList_findByKey(*dictListHead, pKey, KeyCmp, NULL)) {
+        if (!(new_node = DictList_findByKey(*dictListHead, pKey, KeyCmp, NULL))) {
             new_node = VdsMalloc(sizeof(DictListNode));
 
             if (new_node) {
@@ -74,7 +74,7 @@ DictListNode *DictList_append(DictListNode **dictListHead,
                 for (curr = *dictListHead; curr->nxt; curr = curr->nxt)
                     if (!KeyCmp(curr->item.pKey, pKey)) { //if a node with the same key, already exists on the list
                         VdsFree(new_node);                  //we don't add it
-                        new_node = NULL;
+                        new_node = curr;
                         tmp_err = VDS_KEY_EXISTS;
                         break;
                     }
