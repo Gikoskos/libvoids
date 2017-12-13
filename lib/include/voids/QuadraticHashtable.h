@@ -34,22 +34,22 @@ VOIDS_API QuadHashtable *QuadHash_init(size_t size,
                                        vdsUserHashFunc Hash,
                                        vdsErrCode *err);
 
-VOIDS_API void *QuadHash_insert(QuadHashtable *table,
-                                void *pData,
-                                void *pKey,
-                                size_t key_size,
-                                vdsUserDataFunc freeData,
-                                vdsErrCode *err);
+VOIDS_API KeyValuePair *QuadHash_insert(QuadHashtable *table,
+                                        void *pData,
+                                        void *pKey,
+                                        size_t key_size,
+                                        vdsUserDataFunc freeData,
+                                        vdsErrCode *err);
 
 VOIDS_API KeyValuePair QuadHash_delete(QuadHashtable *table,
                                        void *pKey,
                                        size_t key_size,
                                        vdsErrCode *err);
 
-VOIDS_API HashArrayElement *QuadHash_find(QuadHashtable *table,
-                                          void *pKey,
-                                          size_t key_size,
-                                          vdsErrCode *err);
+VOIDS_API KeyValuePair *QuadHash_find(QuadHashtable *table,
+                                      void *pKey,
+                                      size_t key_size,
+                                      vdsErrCode *err);
 
 VOIDS_API void QuadHash_destroy(QuadHashtable **table,
                                 vdsUserDataFunc freeData,

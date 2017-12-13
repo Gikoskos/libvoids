@@ -127,15 +127,15 @@ int rehash(LinHashtable *table, vdsUserDataFunc freeData)
     return 1;
 }
 
-void *LinHash_insert(LinHashtable *table,
-                     void *pData,
-                     void *pKey,
-                     size_t key_size,
-                     vdsUserDataFunc freeData,
-                     vdsErrCode *err)
+KeyValuePair *LinHash_insert(LinHashtable *table,
+                             void *pData,
+                             void *pKey,
+                             size_t key_size,
+                             vdsUserDataFunc freeData,
+                             vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    void *new_key = NULL;
+    KeyValuePair *new_item = NULL;
 
     if (table && pKey && key_size && (table->total_elements < table->size)) {
 
@@ -162,12 +162,12 @@ void *LinHash_insert(LinHashtable *table,
                 table->array[tmp_idx].key_hash = key_hash;
 
                 table->total_elements++; //successful insertion
-                new_key = pKey;
+                new_item = &(table->array[tmp_idx].item);
                 break;
 
             } else if (!table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
                 //if the same key is already in the table then the insertion has failed
-                new_key = pKey;
+                new_item = &(table->array[tmp_idx].item);
                 tmp_err = VDS_KEY_EXISTS;
                 break;
             }
@@ -190,7 +190,7 @@ void *LinHash_insert(LinHashtable *table,
 
     SAVE_ERR(err, tmp_err);
 
-    return new_key;
+    return new_item;
 }
 
 KeyValuePair LinHash_delete(LinHashtable *table,
@@ -230,13 +230,13 @@ KeyValuePair LinHash_delete(LinHashtable *table,
     return item;
 }
 
-HashArrayElement *LinHash_find(LinHashtable *table,
-                               void *pKey,
-                               size_t key_size,
-                               vdsErrCode *err)
+KeyValuePair *LinHash_find(LinHashtable *table,
+                           void *pKey,
+                           size_t key_size,
+                           vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    HashArrayElement *to_find = NULL;
+    KeyValuePair *to_find = NULL;
 
     if (table && pKey && key_size) {
         size_t hash_idx = table->Hash(HashCode(pKey, key_size), table->size);
@@ -248,7 +248,7 @@ HashArrayElement *LinHash_find(LinHashtable *table,
             if (IS_OCCUPIED(table->array[tmp_idx].state) &&
                 !table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
 
-                to_find = &table->array[tmp_idx];
+                to_find = &(table->array[tmp_idx].item);
                 break;
 
             }

@@ -120,15 +120,15 @@ int rehash(QuadHashtable *table, vdsUserDataFunc freeData)
     return 1;
 }
 
-void *QuadHash_insert(QuadHashtable *table,
-                      void *pData,
-                      void *pKey,
-                      size_t key_size,
-                      vdsUserDataFunc freeData,
-                      vdsErrCode *err)
+KeyValuePair *QuadHash_insert(QuadHashtable *table,
+                              void *pData,
+                              void *pKey,
+                              size_t key_size,
+                              vdsUserDataFunc freeData,
+                              vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    void *new_key = NULL;
+    KeyValuePair *new_item = NULL;
 
     if (table && pKey && key_size) {
 
@@ -152,12 +152,12 @@ void *QuadHash_insert(QuadHashtable *table,
                 table->array[tmp_idx].key_hash = key_hash;
 
                 table->total_elements++; //successful insertion
-                new_key = pKey;
+                new_item = &(table->array[tmp_idx].item);
                 break;
 
             } else if (!table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
                 //if the same key is already in the table then the insertion has failed
-                new_key = pKey;
+                new_item = &(table->array[tmp_idx].item);
                 tmp_err = VDS_KEY_EXISTS;
                 break;
             }
@@ -175,7 +175,7 @@ void *QuadHash_insert(QuadHashtable *table,
 
     SAVE_ERR(err, tmp_err);
 
-    return new_key;
+    return new_item;
 }
 
 KeyValuePair QuadHash_delete(QuadHashtable *table,
@@ -215,13 +215,13 @@ KeyValuePair QuadHash_delete(QuadHashtable *table,
     return item;
 }
 
-HashArrayElement *QuadHash_find(QuadHashtable *table,
-                                void *pKey,
-                                size_t key_size,
-                                vdsErrCode *err)
+KeyValuePair *QuadHash_find(QuadHashtable *table,
+                            void *pKey,
+                            size_t key_size,
+                            vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    HashArrayElement *to_find = NULL;
+    KeyValuePair *to_find = NULL;
 
     if (table && pKey && key_size) {
         size_t hash_idx = table->Hash(HashCode(pKey, key_size), table->size);
@@ -233,7 +233,7 @@ HashArrayElement *QuadHash_find(QuadHashtable *table,
             if (IS_OCCUPIED(table->array[tmp_idx].state) &&
                 !table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
 
-                to_find = &table->array[tmp_idx];
+                to_find = &(table->array[tmp_idx].item);
                 break;
 
             }

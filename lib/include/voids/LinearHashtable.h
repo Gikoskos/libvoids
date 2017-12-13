@@ -41,22 +41,22 @@ VOIDS_API LinHashtable *LinHash_init(size_t size,
                                      int rehash,
                                      vdsErrCode *err);
 
-VOIDS_API void *LinHash_insert(LinHashtable *table,
-                               void *pData,
-                               void *pKey,
-                               size_t key_size,
-                               vdsUserDataFunc freeData,
-                               vdsErrCode *err);
+VOIDS_API KeyValuePair *LinHash_insert(LinHashtable *table,
+                                       void *pData,
+                                       void *pKey,
+                                       size_t key_size,
+                                       vdsUserDataFunc freeData,
+                                       vdsErrCode *err);
 
 VOIDS_API KeyValuePair LinHash_delete(LinHashtable *table,
                                       void *pKey,
                                       size_t key_size,
                                       vdsErrCode *err);
 
-VOIDS_API HashArrayElement *LinHash_find(LinHashtable *table,
-                                         void *pKey,
-                                         size_t key_size,
-                                         vdsErrCode *err);
+VOIDS_API KeyValuePair *LinHash_find(LinHashtable *table,
+                                     void *pKey,
+                                     size_t key_size,
+                                     vdsErrCode *err);
 
 VOIDS_API void LinHash_destroy(LinHashtable **table,
                                vdsUserDataFunc freeData,
