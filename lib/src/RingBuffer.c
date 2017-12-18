@@ -117,6 +117,7 @@ void *RingBuffer_read(RingBuffer *cBuff,
 
         if (cBuff->available) {
             pData = cBuff->buff[cBuff->read];
+            cBuff->buff[cBuff->read] = NULL;
 
             cBuff->available--;
             cBuff->read++;

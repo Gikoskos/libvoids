@@ -67,7 +67,7 @@ TODO
 * [x] Binary heap implemented as an array
 * [x] Binomial heap
 * [ ] Fibonacci heap
-* [ ] Height-biased Leftist heap
+* [x] Height-biased Leftist heap
 * [ ] Skew heap
 * [x] Red black tree
 * [x] Association List
