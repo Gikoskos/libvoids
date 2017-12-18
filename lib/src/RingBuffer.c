@@ -91,13 +91,15 @@ void RingBuffer_write(RingBuffer *cBuff,
     if (cBuff) {
 
         if (cBuff->available < cBuff->size) {
-            cBuff->buff[cBuff->write] = pData;
 
-            cBuff->write++;
             if (cBuff->write >= cBuff->size)
                 cBuff->write = 0;
 
+            cBuff->buff[cBuff->write] = pData;
+
             cBuff->available++;
+            cBuff->write++;
+
         } else
             tmp_err = VDS_BUFFER_FULL;
 
@@ -116,13 +118,15 @@ void *RingBuffer_read(RingBuffer *cBuff,
     if (cBuff) {
 
         if (cBuff->available) {
+
+            if (cBuff->read >= cBuff->size)
+                cBuff->read = 0;
+
             pData = cBuff->buff[cBuff->read];
-            cBuff->buff[cBuff->read] = NULL;
 
             cBuff->available--;
             cBuff->read++;
-            if (cBuff->read >= cBuff->size)
-                cBuff->read = 0;
+
         } else
             tmp_err = VDS_BUFFER_EMPTY;
 
@@ -145,8 +149,13 @@ void RingBuffer_destroy(RingBuffer **cBuff,
         if (*cBuff) {
 
             if (freeData) {
-                for (size_t i = 0; i <= (*cBuff)->size; i++)
-                    freeData((*cBuff)->buff[i]);
+
+                void *tmp;
+
+                while ((*cBuff)->available) {
+                    tmp = RingBuffer_read(*cBuff, NULL);
+                    freeData(tmp);
+                }
             }
 
             VdsFree((*cBuff)->buff);

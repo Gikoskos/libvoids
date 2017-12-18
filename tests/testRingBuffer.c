@@ -3,11 +3,10 @@
 #include <time.h>
 #include <voids.h>
 
-#define VDS_ERR_FATAL(func, err) \
+#define VDS_ERR(func, err) \
     func; \
     if (err != VDS_SUCCESS) { \
         printf("Function call \"%s\" failed with error \"%s\"\n", #func, VdsErrString(err)); \
-        return 1; \
     }
 
 int main(int argc, char *argv[])
@@ -15,7 +14,7 @@ int main(int argc, char *argv[])
     vdsErrCode err;
     RingBuffer *buff;
 
-    VDS_ERR_FATAL(buff = RingBuffer_init(10, &err), err);
+    VDS_ERR(buff = RingBuffer_init(10, &err), err);
 
     srand(time(NULL));
 
@@ -26,14 +25,14 @@ int main(int argc, char *argv[])
         *data = (int)rand();
         printf("Pushing data %d!\n", *data);
 
-        VDS_ERR_FATAL(RingBuffer_write(buff, data, &err), err);
+        VDS_ERR(RingBuffer_write(buff, data, &err), err);
     }
 
     putchar('\n');
     for (int i = 0; i < 4; i++) {
         int *data;
 
-        VDS_ERR_FATAL(data = RingBuffer_read(buff, &err), err);
+        VDS_ERR(data = RingBuffer_read(buff, &err), err);
 
         if (data) {
             printf("Data %d popped!\n", *data);
@@ -45,7 +44,7 @@ int main(int argc, char *argv[])
     for (int i = 0; i < 6; i++) {
         int *data;
 
-        VDS_ERR_FATAL(data = RingBuffer_read(buff, &err), err);
+        VDS_ERR(data = RingBuffer_read(buff, &err), err);
 
         if (data) {
             printf("Data %d popped!\n", *data);
@@ -57,21 +56,23 @@ int main(int argc, char *argv[])
         printf("No more data to read from the buffer!\n\n");
     }
 
-    VDS_ERR_FATAL(RingBuffer_resize(&buff, 20, &err), err);
-    for (int i = 0; i < 15; i++) {
+    VDS_ERR(RingBuffer_resize(&buff, 20, &err), err);
+    for (int i = 0; i < 30; i++) {
         int *data = malloc(sizeof data);
 
         *data = (int)rand();
         printf("Pushing data %d!\n", *data);
 
-        VDS_ERR_FATAL(RingBuffer_write(buff, data, &err), err);
+        VDS_ERR(RingBuffer_write(buff, data, &err), err);
+        if (err != VDS_SUCCESS)
+            free(data);
     }
 
     putchar('\n');
-    for (int i = 0; i < 17; i++) {
+    for (int i = 0; i < 10; i++) {
         int *data;
 
-        VDS_ERR_FATAL(data = RingBuffer_read(buff, &err), err);
+        VDS_ERR(data = RingBuffer_read(buff, &err), err);
 
         if (data) {
             printf("Data %d popped!\n", *data);
@@ -79,6 +80,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    RingBuffer_destroy(&buff, NULL, &err);
+    RingBuffer_destroy(&buff, free, &err);
     return 0;
 }
