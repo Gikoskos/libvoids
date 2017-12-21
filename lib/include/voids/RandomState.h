@@ -30,6 +30,10 @@ VOIDS_API unsigned int RandomState_genUInt(void *state, vdsErrCode *err);
 
 VOIDS_API int RandomState_genInt(void *state, vdsErrCode *err);
 
+VOIDS_API unsigned long RandomState_genULong(void *state, vdsErrCode *err);
+
+VOIDS_API long RandomState_genLong(void *state, vdsErrCode *err);
+
 VOIDS_API void RandomState_destroy(void **state, vdsErrCode *err);
 
 #ifdef __cplusplus

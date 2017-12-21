@@ -68,6 +68,40 @@ int RandomState_genInt(void *state,
     return ret;
 }
 
+unsigned long RandomState_genULong(void *state,
+                                   vdsErrCode *err)
+{
+    vdsErrCode tmp_err = VDS_SUCCESS;
+    unsigned long ret = 0;
+    sfmt_t *sfmt_state = (state) ? (sfmt_t*)state : NULL;
+
+    if (sfmt_state)
+        ret = (unsigned long)sfmt_genrand_uint64(sfmt_state);
+    else
+        tmp_err = VDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
+
+    return ret;
+}
+
+long RandomState_genLong(void *state,
+                         vdsErrCode *err)
+{
+    vdsErrCode tmp_err = VDS_SUCCESS;
+    long ret = 0;
+    sfmt_t *sfmt_state = (state) ? (sfmt_t*)state : NULL;
+
+    if (sfmt_state)
+        ret = (long)sfmt_genrand_uint64(sfmt_state);
+    else
+        tmp_err = VDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
+
+    return ret;
+}
+
 void RandomState_destroy(void **state,
                          vdsErrCode *err)
 {
