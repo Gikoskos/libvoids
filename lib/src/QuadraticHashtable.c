@@ -132,43 +132,46 @@ KeyValuePair *QuadHash_insert(QuadHashtable *table,
 
     if (table && pKey && key_size) {
 
-        size_t key_hash = HashCode(pKey, key_size);
-        size_t hash_idx = table->Hash(key_hash, table->size);
-        size_t offset = 0, tmp_idx;
-
         do {
-            tmp_idx = (hash_idx + (offset * offset)) % table->size;
+            size_t key_hash = HashCode(pKey, key_size);
+            size_t hash_idx = table->Hash(key_hash, table->size);
+            size_t offset = 0, tmp_idx;
+
+            do {
+                tmp_idx = (hash_idx + (offset * offset)) % table->size;
 
 
-            if (!IS_OCCUPIED(table->array[tmp_idx].state)) {
+                if (!IS_OCCUPIED(table->array[tmp_idx].state)) {
 
-                if (IS_DELETED(table->array[tmp_idx].state) && freeData)
-                    freeData((void *)&table->array[tmp_idx].item);
+                    if (IS_DELETED(table->array[tmp_idx].state) && freeData)
+                        freeData((void *)&table->array[tmp_idx].item);
 
-                table->array[tmp_idx].item.pData = pData;
-                table->array[tmp_idx].item.pKey = pKey;
-                SET_OCCUPIED(table->array[tmp_idx].state);
-                //saving the pre-computed hashcode
-                table->array[tmp_idx].key_hash = key_hash;
+                    table->array[tmp_idx].item.pData = pData;
+                    table->array[tmp_idx].item.pKey = pKey;
+                    SET_OCCUPIED(table->array[tmp_idx].state);
+                    //saving the pre-computed hashcode
+                    table->array[tmp_idx].key_hash = key_hash;
 
-                table->total_elements++; //successful insertion
-                new_item = &(table->array[tmp_idx].item);
-                break;
+                    table->total_elements++; //successful insertion
+                    new_item = &(table->array[tmp_idx].item);
+                    break;
 
-            } else if (!table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
-                //if the same key is already in the table then the insertion has failed
-                new_item = &(table->array[tmp_idx].item);
-                tmp_err = VDS_KEY_EXISTS;
-                break;
-            }
+                } else if (!table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
+                    //if the same key is already in the table then the insertion has failed
+                    new_item = &(table->array[tmp_idx].item);
+                    tmp_err = VDS_KEY_EXISTS;
+                    break;
+                }
 
-            offset++;
+                offset++;
 
-        } while (offset < table->size);
+            } while (offset < table->size);
 
-        if ( ((float)table->total_elements / table->size) >= 0.5 )
-            if (!rehash(table, freeData))
-                tmp_err = VDS_MALLOC_FAIL;
+            if ( !new_item || (((float)table->total_elements / table->size) >= 0.5) )
+                if (!rehash(table, freeData))
+                    tmp_err = VDS_MALLOC_FAIL;
+
+        } while (!new_item);
 
     } else
         tmp_err = VDS_INVALID_ARGS;
