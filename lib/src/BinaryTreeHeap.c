@@ -8,18 +8,18 @@
   ***********************************************************************************/
 
 
-#include "MemoryAllocation.h"
+#include "HeapAllocation.h"
 #include "BinaryTreeHeap.h"
 #include "FIFOqueue.h" //for breadth-first
 #include <math.h> //log2, floor
 
 
 
-static void recur_insert(BTHeapNode *subtree, unsigned int total_nodes, BTHeapNode *new_node);
+static void iter_insert(BTHeapNode *subtree, unsigned int total_nodes, BTHeapNode *new_node);
 static void fix_push_max(BTHeapNode *curr, vdsUserCompareFunc DataCmp);
 static void fix_push_min(BTHeapNode *curr, vdsUserCompareFunc DataCmp);
 static BTHeapNode *breadth_first_get_last(BTHeap *btheap);
-static BTHeapNode *recur_get_last(BTHeapNode *subtree, unsigned int total_nodes);
+//static BTHeapNode *recur_get_last(BTHeapNode *subtree, unsigned int total_nodes);
 static void fix_pop_max(BTHeapNode *curr, vdsUserCompareFunc DataCmp);
 static void fix_pop_min(BTHeapNode *curr, vdsUserCompareFunc DataCmp);
 
@@ -81,7 +81,7 @@ BTHeapNode *BTHeap_push(BTHeap *btheap,
                 btheap->total_nodes = 1;
             } else {
 
-                recur_insert(btheap->root, btheap->total_nodes, new_node);
+                iter_insert(btheap->root, btheap->total_nodes, new_node);
                 btheap->total_nodes++;
 
                 switch (btheap->property) {
@@ -148,43 +148,41 @@ void fix_push_min(BTHeapNode *curr, vdsUserCompareFunc DataCmp)
 /* my algorithm that locates the inserts a new node in a complete binary tree, in a way
  * that maintains the tree's completeness */
 /* TODO: add description of how it works */
-void recur_insert(BTHeapNode *subtree, unsigned int total_nodes, BTHeapNode *new_node)
+void iter_insert(BTHeapNode *subtree, unsigned int total_nodes, BTHeapNode *new_node)
 {
-    if (total_nodes <= 2) {
+    unsigned int depth, two_to_depth, last_node_left_subtree;
 
-        new_node->parent = subtree;
-
-        if (!subtree->left)
-            subtree->left = new_node;
-        else
-            subtree->right = new_node;
-
-    } else {
-
-        unsigned int depth, two_to_depth, last_node_left_subtree;
-
-
+    while (total_nodes > 2) {
         depth = (unsigned int)floor(log2(total_nodes));
 
         two_to_depth = (unsigned int)pow(2, depth);
 
         last_node_left_subtree = two_to_depth + (unsigned int)pow(2, depth - 1) - 1;
 
-
         if (total_nodes < last_node_left_subtree) {
 
-            recur_insert(subtree->left, total_nodes - (two_to_depth / 2), new_node);
+            total_nodes = total_nodes - (two_to_depth / 2);
+            subtree = subtree->left;
 
         } else if (!( (total_nodes + 1) & (total_nodes) )) {
 
-            recur_insert(subtree->left, total_nodes - two_to_depth, new_node);
+            total_nodes = total_nodes - two_to_depth;
+            subtree = subtree->left;
 
         } else {
 
-            recur_insert(subtree->right, total_nodes - two_to_depth, new_node);
+            total_nodes = total_nodes - two_to_depth;
+            subtree = subtree->right;
 
         }
     }
+
+    new_node->parent = subtree;
+
+    if (!subtree->left)
+        subtree->left = new_node;
+    else
+        subtree->right = new_node;
 }
 
 void *BTHeap_pop(BTHeap *btheap,
@@ -369,7 +367,7 @@ void fix_pop_min(BTHeapNode *curr, vdsUserCompareFunc DataCmp)
 
     }
 }
-
+/*
 BTHeapNode *recur_get_last(BTHeapNode *subtree, unsigned int total_nodes)
 {
     if (total_nodes <= 4) {
@@ -401,7 +399,7 @@ BTHeapNode *recur_get_last(BTHeapNode *subtree, unsigned int total_nodes)
 
     return recur_get_last(subtree->right, total_nodes - two_to_depth);
 }
-
+*/
 BTHeapNode *breadth_first_get_last(BTHeap *btheap)
 {
     vdsErrCode err;
@@ -489,7 +487,7 @@ void BTHeap_destroy(BTHeap **btheap,
 
         BTHeapNode *curr = (*btheap)->root, *to_delete;
 
-        //basically my iterative version of post-order
+        //iterative version of post-order
         while (curr) {
             if (curr->left) {
 

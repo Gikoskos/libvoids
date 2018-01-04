@@ -8,7 +8,7 @@
   ***********************************************************************************/
 
 
-#include "MemoryAllocation.h"
+#include "HeapAllocation.h"
 #include "QuadraticHashtable.h"
 #include "HashFunctions.h"
 
@@ -261,9 +261,11 @@ void QuadHash_destroy(QuadHashtable **table,
 
     if (table && *table) {
 
-        for (size_t i = 0; i < (*table)->size; i++)
-            if (freeData && (IS_OCCUPIED((*table)->array[i].state) || IS_DELETED((*table)->array[i].state)))
-                freeData((void *)&(*table)->array[i].item);
+        if (freeData) {
+            for (size_t i = 0; i < (*table)->size; i++)
+                if (IS_OCCUPIED((*table)->array[i].state))
+                    freeData((void *)&(*table)->array[i].item);
+        }
 
         VdsFree((*table)->array);
         VdsFree(*table);

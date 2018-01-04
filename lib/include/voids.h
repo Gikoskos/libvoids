@@ -13,6 +13,8 @@
 
 #include "voids/Common.h"
 
+#include "voids/RandomState.h"
+#include "voids/HeapAllocation.h"
 #include "voids/SinglyLinkedList.h"
 #include "voids/DoublyLinkedList.h"
 #include "voids/SentinelSinglyLinkedList.h"

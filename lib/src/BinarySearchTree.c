@@ -8,7 +8,7 @@
   ***********************************************************************************/
 
 
-#include "MemoryAllocation.h"
+#include "HeapAllocation.h"
 #include "BinarySearchTree.h"
 
 #define isLeafNode(x) ( !(x->right || x->left) )

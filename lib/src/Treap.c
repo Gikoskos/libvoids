@@ -8,7 +8,7 @@
   ***********************************************************************************/
 
 
-#include "MemoryAllocation.h"
+#include "HeapAllocation.h"
 #include "Treap.h"
 
 #define isLeftNode(x) ( (x) == (x)->parent->left )
@@ -60,7 +60,8 @@ static void eulerTraversal(TreapNode *treapNode, vdsUserDataFunc callback);
 
 static void fix_max_order(Treap *treap, TreapNode *curr);
 static void fix_min_order(Treap *treap, TreapNode *curr);
-
+static void max_bubble_down(Treap *treap, TreapNode *treapNode);
+static void min_bubble_down(Treap *treap, TreapNode *treapNode);
 
 
 Treap *Treap_init(vdsUserCompareFunc KeyCmp,
@@ -249,83 +250,175 @@ void fix_min_order(Treap *treap, TreapNode *curr)
     }
 }
 
+void max_bubble_down(Treap *treap, TreapNode *treapNode)
+{
+    TreapNode *tmp;
+
+    if (treapNode == treap->root) {
+        if (treapNode->left) {
+            if (treapNode->right) {
+                if (treapNode->left->priority > treapNode->right->priority) {
+                    tmp = treapNode->left;
+
+                    RotateRight(tmp, treapNode);
+                } else {
+                    tmp = treapNode->right;
+
+                    RotateLeft(tmp, treapNode);
+                }
+            } else {
+                tmp = treapNode->left;
+
+                RotateRight(tmp, treapNode);
+            }
+
+            treap->root = tmp;
+        } else {
+            if (treapNode->right) {
+                tmp = treapNode->right;
+
+                RotateLeft(tmp, treapNode);
+
+                treap->root = tmp;
+            } else {
+                return;
+            }
+        }
+    }
+
+    while (1) {
+
+        if (treapNode->left) {
+            if (treapNode->right) {
+                if (treapNode->left->priority > treapNode->right->priority) {
+                    tmp = treapNode->left;
+
+                    RotateRight(tmp, treapNode);
+
+                } else {
+                    tmp = treapNode->right;
+
+                    RotateLeft(tmp, treapNode);
+                }
+            } else {
+                tmp = treapNode->left;
+
+                RotateRight(tmp, treapNode);
+            }
+        } else {
+            if (treapNode->right) {
+                tmp = treapNode->right;
+
+                RotateLeft(tmp, treapNode);
+            } else {
+                break;
+            }
+        }
+
+    }
+}
+
+void min_bubble_down(Treap *treap, TreapNode *treapNode)
+{
+    TreapNode *tmp;
+
+    if (treapNode == treap->root) {
+        if (treapNode->left) {
+            if (treapNode->right) {
+                if (treapNode->left->priority < treapNode->right->priority) {
+                    tmp = treapNode->left;
+
+                    RotateRight(tmp, treapNode);
+                } else {
+                    tmp = treapNode->right;
+
+                    RotateLeft(tmp, treapNode);
+                }
+            } else {
+                tmp = treapNode->left;
+
+                RotateRight(tmp, treapNode);
+            }
+
+            treap->root = tmp;
+        } else {
+            if (treapNode->right) {
+                tmp = treapNode->right;
+
+                RotateLeft(tmp, treapNode);
+
+                treap->root = tmp;
+            } else {
+                return;
+            }
+        }
+    }
+
+    while (1) {
+
+        if (treapNode->left) {
+            if (treapNode->right) {
+                if (treapNode->left->priority < treapNode->right->priority) {
+                    tmp = treapNode->left;
+
+                    RotateRight(tmp, treapNode);
+
+                } else {
+                    tmp = treapNode->right;
+
+                    RotateLeft(tmp, treapNode);
+                }
+            } else {
+                tmp = treapNode->left;
+
+                RotateRight(tmp, treapNode);
+            }
+        } else {
+            if (treapNode->right) {
+                tmp = treapNode->right;
+
+                RotateLeft(tmp, treapNode);
+            } else {
+                break;
+            }
+        }
+
+    }
+}
+
 KeyValuePair Treap_deleteNode(Treap *treap,
                               TreapNode *treapNode,
                               vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    int reorder = 0;
     KeyValuePair item = { 0 };
 
     if (treap && treap->root && treapNode) {
 
-        //if the node we want to delete has two children nodes
-        //we switch it with its inorder successor from the right subtree
-        if (treapNode->right && treapNode->left) {
-            //temporary value to store the data that is being swapped
-            KeyValuePair swapped_item;
-            TreapNode *treapSuccessor = treapNode->right;
-
-            while (treapSuccessor->left)
-                treapSuccessor = treapSuccessor->left;
-
-            //swap the data (key and value) of the two nodes
-            swapped_item = treapNode->item;
-            treapNode->item = treapSuccessor->item;
-            treapSuccessor->item = swapped_item;
-
-            treapNode = treapSuccessor;
-            reorder = 1; //we only need to reorder the tree if we deleted
-            //a node with two children
+        switch (treap->property) {
+        case VDS_MAX_HEAP:
+            max_bubble_down(treap, treapNode);
+            break;
+        case VDS_MIN_HEAP:
+            min_bubble_down(treap, treapNode);
+            break;
+        default:
+            tmp_err = VDS_INVALID_ARGS;
+            break;
         }
 
-        //now the node we want to delete has AT MOST one child node
-
-        TreapNode *parent = treapNode->parent;
-
-        //if the node we want to delete ISN'T the root node
-        if (parent) {
-            //if the node we want to delete is a right node
-            if (!isLeftNode(treapNode)) {
-                //and we change the right node of the parent so
-                //that it points to either the right node of the node we
-                //want to delete, or the left node, depending on which one
-                //is not NULL (if both are NULL then we point to NULL)
-                parent->right = (treapNode->right) ? treapNode->right : treapNode->left;
-            } else { //if the key of the parent is smaller, it's a left node
-                parent->left = (treapNode->right) ? treapNode->right : treapNode->left;
+        if (treapNode->parent) {
+            if (isLeftNode(treapNode)) {
+                treapNode->parent->left = NULL;
+            } else {
+                treapNode->parent->right = NULL;
             }
-        //else if the node we want to delete IS the root node
         } else {
-            //change the tree root accordingly, so that it points to the new root (or NULL, if it's the only node in the tree)
-            treap->root = (treapNode->right) ? treapNode->right : treapNode->left;
+            treap->root = NULL;
         }
-
-        //don't forget to change the parents of the children node too
-        //(if they exist)
-        if (treapNode->right)
-            treapNode->right->parent = parent;
-        else if (treapNode->left)
-            treapNode->left->parent = parent;
 
         item = treapNode->item;
 
-        if (reorder) {
-            switch (treap->property) {
-            case VDS_MAX_HEAP:
-                fix_max_order(treap, treapNode->parent);
-                break;
-            case VDS_MIN_HEAP:
-                fix_min_order(treap, treapNode->parent);
-                break;
-            default:
-                tmp_err = VDS_INVALID_ARGS;
-                break;
-            }
-        }
-
-        //delete the node because we don't need it anymore
-        //and no other nodes point to it
         VdsFree(treapNode);
 
     } else
@@ -340,7 +433,17 @@ KeyValuePair Treap_deleteByKey(Treap *treap,
                                void *pKey,
                                vdsErrCode *err)
 {
-    return Treap_deleteNode(treap, Treap_findNode(treap, pKey, err), err);
+    vdsErrCode tmp_err = VDS_SUCCESS;
+    KeyValuePair item = { 0 };
+    TreapNode *to_delete = Treap_findNode(treap, pKey, &tmp_err);
+
+    if (tmp_err == VDS_SUCCESS) {
+        item = Treap_deleteNode(treap, to_delete, err);
+    }
+
+    SAVE_ERR(err, tmp_err);
+
+    return item;
 }
 
 TreapNode *Treap_findNode(Treap *treap,
@@ -374,8 +477,8 @@ TreapNode *Treap_findNode(Treap *treap,
 }
 
 void *Treap_findData(Treap *treap,
-                       void *pKey,
-                       vdsErrCode *err)
+                     void *pKey,
+                     vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
     TreapNode *curr = NULL;
@@ -448,7 +551,7 @@ void Treap_destroy(Treap **treap,
 
         TreapNode *curr = (*treap)->root, *to_delete;
 
-        //basically my iterative version of post-property
+        //iterative version of post-order
         while (curr) {
             if (curr->left) {
 

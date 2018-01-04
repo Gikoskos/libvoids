@@ -8,7 +8,7 @@
   ***********************************************************************************/
 
 
-#include "MemoryAllocation.h"
+#include "HeapAllocation.h"
 #include "LIFOstack.h"
 
 
@@ -108,7 +108,7 @@ void LIFO_destroy(LIFOstack **stack,
                 LIFOnode *to_delete = curr;
                 curr = curr->next;
 
-                if (to_delete->data && freeData)
+                if (freeData)
                     freeData(to_delete->data);
 
                 VdsFree((void*)to_delete);

@@ -8,7 +8,7 @@
   ***********************************************************************************/
 
 
-#include "MemoryAllocation.h"
+#include "HeapAllocation.h"
 #include "AVLTree.h"
 
 #define isLeafNode(x) ( !((x)->right || (x)->left) )
@@ -51,7 +51,6 @@
 \
         (y)->parent = x; \
     } while (0)
-
 
 
 static void pre_orderTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback);
@@ -495,7 +494,7 @@ void AVLTree_destroy(AVLTree **avlt,
 
         AVLTreeNode *curr = (*avlt)->root, *to_delete;
 
-        //basically my iterative version of post-order
+        //iterative version of post-order
         while (curr) {
             if (curr->left) {
 

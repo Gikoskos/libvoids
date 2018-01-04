@@ -8,7 +8,7 @@
   ***********************************************************************************/
 
 
-#include "MemoryAllocation.h"
+#include "HeapAllocation.h"
 #include "FIFOqueue.h"
 
 
@@ -107,7 +107,7 @@ void FIFO_destroy(FIFOqueue **queue,
                 FIFOnode *to_delete = curr;
                 curr = curr->next;
 
-                if (to_delete->data && freeData)
+                if (freeData)
                     freeData(to_delete->data);
 
                 VdsFree((void*)to_delete);

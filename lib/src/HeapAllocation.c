@@ -1,5 +1,5 @@
  /********************
- *  MemoryAllocation.c
+ *  HeapAllocation.c
  *
  * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
@@ -9,7 +9,7 @@
 
 
 #include <stdlib.h>
-#include "MemoryAllocation.h"
+#include "HeapAllocation.h"
 
 
 void *VdsMalloc(size_t size)

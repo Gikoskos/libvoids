@@ -8,7 +8,7 @@
   ***********************************************************************************/
 
 
-#include "MemoryAllocation.h"
+#include "HeapAllocation.h"
 #include <math.h>
 #include "RandomState.h"
 
@@ -42,7 +42,7 @@ unsigned int RandomState_genUInt(void *state,
     sfmt_t *sfmt_state = (state) ? (sfmt_t*)state : NULL;
 
     if (sfmt_state)
-        ret = (unsigned int)sfmt_genrand_uint32(sfmt_state);
+        ret = (unsigned int)sfmt_genrand_uint64(sfmt_state);
     else
         tmp_err = VDS_INVALID_ARGS;
 
@@ -59,7 +59,7 @@ int RandomState_genInt(void *state,
     sfmt_t *sfmt_state = (state) ? (sfmt_t*)state : NULL;
 
     if (sfmt_state)
-        ret = (int)sfmt_genrand_uint32(sfmt_state);
+        ret = (int)sfmt_genrand_uint64(sfmt_state);
     else
         tmp_err = VDS_INVALID_ARGS;
 
