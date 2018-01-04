@@ -187,7 +187,17 @@ KeyValuePair BSTree_deleteByKey(BSTree *bst,
                                 void *pKey,
                                 vdsErrCode *err)
 {
-    return BSTree_deleteNode(bst, BSTree_findNode(bst, pKey, err), err);
+    vdsErrCode tmp_err = VDS_SUCCESS;
+    KeyValuePair item = { 0 };
+    BSTreeNode *to_delete = BSTree_findNode(bst, pKey, err);
+
+    if (tmp_err == VDS_SUCCESS) {
+        item = BSTree_deleteNode(bst, to_delete, err);
+    }
+
+    SAVE_ERR(err, tmp_err);
+
+    return item;
 }
 
 BSTreeNode *BSTree_findNode(BSTree *bst,

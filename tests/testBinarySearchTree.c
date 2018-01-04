@@ -3,21 +3,11 @@
 #include <time.h>
 #include <voids.h>
 
-
 void printIntData(void *param)
 {
     KeyValuePair *item = (KeyValuePair *)param;
 
     printf("node %d has data %d\n", *(int*)item->pKey, *(int*)item->pData);
-    
-    /*RBTreeNode *node = (RBTreeNode*)param;
-    printf("node 0x%p %s\t= (key = %d\tcolor = %s\tleft child = 0x%p %s\tright child = 0x%p %s\tparent = 0x%p %s)\n",
-           node, (node == rbt->root) ? "ROOT" : ((node->right == rbt->nil && node->left == rbt->nil) ? "LEAF" : ""),
-           *(int*)node->item.pKey,
-           (node->color == BLACK_NODE) ? "BLACK" : "RED",
-           node->left, (node->left == rbt->nil) ? "nil" : "", 
-           node->right, (node->right == rbt->nil) ? "nil" : "",
-           node->parent, (node->parent == rbt->nil) ? "nil" : "");*/
 }
 
 int *newRandInt(int range)
@@ -25,7 +15,7 @@ int *newRandInt(int range)
     int *p = malloc(sizeof(int));
 
     if (range) {
-        *p = rand()%range + 1;        
+        *p = rand()%range + 1;
     } else {
         *p = rand();
     }
@@ -48,10 +38,12 @@ void freeKeyValuePair(void *param)
 
 int main(int argc, char *argv[])
 {
-    RBTree *rbt;
-    rbt = RBTree_init(compareInts, NULL);
+    BSTree *bst = BSTree_init(compareInts, NULL);
 
     srand(time(NULL));
+
+    //trying to add 10 nodes to a binary search tree
+    //with pseudorandomly generated keys and data
     printf("\n----STARTING INSERTIONS----\n");
     for (int i = 0; i < 10; i++) {
 
@@ -60,12 +52,10 @@ int main(int argc, char *argv[])
 
         printf("Trying to insert new node with key %d and data %d!\n", *new_key, *new_data);
 
-        if (RBTree_insert(rbt, (void*)new_key, (void*)new_data, NULL)) {
+        if (BSTree_insert(bst, (void*)new_data, (void*)new_key, NULL)) {
             printf("Node was successfully inserted!\n");
             printf("in-order traversal (the node numbers should be in ascending order):\n");
-            RBTree_traverse(rbt, VDS_IN_ORDER, printIntData, NULL);
-            putchar('\n');
-
+            BSTree_traverse(bst, VDS_IN_ORDER, printIntData, NULL);
         } else {
             printf("Node insertion failed!\n\n");
             free(new_key);
@@ -73,14 +63,26 @@ int main(int argc, char *argv[])
         }
     }
 
-    
-    printf("\n----PRINTING RB TREE BEFORE STARTING TO DELETE ELEMENTS----\n");
+    printf("\n----PRINTING BS TREE BEFORE STARTING TO DELETE ELEMENTS----\n");
+    //testing traversals
     printf("in-order traversal (the node numbers should be in ascending order):\n");
-    RBTree_traverse(rbt, VDS_IN_ORDER, printIntData, NULL);
+    BSTree_traverse(bst, VDS_IN_ORDER, printIntData, NULL);
+
+    printf("\npre-order traversal:\n");
+    BSTree_traverse(bst, VDS_PRE_ORDER, printIntData, NULL);
+
+    printf("\npost-order traversal:\n");
+    BSTree_traverse(bst, VDS_POST_ORDER, printIntData, NULL);
+
+    printf("\nbreadth-first traversal:\n");
+    BSTree_traverse(bst, VDS_BREADTH_FIRST, printIntData, NULL);
+
+    printf("\neuler traversal:\n");
+    BSTree_traverse(bst, VDS_EULER, printIntData, NULL);
 
     printf("\n----STARTING DELETIONS----\n");
     for (int i = 80; i >= 30; i--) {
-        KeyValuePair deleted = RBTree_deleteByKey(rbt, (void*)&i, NULL);
+        KeyValuePair deleted = BSTree_deleteByKey(bst, (void*)&i, NULL);
 
         //if we deleted a valid node
         if (deleted.pKey) {
@@ -88,10 +90,11 @@ int main(int argc, char *argv[])
             free(deleted.pKey);
             free(deleted.pData);
             printf("in-order traversal (the node numbers should be in ascending order):\n");
-            RBTree_traverse(rbt, VDS_IN_ORDER, printIntData, NULL);
+            BSTree_traverse(bst, VDS_IN_ORDER, printIntData, NULL);
         }
     }
 
-    RBTree_destroy(&rbt, freeKeyValuePair, NULL);
+    BSTree_destroy(&bst, freeKeyValuePair, NULL);
+
     return 0;
 }
