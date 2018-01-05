@@ -61,6 +61,7 @@ TODO
 * [x] Binary search tree \(unbalanced\)
 * [x] AVL tree
 * [x] Treap
+* [x] Splay tree
 * [ ] Trie
 * [ ] \(a,b\) tree
 * [x] Binary heap implemented as a binary tree
