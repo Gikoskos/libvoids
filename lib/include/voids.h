@@ -32,6 +32,7 @@
 #include "voids/AVLTree.h"
 #include "voids/Treap.h"
 #include "voids/RedBlackTree.h"
+#include "voids/SplayTree.h"
 #include "voids/FIFOqueue.h"
 #include "voids/LIFOstack.h"
 #include "voids/BinaryTreeHeap.h"

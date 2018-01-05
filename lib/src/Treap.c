@@ -437,7 +437,7 @@ KeyValuePair Treap_deleteByKey(Treap *treap,
     KeyValuePair item = { 0 };
     TreapNode *to_delete = Treap_findNode(treap, pKey, &tmp_err);
 
-    if (tmp_err == VDS_SUCCESS) {
+    if (to_delete) {
         item = Treap_deleteNode(treap, to_delete, err);
     }
 

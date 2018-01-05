@@ -11,7 +11,7 @@
 #include "HeapAllocation.h"
 #include "BinarySearchTree.h"
 
-#define isLeafNode(x) ( !(x->right || x->left) )
+#define isLeafNode(x) ( !((x)->right || (x)->left) )
 #define isLeftNode(x) ( (x) == (x)->parent->left )
 
 static void pre_orderTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback);
@@ -189,9 +189,9 @@ KeyValuePair BSTree_deleteByKey(BSTree *bst,
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
     KeyValuePair item = { 0 };
-    BSTreeNode *to_delete = BSTree_findNode(bst, pKey, err);
+    BSTreeNode *to_delete = BSTree_findNode(bst, pKey, &tmp_err);
 
-    if (tmp_err == VDS_SUCCESS) {
+    if (to_delete) {
         item = BSTree_deleteNode(bst, to_delete, err);
     }
 
@@ -205,7 +205,7 @@ BSTreeNode *BSTree_findNode(BSTree *bst,
                             vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    BSTreeNode *curr = bst->root;
+    BSTreeNode *curr;
 
     if (bst && pKey) {
         int cmp_res;
@@ -236,7 +236,7 @@ void *BSTree_findData(BSTree *bst,
                       vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    BSTreeNode *curr = bst->root;
+    BSTreeNode *curr = NULL;
 
     if (bst && pKey) {
         int cmp_res;
@@ -306,7 +306,7 @@ void BSTree_destroy(BSTree **bst,
 
         BSTreeNode *curr = (*bst)->root, *to_delete;
 
-        //basically my iterative version of post-order
+        //iterative version of post-order
         while (curr) {
             if (curr->left) {
 

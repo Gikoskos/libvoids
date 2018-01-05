@@ -562,9 +562,9 @@ KeyValuePair RBTree_deleteByKey(RBTree *rbt,
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
     KeyValuePair item = { 0 };
-    RBTreeNode *to_delete = RBTree_findNode(rbt, pKey, err);
+    RBTreeNode *to_delete = RBTree_findNode(rbt, pKey, &tmp_err);
 
-    if (tmp_err == VDS_SUCCESS) {
+    if (to_delete) {
         item = RBTree_deleteNode(rbt, to_delete, err);
     }
 
