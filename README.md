@@ -44,7 +44,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Debug
 
 ## How to use
 
-TODO
+[Documentation](DOC.md)
 
 ## Data Structures
 
