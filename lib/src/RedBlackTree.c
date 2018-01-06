@@ -560,17 +560,13 @@ KeyValuePair RBTree_deleteByKey(RBTree *rbt,
                                 void *pKey,
                                 vdsErrCode *err)
 {
-    vdsErrCode tmp_err = VDS_SUCCESS;
-    KeyValuePair item = { 0 };
-    RBTreeNode *to_delete = RBTree_findNode(rbt, pKey, &tmp_err);
+    RBTreeNode *to_delete = RBTree_findNode(rbt, pKey, err);
 
     if (to_delete) {
-        item = RBTree_deleteNode(rbt, to_delete, err);
+        return RBTree_deleteNode(rbt, to_delete, err);
     }
 
-    SAVE_ERR(err, tmp_err);
-
-    return item;
+    return (KeyValuePair){NULL, NULL};
 }
 
 RBTreeNode *RBTree_findNode(RBTree *rbt,
@@ -588,7 +584,7 @@ RBTreeNode *RBTree_findNode(RBTree *rbt,
 
         while (curr->item.pKey) {
             cmp_res = rbt->KeyCmp(pKey, curr->item.pKey);
-            
+
             if (!cmp_res)
                 break;
 

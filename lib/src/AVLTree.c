@@ -385,17 +385,13 @@ KeyValuePair AVLTree_deleteByKey(AVLTree *avlt,
                                  void *pKey,
                                  vdsErrCode *err)
 {
-    vdsErrCode tmp_err = VDS_SUCCESS;
-    KeyValuePair item = { 0 };
-    AVLTreeNode *to_delete = AVLTree_findNode(avlt, pKey, &tmp_err);
+    AVLTreeNode *to_delete = AVLTree_findNode(avlt, pKey, err);
 
     if (to_delete) {
-        item = AVLTree_deleteNode(avlt, to_delete, err);
+        return AVLTree_deleteNode(avlt, to_delete, err);
     }
 
-    SAVE_ERR(err, tmp_err);
-
-    return item;
+    return (KeyValuePair){NULL, NULL};
 }
 
 AVLTreeNode *AVLTree_findNode(AVLTree *avlt,

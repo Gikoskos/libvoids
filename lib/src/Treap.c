@@ -433,17 +433,13 @@ KeyValuePair Treap_deleteByKey(Treap *treap,
                                void *pKey,
                                vdsErrCode *err)
 {
-    vdsErrCode tmp_err = VDS_SUCCESS;
-    KeyValuePair item = { 0 };
-    TreapNode *to_delete = Treap_findNode(treap, pKey, &tmp_err);
+    TreapNode *to_delete = Treap_findNode(treap, pKey, err);
 
     if (to_delete) {
-        item = Treap_deleteNode(treap, to_delete, err);
+        return Treap_deleteNode(treap, to_delete, err);
     }
 
-    SAVE_ERR(err, tmp_err);
-
-    return item;
+    return (KeyValuePair){NULL, NULL};
 }
 
 TreapNode *Treap_findNode(Treap *treap,
@@ -489,7 +485,7 @@ void *Treap_findData(Treap *treap,
 
         while (curr) {
             cmp_res = treap->KeyCmp(pKey, curr->item.pKey);
-            
+
             if (!cmp_res)
                 break;
 
