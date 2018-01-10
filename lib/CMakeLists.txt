@@ -30,6 +30,8 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     #add debugging flags for GCC if we're building the debug build
     if(CMAKE_BUILD_TYPE MATCHES Debug)
         target_compile_options(voids BEFORE PRIVATE -g)
+    else(CMAKE_BUILD_TYPE MATCHES Debug)
+        target_compile_options(voids BEFORE PRIVATE -O3)
     endif(CMAKE_BUILD_TYPE MATCHES Debug)
     #link to math library (for gcc on linux mostly)
     target_link_libraries(voids m)
