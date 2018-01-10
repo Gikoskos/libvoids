@@ -9,7 +9,7 @@ function(new_libvoids_test target_name)
         add_executable(${target_name}  ${target_name}.c)
     endif(CMAKE_BUILD_TYPE MATCHES Release)
 
-    target_include_directories(${target_name} PUBLIC "${PROJECT_SOURCE_DIR}/lib/include")
+    target_include_directories(${target_name} PUBLIC "../lib/include")
     target_link_libraries(${target_name} voids)
 
     if(BUILD_SHARED_LIBS)
