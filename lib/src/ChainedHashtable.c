@@ -27,7 +27,7 @@ ChainedHashtable *ChainedHash_init(size_t size,
 
         if (chtable) {
 
-            chtable->chains = VdsCalloc(size, sizeof(DictListNode*));
+            chtable->chains = VdsCalloc(size, sizeof(AListNode*));
 
             if (chtable->chains) {
                 //if the user didn't give a custom hashing algorithm, we default to either
@@ -63,17 +63,17 @@ ChainedHashtable *ChainedHash_init(size_t size,
     return chtable;
 }
 
-DictListNode *ChainedHash_insert(ChainedHashtable *table,
-                                 void *pData,
-                                 void *pKey,
-                                 size_t key_size,
-                                 vdsErrCode *err)
+AListNode *ChainedHash_insert(ChainedHashtable *table,
+                              void *pData,
+                              void *pKey,
+                              size_t key_size,
+                              vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    DictListNode *new_node = NULL;
+    AListNode *new_node = NULL;
 
     if (table && pKey && key_size)
-        new_node = DictList_insert(&table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pData, pKey, table->KeyCmp, &tmp_err);
+        new_node = AList_insert(&table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pData, pKey, table->KeyCmp, &tmp_err);
     else
         tmp_err = VDS_INVALID_ARGS;
 
@@ -91,7 +91,7 @@ KeyValuePair ChainedHash_delete(ChainedHashtable *table,
     KeyValuePair item = { 0 };
 
     if (table && pKey && key_size)
-        item = DictList_deleteByKey(&table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pKey, table->KeyCmp, &tmp_err);
+        item = AList_deleteByKey(&table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pKey, table->KeyCmp, &tmp_err);
     else
         tmp_err = VDS_INVALID_ARGS;
 
@@ -100,16 +100,16 @@ KeyValuePair ChainedHash_delete(ChainedHashtable *table,
     return item;
 }
 
-DictListNode *ChainedHash_find(ChainedHashtable *table,
+KeyValuePair *ChainedHash_find(ChainedHashtable *table,
                                void *pKey,
                                size_t key_size,
                                vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    DictListNode *to_find = NULL;
+    KeyValuePair *to_find = NULL;
 
     if (table && pKey && key_size)
-        to_find = DictList_findByKey(table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pKey, table->KeyCmp, &tmp_err);
+        to_find = AList_findByKey(table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pKey, table->KeyCmp, &tmp_err);
     else
         tmp_err = VDS_INVALID_ARGS;
 
@@ -126,7 +126,7 @@ void ChainedHash_destroy(ChainedHashtable **table,
     if (table && *table) {
 
         for (size_t i = 0; i < (*table)->size; i++)
-            DictList_destroy(&(*table)->chains[i], freeData, NULL);
+            AList_destroy(&(*table)->chains[i], freeData, NULL);
 
         VdsFree((*table)->chains);
         VdsFree(*table);

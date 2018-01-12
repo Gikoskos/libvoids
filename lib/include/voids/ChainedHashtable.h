@@ -21,7 +21,7 @@ extern "C" {
 
 
 typedef struct _ChainedHashtable {
-    DictListNode **chains;
+    AListNode **chains;
     vdsUserCompareFunc KeyCmp;
     vdsUserHashFunc Hash;
     size_t size;
@@ -33,18 +33,18 @@ VOIDS_API ChainedHashtable *ChainedHash_init(size_t size,
                                              vdsUserHashFunc Hash,
                                              vdsErrCode *err);
 
-VOIDS_API DictListNode *ChainedHash_insert(ChainedHashtable *table,
-                                           void *pData,
-                                           void *pKey,
-                                           size_t key_size,
-                                           vdsErrCode *err);
+VOIDS_API AListNode *ChainedHash_insert(ChainedHashtable *table,
+                                        void *pData,
+                                        void *pKey,
+                                        size_t key_size,
+                                        vdsErrCode *err);
 
 VOIDS_API KeyValuePair ChainedHash_delete(ChainedHashtable *table,
                                           void *pKey,
                                           size_t key_size,
                                           vdsErrCode *err);
 
-VOIDS_API DictListNode *ChainedHash_find(ChainedHashtable *table,
+VOIDS_API KeyValuePair *ChainedHash_find(ChainedHashtable *table,
                                          void *pKey,
                                          size_t key_size,
                                          vdsErrCode *err);

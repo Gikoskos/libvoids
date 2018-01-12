@@ -19,47 +19,47 @@ extern "C" {
 
 
 
-typedef struct _DictListNode {
+typedef struct _AListNode {
     KeyValuePair item;
-    struct _DictListNode *nxt;
-} DictListNode;
+    struct _AListNode *nxt;
+} AListNode;
 
 
 
-VOIDS_API DictListNode *DictList_insert(DictListNode **dictListHead,
-                                        void *pData,
+VOIDS_API AListNode *AList_insert(AListNode **aListHead,
+                                  void *pData,
+                                  void *pKey,
+                                  vdsUserCompareFunc KeyCmp,
+                                  vdsErrCode *err);
+
+VOIDS_API AListNode *AList_append(AListNode **aListHead,
+                                  void *pData,
+                                  void *pKey,
+                                  vdsUserCompareFunc KeyCmp,
+                                  vdsErrCode *err);
+
+VOIDS_API AListNode *AList_insertAfter(AListNode *dictListPrev,
+                                       void *pData,
+                                       void *pKey,
+                                       vdsErrCode *err);
+
+VOIDS_API KeyValuePair AList_deleteByKey(AListNode **aListHead,
+                                         void *pKey,
+                                         vdsUserCompareFunc KeyCmp,
+                                         vdsErrCode *err);
+
+VOIDS_API KeyValuePair *AList_findByKey(AListNode *aListHead,
                                         void *pKey,
                                         vdsUserCompareFunc KeyCmp,
                                         vdsErrCode *err);
 
-VOIDS_API DictListNode *DictList_append(DictListNode **dictListHead,
-                                        void *pData,
-                                        void *pKey,
-                                        vdsUserCompareFunc KeyCmp,
-                                        vdsErrCode *err);
+VOIDS_API void AList_traverse(AListNode *aListHead,
+                              vdsUserDataFunc handleData,
+                              vdsErrCode *err);
 
-VOIDS_API DictListNode *DictList_insertAfter(DictListNode *dictListPrev,
-                                             void *pData,
-                                             void *pKey,
-                                             vdsErrCode *err);
-
-VOIDS_API KeyValuePair DictList_deleteByKey(DictListNode **dictListHead,
-                                            void *pKey,
-                                            vdsUserCompareFunc KeyCmp,
-                                            vdsErrCode *err);
-
-VOIDS_API DictListNode *DictList_findByKey(DictListNode *dictListHead,
-                                           void *pKey,
-                                           vdsUserCompareFunc KeyCmp,
-                                           vdsErrCode *err);
-
-VOIDS_API void DictList_traverse(DictListNode *dictListHead,
-                                 vdsUserDataFunc handleData,
-                                 vdsErrCode *err);
-
-VOIDS_API void DictList_destroy(DictListNode **dictListHead,
-                                vdsUserDataFunc freeData,
-                                vdsErrCode *err);
+VOIDS_API void AList_destroy(AListNode **aListHead,
+                             vdsUserDataFunc freeData,
+                             vdsErrCode *err);
 
 #ifdef __cplusplus
 }
