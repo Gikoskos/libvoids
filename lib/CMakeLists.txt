@@ -1,5 +1,7 @@
 
 #LIBVOIDS_SRC is all the .c modules
+#using the file function with GLOB_RECURSE instead 
+#of setting a list with each source file individually on purpose
 file(GLOB_RECURSE LIBVOIDS_SRC src//*.c external//SFMT//*.c)
 #LIBVOIDS_INC is all the .h header files
 file(GLOB_RECURSE LIBVOIDS_INC include//*.h)

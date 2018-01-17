@@ -39,15 +39,21 @@ VOIDS_API AListNode *ChainedHash_insert(ChainedHashtable *table,
                                         size_t key_size,
                                         vdsErrCode *err);
 
-VOIDS_API KeyValuePair ChainedHash_delete(ChainedHashtable *table,
-                                          void *pKey,
-                                          size_t key_size,
-                                          vdsErrCode *err);
+VOIDS_API void *ChainedHash_delete(ChainedHashtable *table,
+                                   void *pKey,
+                                   size_t key_size,
+                                   vdsErrCode *err);
 
-VOIDS_API KeyValuePair *ChainedHash_find(ChainedHashtable *table,
-                                         void *pKey,
-                                         size_t key_size,
-                                         vdsErrCode *err);
+VOIDS_API void *ChainedHash_find(ChainedHashtable *table,
+                                 void *pKey,
+                                 size_t key_size,
+                                 vdsErrCode *err);
+
+VOIDS_API void *ChainedHash_replace(ChainedHashtable *table,
+                                    void *pNewData,
+                                    void *pKey,
+                                    size_t key_size,
+                                    vdsErrCode *err);
 
 VOIDS_API void ChainedHash_destroy(ChainedHashtable **table,
                                    vdsUserDataFunc freeData,

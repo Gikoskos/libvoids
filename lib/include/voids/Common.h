@@ -45,7 +45,7 @@
 
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
-#   define VOIDS_API    __attribute__ ((visibility ("default")))
+#   define VOIDS_API __attribute__ ((visibility ("default")))
 #  else
 #   define VOIDS_API
 #  endif
@@ -70,12 +70,13 @@
 #include <stddef.h>
 
 //Key-value pair type definition
-typedef struct _KeyValuePair {
+typedef struct _KVPair {
     void *pData;
     void *pKey;
-} KeyValuePair;
+} KVPair;
 
 typedef void (*vdsUserDataFunc)(void *pData);
+typedef int (*vdsTraverseFunc)(void *pData);
 typedef int (*vdsUserCompareFunc)(const void *pKey1, const void *pKey2);
 typedef size_t (*vdsUserHashFunc)(size_t key_hash, size_t array_len);
 

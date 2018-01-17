@@ -3,7 +3,7 @@
  *
  * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
- * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * Copyright (c) 2015-2018 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
   ***********************************************************************************/
 
@@ -24,7 +24,7 @@ AListNode *AList_insert(AListNode **aListHead,
     if (aListHead && pKey && KeyCmp) {
 
         //insert the new node ONLY if a node with the same key doesn't exist already in the list
-        if (!AList_findByKey(*aListHead, pKey, KeyCmp, NULL)) {
+        if (!AList_find(*aListHead, pKey, KeyCmp, NULL)) {
             new_node = VdsMalloc(sizeof(AListNode));
 
             if (new_node) {
@@ -120,13 +120,13 @@ AListNode *AList_insertAfter(AListNode *dictListPrev,
     return new_node;
 }
 
-KeyValuePair AList_deleteByKey(AListNode **aListHead,
-                               void *pKey,
-                               vdsUserCompareFunc KeyCmp,
-                               vdsErrCode *err)
+void *AList_delete(AListNode **aListHead,
+                   void *pKey,
+                   vdsUserCompareFunc KeyCmp,
+                   vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_INVALID_ARGS;
-    KeyValuePair item = { 0 };
+    void *pDeleted = NULL;
 
     if (aListHead && KeyCmp && pKey) {
         AListNode *curr, *prev = NULL;
@@ -135,7 +135,7 @@ KeyValuePair AList_deleteByKey(AListNode **aListHead,
             prev = curr;
 
         if (curr) {
-            item = curr->item;
+            pDeleted = curr->item.pData;
 
             if (prev) {
                 prev->nxt = curr->nxt;
@@ -151,13 +151,13 @@ KeyValuePair AList_deleteByKey(AListNode **aListHead,
 
     SAVE_ERR(err, tmp_err);
 
-    return item;
+    return pDeleted;
 }
 
-KeyValuePair *AList_findByKey(AListNode *aListHead,
-                              void *pKey,
-                              vdsUserCompareFunc KeyCmp,
-                              vdsErrCode *err)
+void *AList_find(AListNode *aListHead,
+                 void *pKey,
+                 vdsUserCompareFunc KeyCmp,
+                 vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
     AListNode *curr = aListHead;
@@ -169,19 +169,45 @@ KeyValuePair *AList_findByKey(AListNode *aListHead,
 
     SAVE_ERR(err, tmp_err);
 
-    return (curr) ? &curr->item : NULL;
+    return (curr) ? curr->item.pData : NULL;
+}
+
+void *AList_replace(AListNode *aListHead,
+                    void *pNewData,
+                    void *pKey,
+                    vdsUserCompareFunc KeyCmp,
+                    vdsErrCode *err)
+{
+    vdsErrCode tmp_err = VDS_SUCCESS;
+    AListNode *curr = aListHead;
+    void *pOldValue = NULL;
+
+    if (aListHead && KeyCmp && pKey) {
+        for (; curr && KeyCmp(curr->item.pKey, pKey); curr = curr->nxt);
+
+        if (curr) {
+            pOldValue = curr->item.pData;
+            curr->item.pData = pNewData;
+        }
+    } else
+        tmp_err = VDS_INVALID_ARGS;
+
+    SAVE_ERR(err, tmp_err);
+
+    return pOldValue;
 }
 
 void AList_traverse(AListNode *aListHead,
-                    vdsUserDataFunc handleData,
+                    vdsTraverseFunc handleData,
                     vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
 
-    if (aListHead && handleData)
+    if (aListHead && handleData) {
         for (AListNode *curr = aListHead; curr; curr = curr->nxt)
-            handleData((void *)&curr->item);
-    else
+            if (!handleData((void *)&curr->item))
+                break;
+    } else
         tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);

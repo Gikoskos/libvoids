@@ -53,11 +53,11 @@
     } while (0)
 
 
-static void pre_orderTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback);
-static void in_orderTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback);
-static void post_orderTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback);
-static int breadth_firstTraversal(AVLTreeNode *avltRoot, vdsUserDataFunc callback);
-static void eulerTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback);
+static void pre_orderTraversal(AVLTreeNode *avltNode, vdsTraverseFunc callback);
+static void in_orderTraversal(AVLTreeNode *avltNode, vdsTraverseFunc callback);
+static void post_orderTraversal(AVLTreeNode *avltNode, vdsTraverseFunc callback);
+static int breadth_firstTraversal(AVLTreeNode *avltRoot, vdsTraverseFunc callback);
+static void eulerTraversal(AVLTreeNode *avltNode, vdsTraverseFunc callback);
 
 static int balanceFactor(AVLTreeNode *avltNode);
 static void correctNodeHeight(AVLTreeNode *avltNode);
@@ -87,8 +87,8 @@ AVLTree *AVLTree_init(vdsUserCompareFunc KeyCmp,
 }
 
 AVLTreeNode *AVLTree_insert(AVLTree *avlt,
-                            void *pKey,
                             void *pData,
+                            void *pKey,
                             vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
@@ -310,12 +310,12 @@ void rebalance(AVLTreeNode **avltRoot, AVLTreeNode *avltStartNode)
     }
 }
 
-KeyValuePair AVLTree_deleteNode(AVLTree *avlt,
-                                AVLTreeNode *avltToDelete,
-                                vdsErrCode *err)
+KVPair AVLTree_deleteNode(AVLTree *avlt,
+                          AVLTreeNode *avltToDelete,
+                          vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    KeyValuePair item = { 0 };
+    KVPair item = { 0 };
 
     if (avlt && avlt->root && avltToDelete) {
 
@@ -323,7 +323,7 @@ KeyValuePair AVLTree_deleteNode(AVLTree *avlt,
         //we switch it with its inorder successor from the right subtree
         if (avltToDelete->right && avltToDelete->left) {
             //temporary value to store the data that is being swapped
-            KeyValuePair swapped_item;
+            KVPair swapped_item;
             AVLTreeNode *avltSuccessor = avltToDelete->right;
 
             while (avltSuccessor->left)
@@ -381,17 +381,19 @@ KeyValuePair AVLTree_deleteNode(AVLTree *avlt,
     return item;
 }
 
-KeyValuePair AVLTree_deleteByKey(AVLTree *avlt,
-                                 void *pKey,
-                                 vdsErrCode *err)
+void *AVLTree_deleteByKey(AVLTree *avlt,
+                          void *pKey,
+                          vdsErrCode *err)
 {
     AVLTreeNode *to_delete = AVLTree_findNode(avlt, pKey, err);
+    void *deleted = NULL;
 
     if (to_delete) {
-        return AVLTree_deleteNode(avlt, to_delete, err);
+        KVPair tmp = AVLTree_deleteNode(avlt, to_delete, err);
+        deleted = tmp.pData;
     }
 
-    return (KeyValuePair){NULL, NULL};
+    return deleted;
 }
 
 AVLTreeNode *AVLTree_findNode(AVLTree *avlt,
@@ -456,7 +458,7 @@ void *AVLTree_findData(AVLTree *avlt,
 
 void AVLTree_traverse(AVLTree *avlt,
                       vdsTreeTraversal traversal,
-                      vdsUserDataFunc callback,
+                      vdsTraverseFunc callback,
                       vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
@@ -551,34 +553,34 @@ void AVLTree_destroy(AVLTree **avlt,
 
 #include "FIFOqueue.h"
 
-void pre_orderTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback)
+void pre_orderTraversal(AVLTreeNode *avltNode, vdsTraverseFunc callback)
 {
     if (avltNode) {
-        callback((void *)&avltNode->item);
+        if (!callback((void *)&avltNode->item)) return;
         pre_orderTraversal(avltNode->left, callback);
         pre_orderTraversal(avltNode->right, callback);
     }
 }
 
-void in_orderTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback)
+void in_orderTraversal(AVLTreeNode *avltNode, vdsTraverseFunc callback)
 {
     if (avltNode) {
         in_orderTraversal(avltNode->left, callback);
-        callback((void *)&avltNode->item);
+        if (!callback((void *)&avltNode->item)) return;
         in_orderTraversal(avltNode->right, callback);
     }
 }
 
-void post_orderTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback)
+void post_orderTraversal(AVLTreeNode *avltNode, vdsTraverseFunc callback)
 {
     if (avltNode) {
         post_orderTraversal(avltNode->left, callback);
         post_orderTraversal(avltNode->right, callback);
-        callback((void *)&avltNode->item);
+        if (!callback((void *)&avltNode->item)) return;
     }
 }
 
-int breadth_firstTraversal(AVLTreeNode *avltRoot, vdsUserDataFunc callback)
+int breadth_firstTraversal(AVLTreeNode *avltRoot, vdsTraverseFunc callback)
 {
     vdsErrCode err;
     AVLTreeNode *curr;
@@ -592,7 +594,7 @@ int breadth_firstTraversal(AVLTreeNode *avltRoot, vdsUserDataFunc callback)
             while (levelFIFO->total_nodes) {
                 curr = (AVLTreeNode *)FIFO_dequeue(levelFIFO, NULL);
 
-                callback((void *)&curr->item);
+                if (!callback((void *)&curr->item)) break;
 
                 if (curr->right) {
                     FIFO_enqueue(levelFIFO, curr->right, &err);
@@ -620,14 +622,14 @@ int breadth_firstTraversal(AVLTreeNode *avltRoot, vdsUserDataFunc callback)
     return 0;
 }
 
-void eulerTraversal(AVLTreeNode *avltNode, vdsUserDataFunc callback)
+void eulerTraversal(AVLTreeNode *avltNode, vdsTraverseFunc callback)
 {
     if (avltNode) {
-        callback((void *)&avltNode->item);
+        if (!callback((void *)&avltNode->item)) return;
 
         eulerTraversal(avltNode->left, callback);
-        callback((void *)&avltNode->item);
+        if (!callback((void *)&avltNode->item)) return;
         eulerTraversal(avltNode->right, callback);
-        callback((void *)&avltNode->item);
+        if (!callback((void *)&avltNode->item)) return;
     }
 }

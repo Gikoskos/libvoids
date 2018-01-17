@@ -20,7 +20,7 @@ extern "C" {
 
 
 typedef struct _AListNode {
-    KeyValuePair item;
+    KVPair item;
     struct _AListNode *nxt;
 } AListNode;
 
@@ -43,18 +43,24 @@ VOIDS_API AListNode *AList_insertAfter(AListNode *dictListPrev,
                                        void *pKey,
                                        vdsErrCode *err);
 
-VOIDS_API KeyValuePair AList_deleteByKey(AListNode **aListHead,
-                                         void *pKey,
-                                         vdsUserCompareFunc KeyCmp,
-                                         vdsErrCode *err);
+VOIDS_API void *AList_delete(AListNode **aListHead,
+                             void *pKey,
+                             vdsUserCompareFunc KeyCmp,
+                             vdsErrCode *err);
 
-VOIDS_API KeyValuePair *AList_findByKey(AListNode *aListHead,
-                                        void *pKey,
-                                        vdsUserCompareFunc KeyCmp,
-                                        vdsErrCode *err);
+VOIDS_API void *AList_find(AListNode *aListHead,
+                           void *pKey,
+                           vdsUserCompareFunc KeyCmp,
+                           vdsErrCode *err);
+
+VOIDS_API void *AList_replace(AListNode *aListHead,
+                              void *pNewData,
+                              void *pKey,
+                              vdsUserCompareFunc KeyCmp,
+                              vdsErrCode *err);
 
 VOIDS_API void AList_traverse(AListNode *aListHead,
-                              vdsUserDataFunc handleData,
+                              vdsTraverseFunc handleData,
                               vdsErrCode *err);
 
 VOIDS_API void AList_destroy(AListNode **aListHead,

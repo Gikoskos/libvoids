@@ -58,11 +58,11 @@
 
 
 
-static void pre_orderTraversal(RBTreeNode *rbtNode, vdsUserDataFunc callback);
-static void in_orderTraversal(RBTreeNode *rbtNode, vdsUserDataFunc callback);
-static void post_orderTraversal(RBTreeNode *rbtNode, vdsUserDataFunc callback);
-static int breadth_firstTraversal(RBTreeNode *rbtRoot, vdsUserDataFunc callback);
-static void eulerTraversal(RBTreeNode *rbtNode, vdsUserDataFunc callback);
+static void pre_orderTraversal(RBTreeNode *rbtNode, vdsTraverseFunc callback);
+static void in_orderTraversal(RBTreeNode *rbtNode, vdsTraverseFunc callback);
+static void post_orderTraversal(RBTreeNode *rbtNode, vdsTraverseFunc callback);
+static int breadth_firstTraversal(RBTreeNode *rbtRoot, vdsTraverseFunc callback);
+static void eulerTraversal(RBTreeNode *rbtNode, vdsTraverseFunc callback);
 
 static void rebalance_insertion(RBTree *rbt, RBTreeNode *curr);
 static void rebalance_deletion(RBTree *rbt, RBTreeNode *curr);
@@ -345,12 +345,12 @@ void rebalance_insertion(RBTree *rbt, RBTreeNode *curr)
     }
 }
 
-KeyValuePair RBTree_deleteNode(RBTree *rbt,
-                               RBTreeNode *rbtToDelete,
-                               vdsErrCode *err)
+KVPair RBTree_deleteNode(RBTree *rbt,
+                         RBTreeNode *rbtToDelete,
+                         vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    KeyValuePair item = { 0 };
+    KVPair item = { 0 };
 
     if (rbt && rbt->root && rbtToDelete) {
 
@@ -361,7 +361,7 @@ KeyValuePair RBTree_deleteNode(RBTree *rbt,
         //we switch it with the first leftmost leaf node from the right subtree
         if (rbtToDelete->right->item.pKey && rbtToDelete->left->item.pKey) {
             //temporary value to store the data that is being swapped
-            KeyValuePair swapped_item;
+            KVPair swapped_item;
             RBTreeNode *rbtSuccessor = rbtToDelete->right;
 
             while (rbtSuccessor->left->item.pKey)
@@ -556,22 +556,24 @@ void rebalance_deletion(RBTree *rbt, RBTreeNode *curr)
     }
 }
 
-KeyValuePair RBTree_deleteByKey(RBTree *rbt,
-                                void *pKey,
-                                vdsErrCode *err)
+void *RBTree_deleteByKey(RBTree *rbt,
+                         void *pKey,
+                         vdsErrCode *err)
 {
     RBTreeNode *to_delete = RBTree_findNode(rbt, pKey, err);
+    void *deleted = NULL;
 
     if (to_delete) {
-        return RBTree_deleteNode(rbt, to_delete, err);
+        KVPair tmp = RBTree_deleteNode(rbt, to_delete, err);
+        deleted = tmp.pData;
     }
 
-    return (KeyValuePair){NULL, NULL};
+    return deleted;
 }
 
 RBTreeNode *RBTree_findNode(RBTree *rbt,
-                                  void *pKey,
-                                  vdsErrCode *err)
+                            void *pKey,
+                            vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
     RBTreeNode *curr = NULL;
@@ -644,7 +646,7 @@ void *RBTree_findData(RBTree *rbt,
 }
 void RBTree_traverse(RBTree *rbt,
                      vdsTreeTraversal traversal,
-                     vdsUserDataFunc callback,
+                     vdsTraverseFunc callback,
                      vdsErrCode *err)
 
 {
@@ -744,34 +746,34 @@ void RBTree_destroy(RBTree **rbt,
 
 #include "FIFOqueue.h"
 
-void pre_orderTraversal(RBTreeNode *rbtNode, vdsUserDataFunc callback)
+void pre_orderTraversal(RBTreeNode *rbtNode, vdsTraverseFunc callback)
 {
     if (rbtNode->item.pKey) {
-        callback((void *)&rbtNode->item);
+        if (!callback((void *)&rbtNode->item)) return;
         pre_orderTraversal(rbtNode->left, callback);
         pre_orderTraversal(rbtNode->right, callback);
     }
 }
 
-void in_orderTraversal(RBTreeNode *rbtNode, vdsUserDataFunc callback)
+void in_orderTraversal(RBTreeNode *rbtNode, vdsTraverseFunc callback)
 {
     if (rbtNode->item.pKey) {
         in_orderTraversal(rbtNode->left, callback);
-        callback((void *)&rbtNode->item);
+        if (!callback((void *)&rbtNode->item)) return;
         in_orderTraversal(rbtNode->right, callback);
     }
 }
 
-void post_orderTraversal(RBTreeNode *rbtNode, vdsUserDataFunc callback)
+void post_orderTraversal(RBTreeNode *rbtNode, vdsTraverseFunc callback)
 {
     if (rbtNode->item.pKey) {
         post_orderTraversal(rbtNode->left, callback);
         post_orderTraversal(rbtNode->right, callback);
-        callback((void *)&rbtNode->item);
+        if (!callback((void *)&rbtNode->item)) return;
     }
 }
 
-int breadth_firstTraversal(RBTreeNode *rbtNode, vdsUserDataFunc callback)
+int breadth_firstTraversal(RBTreeNode *rbtNode, vdsTraverseFunc callback)
 {
     vdsErrCode err;
     RBTreeNode *curr;
@@ -785,7 +787,7 @@ int breadth_firstTraversal(RBTreeNode *rbtNode, vdsUserDataFunc callback)
             while (levelFIFO->total_nodes) {
                 curr = (RBTreeNode *)FIFO_dequeue(levelFIFO, NULL);
 
-                callback((void *)&curr->item);
+                if (!callback((void *)&curr->item)) break;
 
                 if (curr->right) {
                     FIFO_enqueue(levelFIFO, curr->right, &err);
@@ -813,14 +815,14 @@ int breadth_firstTraversal(RBTreeNode *rbtNode, vdsUserDataFunc callback)
     return 0;
 }
 
-void eulerTraversal(RBTreeNode *rbtNode, vdsUserDataFunc callback)
+void eulerTraversal(RBTreeNode *rbtNode, vdsTraverseFunc callback)
 {
     if (rbtNode->item.pKey) {
-        callback((void *)&rbtNode->item);
+        if (!callback((void *)&rbtNode->item)) return;
 
         eulerTraversal(rbtNode->left, callback);
-        callback((void *)&rbtNode->item);
+        if (!callback((void *)&rbtNode->item)) return;
         eulerTraversal(rbtNode->right, callback);
-        callback((void *)&rbtNode->item);
+        if (!callback((void *)&rbtNode->item)) return;
     }
 }

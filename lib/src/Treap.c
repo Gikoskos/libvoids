@@ -52,11 +52,11 @@
     } while (0)
 
 
-static void pre_orderTraversal(TreapNode *treapNode, vdsUserDataFunc callback);
-static void in_orderTraversal(TreapNode *treapNode, vdsUserDataFunc callback);
-static void post_orderTraversal(TreapNode *treapNode, vdsUserDataFunc callback);
-static int breadth_firstTraversal(TreapNode *treapNode, vdsUserDataFunc callback);
-static void eulerTraversal(TreapNode *treapNode, vdsUserDataFunc callback);
+static void pre_orderTraversal(TreapNode *treapNode, vdsTraverseFunc callback);
+static void in_orderTraversal(TreapNode *treapNode, vdsTraverseFunc callback);
+static void post_orderTraversal(TreapNode *treapNode, vdsTraverseFunc callback);
+static int breadth_firstTraversal(TreapNode *treapNode, vdsTraverseFunc callback);
+static void eulerTraversal(TreapNode *treapNode, vdsTraverseFunc callback);
 
 static void fix_max_order(Treap *treap, TreapNode *curr);
 static void fix_min_order(Treap *treap, TreapNode *curr);
@@ -386,12 +386,12 @@ void min_bubble_down(Treap *treap, TreapNode *treapNode)
     }
 }
 
-KeyValuePair Treap_deleteNode(Treap *treap,
-                              TreapNode *treapNode,
-                              vdsErrCode *err)
+KVPair Treap_deleteNode(Treap *treap,
+                        TreapNode *treapNode,
+                        vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    KeyValuePair item = { 0 };
+    KVPair item = { 0 };
 
     if (treap && treap->root && treapNode) {
 
@@ -429,17 +429,19 @@ KeyValuePair Treap_deleteNode(Treap *treap,
     return item;
 }
 
-KeyValuePair Treap_deleteByKey(Treap *treap,
-                               void *pKey,
-                               vdsErrCode *err)
+void *Treap_deleteByKey(Treap *treap,
+                        void *pKey,
+                        vdsErrCode *err)
 {
     TreapNode *to_delete = Treap_findNode(treap, pKey, err);
+    void *deleted = NULL;
 
     if (to_delete) {
-        return Treap_deleteNode(treap, to_delete, err);
+        KVPair tmp = Treap_deleteNode(treap, to_delete, err);
+        deleted = tmp.pData;
     }
 
-    return (KeyValuePair){NULL, NULL};
+    return deleted;
 }
 
 TreapNode *Treap_findNode(Treap *treap,
@@ -504,7 +506,7 @@ void *Treap_findData(Treap *treap,
 
 void Treap_traverse(Treap *treap,
                     vdsTreeTraversal traversal,
-                    vdsUserDataFunc callback,
+                    vdsTraverseFunc callback,
                     vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
@@ -598,34 +600,34 @@ void Treap_destroy(Treap **treap,
 
 #include "FIFOqueue.h"
 
-void pre_orderTraversal(TreapNode *treapNode, vdsUserDataFunc callback)
+void pre_orderTraversal(TreapNode *treapNode, vdsTraverseFunc callback)
 {
     if (treapNode) {
-        callback((void *)&treapNode->item);
+        if (!callback((void *)&treapNode->item)) return;
         pre_orderTraversal(treapNode->left, callback);
         pre_orderTraversal(treapNode->right, callback);
     }
 }
 
-void in_orderTraversal(TreapNode *treapNode, vdsUserDataFunc callback)
+void in_orderTraversal(TreapNode *treapNode, vdsTraverseFunc callback)
 {
     if (treapNode) {
         in_orderTraversal(treapNode->left, callback);
-        callback((void *)&treapNode->item);
+        if (!callback((void *)&treapNode->item)) return;
         in_orderTraversal(treapNode->right, callback);
     }
 }
 
-void post_orderTraversal(TreapNode *treapNode, vdsUserDataFunc callback)
+void post_orderTraversal(TreapNode *treapNode, vdsTraverseFunc callback)
 {
     if (treapNode) {
         post_orderTraversal(treapNode->left, callback);
         post_orderTraversal(treapNode->right, callback);
-        callback((void *)&treapNode->item);
+        if (!callback((void *)&treapNode->item)) return;
     }
 }
 
-int breadth_firstTraversal(TreapNode *treapRoot, vdsUserDataFunc callback)
+int breadth_firstTraversal(TreapNode *treapRoot, vdsTraverseFunc callback)
 {
     vdsErrCode err;
     TreapNode *curr;
@@ -639,7 +641,7 @@ int breadth_firstTraversal(TreapNode *treapRoot, vdsUserDataFunc callback)
             while (levelFIFO->total_nodes) {
                 curr = (TreapNode *)FIFO_dequeue(levelFIFO, NULL);
 
-                callback((void *)&curr->item);
+                if (!callback((void *)&curr->item)) break;
 
                 if (curr->right) {
                     FIFO_enqueue(levelFIFO, curr->right, &err);
@@ -667,14 +669,14 @@ int breadth_firstTraversal(TreapNode *treapRoot, vdsUserDataFunc callback)
     return 0;
 }
 
-void eulerTraversal(TreapNode *treapNode, vdsUserDataFunc callback)
+void eulerTraversal(TreapNode *treapNode, vdsTraverseFunc callback)
 {
     if (treapNode) {
-        callback((void *)&treapNode->item);
+        if (!callback((void *)&treapNode->item)) return;
 
         eulerTraversal(treapNode->left, callback);
-        callback((void *)&treapNode->item);
+        if (!callback((void *)&treapNode->item)) return;
         eulerTraversal(treapNode->right, callback);
-        callback((void *)&treapNode->item);
+        if (!callback((void *)&treapNode->item)) return;
     }
 }

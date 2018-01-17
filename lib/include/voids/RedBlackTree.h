@@ -20,7 +20,7 @@ extern "C" {
 
 
 typedef struct _RBTreeNode {
-    KeyValuePair item;
+    KVPair item;
     struct _RBTreeNode *left, *right, *parent;
     char color;
 } RBTreeNode;
@@ -39,13 +39,13 @@ VOIDS_API RBTreeNode *RBTree_insert(RBTree *rbt,
                                     void *pData,
                                     vdsErrCode *err);
 
-VOIDS_API KeyValuePair RBTree_deleteNode(RBTree *rbt,
-                                         RBTreeNode *rbtToDelete,
-                                         vdsErrCode *err);
+VOIDS_API KVPair RBTree_deleteNode(RBTree *rbt,
+                                   RBTreeNode *rbtToDelete,
+                                   vdsErrCode *err);
 
-VOIDS_API KeyValuePair RBTree_deleteByKey(RBTree *rbt,
-                                          void *pKey,
-                                          vdsErrCode *err);
+VOIDS_API void *RBTree_deleteByKey(RBTree *rbt,
+                                   void *pKey,
+                                   vdsErrCode *err);
 
 VOIDS_API RBTreeNode *RBTree_findNode(RBTree *rbt,
                                       void *pKey,
@@ -57,7 +57,7 @@ VOIDS_API void *RBTree_findData(RBTree *rbt,
 
 VOIDS_API void RBTree_traverse(RBTree *rbt,
                                vdsTreeTraversal traversal,
-                               vdsUserDataFunc callback,
+                               vdsTraverseFunc callback,
                                vdsErrCode *err);
 
 VOIDS_API void RBTree_destroy(RBTree **rbt,

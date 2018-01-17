@@ -45,7 +45,7 @@ VOIDS_API void FIFO_destroy(FIFOqueue **queue,
                             vdsErrCode *err);
 
 VOIDS_API void FIFO_traverse(FIFOqueue *queue,
-                             vdsUserDataFunc handleData,
+                             vdsTraverseFunc handleData,
                              vdsErrCode *err);
 
 #ifdef __cplusplus

@@ -249,15 +249,16 @@ DLListNode *SDLList_find(SDLList *sdllList,
 }
 
 void SDLList_traverse(SDLList *sdllList,
-                      vdsUserDataFunc handleData,
+                      vdsTraverseFunc handleData,
                       vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
 
-    if (sdllList && handleData)
-        for (DLListNode *curr = sdllList->head; curr != sdllList->sentinel; curr = curr->nxt)
-            handleData(curr->pData);
-    else
+    if (sdllList && handleData) {
+        for (DLListNode *curr = sdllList->head;
+             (curr != sdllList->sentinel) && handleData(curr->pData);
+             curr = curr->nxt);
+    } else
         tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);

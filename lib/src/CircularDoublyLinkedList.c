@@ -267,7 +267,7 @@ CDLListNode *CDLList_find(CDLListNode *cdllHead,
 }
 
 void CDLList_traverse(CDLListNode *cdllHead,
-                      vdsUserDataFunc handleData,
+                      vdsTraverseFunc handleData,
                       vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
@@ -276,7 +276,8 @@ void CDLList_traverse(CDLListNode *cdllHead,
         CDLListNode *curr = cdllHead;
 
         do {
-            handleData(curr->pData);
+            if (!handleData(curr->pData))
+                break;
             curr = curr->nxt;
         } while (curr != cdllHead);
     } else

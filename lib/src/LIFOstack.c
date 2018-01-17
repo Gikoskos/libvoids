@@ -126,15 +126,14 @@ void LIFO_destroy(LIFOstack **stack,
 }
 
 void LIFO_traverse(LIFOstack *stack,
-                   vdsUserDataFunc handleData,
+                   vdsTraverseFunc handleData,
                    vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
 
-    if (stack && handleData)
-        for (LIFOnode *curr = stack->head; curr; curr = curr->next)
-            handleData(curr->data);
-    else
+    if (stack && handleData) {
+        for (LIFOnode *curr = stack->head; curr && handleData(curr->data); curr = curr->next);
+    } else
         tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);

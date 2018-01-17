@@ -45,7 +45,7 @@ VOIDS_API void LIFO_destroy(LIFOstack **stack,
                             vdsErrCode *err);
 
 VOIDS_API void LIFO_traverse(LIFOstack *stack,
-                             vdsUserDataFunc handleData,
+                             vdsTraverseFunc handleData,
                              vdsErrCode *err);
 
 #ifdef __cplusplus

@@ -52,11 +52,11 @@
         (y)->parent = x; \
     } while (0)
 
-static void pre_orderTraversal(SplayTreeNode *sptNode, vdsUserDataFunc callback);
-static void in_orderTraversal(SplayTreeNode *sptNode, vdsUserDataFunc callback);
-static void post_orderTraversal(SplayTreeNode *sptNode, vdsUserDataFunc callback);
-static int breadth_firstTraversal(SplayTreeNode *sptRoot, vdsUserDataFunc callback);
-static void eulerTraversal(SplayTreeNode *sptNode, vdsUserDataFunc callback);
+static void pre_orderTraversal(SplayTreeNode *sptNode, vdsTraverseFunc callback);
+static void in_orderTraversal(SplayTreeNode *sptNode, vdsTraverseFunc callback);
+static void post_orderTraversal(SplayTreeNode *sptNode, vdsTraverseFunc callback);
+static int breadth_firstTraversal(SplayTreeNode *sptRoot, vdsTraverseFunc callback);
+static void eulerTraversal(SplayTreeNode *sptNode, vdsTraverseFunc callback);
 
 static void splay(SplayTreeNode *sptNode);
 
@@ -207,19 +207,19 @@ void splay(SplayTreeNode *sptNode)
     }
 }
 
-KeyValuePair SplayTree_deleteNode(SplayTree *spt,
-                                  SplayTreeNode *sptToDelete,
-                                  vdsErrCode *err)
+KVPair SplayTree_deleteNode(SplayTree *spt,
+                            SplayTreeNode *sptToDelete,
+                            vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    KeyValuePair item = { 0 };
+    KVPair item = { 0 };
 
     if (spt && spt->root && sptToDelete) {
 
         //if the node we want to delete has two children nodes
         //we switch it with its inorder successor from the right subtree
         if (sptToDelete->right && sptToDelete->left) {
-            KeyValuePair swapped_item;
+            KVPair swapped_item;
             SplayTreeNode *sptSuccessor = sptToDelete->right;
 
             while (sptSuccessor->left)
@@ -278,10 +278,12 @@ KeyValuePair SplayTree_deleteNode(SplayTree *spt,
     return item;
 }
 
-KeyValuePair SplayTree_deleteByKey(SplayTree *spt,
-                                   void *pKey,
-                                   vdsErrCode *err)
+void *SplayTree_deleteByKey(SplayTree *spt,
+                            void *pKey,
+                            vdsErrCode *err)
 {
+    void *deleted = NULL;
+
     if (spt && pKey) {
         SplayTreeNode *curr = spt->root;
         int cmp_res;
@@ -300,14 +302,15 @@ KeyValuePair SplayTree_deleteByKey(SplayTree *spt,
                 curr = curr->left;
         }
 
-        return SplayTree_deleteNode(spt, curr, err);
+        KVPair tmp = SplayTree_deleteNode(spt, curr, err);
 
+        deleted = tmp.pData;
     }
 
     if (err)
         *err = VDS_INVALID_ARGS;
 
-    return (KeyValuePair){NULL, NULL};
+    return deleted;
 }
 
 SplayTreeNode *SplayTree_findNode(SplayTree *spt,
@@ -392,7 +395,7 @@ void *SplayTree_findData(SplayTree *spt,
 
 void SplayTree_traverse(SplayTree *spt,
                         vdsTreeTraversal traversal,
-                        vdsUserDataFunc callback,
+                        vdsTraverseFunc callback,
                         vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
@@ -485,34 +488,34 @@ void SplayTree_destroy(SplayTree **spt,
 
 #include "FIFOqueue.h"
 
-void pre_orderTraversal(SplayTreeNode *sptNode, vdsUserDataFunc callback)
+void pre_orderTraversal(SplayTreeNode *sptNode, vdsTraverseFunc callback)
 {
     if (sptNode) {
-        callback((void *)&sptNode->item);
+        if (!callback((void *)&sptNode->item)) return;
         pre_orderTraversal(sptNode->left, callback);
         pre_orderTraversal(sptNode->right, callback);
     }
 }
 
-void in_orderTraversal(SplayTreeNode *sptNode, vdsUserDataFunc callback)
+void in_orderTraversal(SplayTreeNode *sptNode, vdsTraverseFunc callback)
 {
     if (sptNode) {
         in_orderTraversal(sptNode->left, callback);
-        callback((void *)&sptNode->item);
+        if (!callback((void *)&sptNode->item)) return;
         in_orderTraversal(sptNode->right, callback);
     }
 }
 
-void post_orderTraversal(SplayTreeNode *sptNode, vdsUserDataFunc callback)
+void post_orderTraversal(SplayTreeNode *sptNode, vdsTraverseFunc callback)
 {
     if (sptNode) {
         post_orderTraversal(sptNode->left, callback);
         post_orderTraversal(sptNode->right, callback);
-        callback((void *)&sptNode->item);
+        if (!callback((void *)&sptNode->item)) return;
     }
 }
 
-int breadth_firstTraversal(SplayTreeNode *sptRoot, vdsUserDataFunc callback)
+int breadth_firstTraversal(SplayTreeNode *sptRoot, vdsTraverseFunc callback)
 {
     vdsErrCode err;
     SplayTreeNode *curr;
@@ -526,7 +529,7 @@ int breadth_firstTraversal(SplayTreeNode *sptRoot, vdsUserDataFunc callback)
             while (levelFIFO->total_nodes) {
                 curr = (SplayTreeNode *)FIFO_dequeue(levelFIFO, NULL);
 
-                callback((void *)&curr->item);
+                if (!callback((void *)&curr->item)) break;
 
                 if (curr->right) {
                     FIFO_enqueue(levelFIFO, curr->right, &err);
@@ -554,14 +557,14 @@ int breadth_firstTraversal(SplayTreeNode *sptRoot, vdsUserDataFunc callback)
     return 0;
 }
 
-void eulerTraversal(SplayTreeNode *sptNode, vdsUserDataFunc callback)
+void eulerTraversal(SplayTreeNode *sptNode, vdsTraverseFunc callback)
 {
     if (sptNode) {
-        callback((void *)&sptNode->item);
+        if (!callback((void *)&sptNode->item)) return;
 
         eulerTraversal(sptNode->left, callback);
-        callback((void *)&sptNode->item);
+        if (!callback((void *)&sptNode->item)) return;
         eulerTraversal(sptNode->right, callback);
-        callback((void *)&sptNode->item);
+        if (!callback((void *)&sptNode->item)) return;
     }
 }

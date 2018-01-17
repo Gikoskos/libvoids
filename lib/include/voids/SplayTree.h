@@ -20,7 +20,7 @@ extern "C" {
 
 
 typedef struct _SplayTreeNode {
-    KeyValuePair item;
+    KVPair item;
     struct _SplayTreeNode *left, *right, *parent;
 } SplayTreeNode;
 
@@ -38,13 +38,13 @@ VOIDS_API SplayTreeNode *SplayTree_insert(SplayTree *spt,
                                           void *pKey,
                                           vdsErrCode *err);
 
-VOIDS_API KeyValuePair SplayTree_deleteNode(SplayTree *spt,
-                                            SplayTreeNode *sptToDelete,
-                                            vdsErrCode *err);
+VOIDS_API KVPair SplayTree_deleteNode(SplayTree *spt,
+                                      SplayTreeNode *sptToDelete,
+                                      vdsErrCode *err);
 
-VOIDS_API KeyValuePair SplayTree_deleteByKey(SplayTree *spt,
-                                             void *pKey,
-                                             vdsErrCode *err);
+VOIDS_API void *SplayTree_deleteByKey(SplayTree *spt,
+                                      void *pKey,
+                                      vdsErrCode *err);
 
 VOIDS_API SplayTreeNode *SplayTree_findNode(SplayTree *spt,
                                             void *pKey,
@@ -56,7 +56,7 @@ VOIDS_API void *SplayTree_findData(SplayTree *spt,
 
 VOIDS_API void SplayTree_traverse(SplayTree *spt,
                                   vdsTreeTraversal traversal,
-                                  vdsUserDataFunc callback,
+                                  vdsTraverseFunc callback,
                                   vdsErrCode *err);
 
 VOIDS_API void SplayTree_destroy(SplayTree **spt,

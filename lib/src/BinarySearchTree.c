@@ -14,11 +14,11 @@
 #define isLeafNode(x) ( !((x)->right || (x)->left) )
 #define isLeftNode(x) ( (x) == (x)->parent->left )
 
-static void pre_orderTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback);
-static void in_orderTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback);
-static void post_orderTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback);
-static int breadth_firstTraversal(BSTreeNode *bstRoot, vdsUserDataFunc callback);
-static void eulerTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback);
+static void pre_orderTraversal(BSTreeNode *bstNode, vdsTraverseFunc callback);
+static void in_orderTraversal(BSTreeNode *bstNode, vdsTraverseFunc callback);
+static void post_orderTraversal(BSTreeNode *bstNode, vdsTraverseFunc callback);
+static int breadth_firstTraversal(BSTreeNode *bstRoot, vdsTraverseFunc callback);
+static void eulerTraversal(BSTreeNode *bstNode, vdsTraverseFunc callback);
 
 
 
@@ -114,19 +114,19 @@ BSTreeNode *BSTree_insert(BSTree *bst,
     return new_node;
 }
 
-KeyValuePair BSTree_deleteNode(BSTree *bst,
-                               BSTreeNode *bstToDelete,
-                               vdsErrCode *err)
+KVPair BSTree_deleteNode(BSTree *bst,
+                         BSTreeNode *bstToDelete,
+                         vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    KeyValuePair item = { 0 };
+    KVPair item = { 0 };
 
     if (bst && bst->root && bstToDelete) {
 
         //if the node we want to delete has two children nodes
         //we switch it with its inorder successor from the right subtree
         if (bstToDelete->right && bstToDelete->left) {
-            KeyValuePair swapped_item;
+            KVPair swapped_item;
             BSTreeNode *bstSuccessor = bstToDelete->right;
 
             while (bstSuccessor->left)
@@ -183,17 +183,19 @@ KeyValuePair BSTree_deleteNode(BSTree *bst,
     return item;
 }
 
-KeyValuePair BSTree_deleteByKey(BSTree *bst,
-                                void *pKey,
-                                vdsErrCode *err)
+void *BSTree_deleteByKey(BSTree *bst,
+                         void *pKey,
+                         vdsErrCode *err)
 {
     BSTreeNode *to_delete = BSTree_findNode(bst, pKey, err);
+    void *deleted = NULL;
 
     if (to_delete) {
-        return BSTree_deleteNode(bst, to_delete, err);
+        KVPair tmp = BSTree_deleteNode(bst, to_delete, err);
+        deleted = tmp.pData;
     }
 
-    return (KeyValuePair){NULL, NULL};
+    return deleted;
 }
 
 BSTreeNode *BSTree_findNode(BSTree *bst,
@@ -260,7 +262,7 @@ void *BSTree_findData(BSTree *bst,
 
 void BSTree_traverse(BSTree *bst,
                      vdsTreeTraversal traversal,
-                     vdsUserDataFunc callback,
+                     vdsTraverseFunc callback,
                      vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
@@ -353,34 +355,34 @@ void BSTree_destroy(BSTree **bst,
 
 #include "FIFOqueue.h"
 
-void pre_orderTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback)
+void pre_orderTraversal(BSTreeNode *bstNode, vdsTraverseFunc callback)
 {
     if (bstNode) {
-        callback((void *)&bstNode->item);
+        if (!callback((void *)&bstNode->item)) return;
         pre_orderTraversal(bstNode->left, callback);
         pre_orderTraversal(bstNode->right, callback);
     }
 }
 
-void in_orderTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback)
+void in_orderTraversal(BSTreeNode *bstNode, vdsTraverseFunc callback)
 {
     if (bstNode) {
         in_orderTraversal(bstNode->left, callback);
-        callback((void *)&bstNode->item);
+        if (!callback((void *)&bstNode->item)) return;
         in_orderTraversal(bstNode->right, callback);
     }
 }
 
-void post_orderTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback)
+void post_orderTraversal(BSTreeNode *bstNode, vdsTraverseFunc callback)
 {
     if (bstNode) {
         post_orderTraversal(bstNode->left, callback);
         post_orderTraversal(bstNode->right, callback);
-        callback((void *)&bstNode->item);
+        if (!callback((void *)&bstNode->item)) return;
     }
 }
 
-int breadth_firstTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback)
+int breadth_firstTraversal(BSTreeNode *bstNode, vdsTraverseFunc callback)
 {
     vdsErrCode err;
     BSTreeNode *curr;
@@ -394,7 +396,7 @@ int breadth_firstTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback)
             while (levelFIFO->total_nodes) {
                 curr = (BSTreeNode *)FIFO_dequeue(levelFIFO, NULL);
 
-                callback((void *)&curr->item);
+                if (!callback((void *)&curr->item)) break;
 
                 if (curr->right) {
                     FIFO_enqueue(levelFIFO, curr->right, &err);
@@ -422,14 +424,14 @@ int breadth_firstTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback)
     return 0;
 }
 
-void eulerTraversal(BSTreeNode *bstNode, vdsUserDataFunc callback)
+void eulerTraversal(BSTreeNode *bstNode, vdsTraverseFunc callback)
 {
     if (bstNode) {
-        callback((void *)&bstNode->item);
+        if (!callback((void *)&bstNode->item)) return;
 
         eulerTraversal(bstNode->left, callback);
-        callback((void *)&bstNode->item);
+        if (!callback((void *)&bstNode->item)) return;
         eulerTraversal(bstNode->right, callback);
-        callback((void *)&bstNode->item);
+        if (!callback((void *)&bstNode->item)) return;
     }
 }

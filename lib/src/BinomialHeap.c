@@ -333,11 +333,11 @@ BinomialTree *make_children_forest(BinomialTree *root)
     return list_head;
 }
 
-KeyValuePair BinomialHeap_pop(BinomialHeap *binheap,
-                              vdsErrCode *err)
+KVPair BinomialHeap_pop(BinomialHeap *binheap,
+                        vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    KeyValuePair popped = { 0 };
+    KVPair popped = { 0 };
 
     if (binheap && binheap->forest) {
 
@@ -413,11 +413,11 @@ KeyValuePair BinomialHeap_pop(BinomialHeap *binheap,
     return popped;
 }
 
-KeyValuePair BinomialHeap_getTop(BinomialHeap *binheap,
-                                 vdsErrCode *err)
+KVPair BinomialHeap_getTop(BinomialHeap *binheap,
+                           vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    KeyValuePair top = { 0 };
+    KVPair top = { 0 };
 
     if (binheap && binheap->forest) {
 
@@ -468,7 +468,7 @@ void *BinomialHeap_replaceKey(BinomialHeap *binheap,
 
             if (binheap->KeyCmp(pNewKey, tree->item.pKey) > 0) {
 
-                KeyValuePair tmp;
+                KVPair tmp;
                 BinomialTree *curr = tree->parent;
 
                 pOldKey = tree->item.pKey;
@@ -495,7 +495,7 @@ void *BinomialHeap_replaceKey(BinomialHeap *binheap,
 
             if (binheap->KeyCmp(pNewKey, tree->item.pKey) < 0) {
 
-                KeyValuePair tmp;
+                KVPair tmp;
                 BinomialTree *curr = tree->parent;
 
                 pOldKey = tree->item.pKey;

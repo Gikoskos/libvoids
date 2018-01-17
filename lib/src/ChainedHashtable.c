@@ -3,7 +3,7 @@
  *
  * This file is part of libvoids which is licensed under the 2-Clause BSD License
  *
- * Copyright (c) 2015, 2016, 2017 George Koskeridis <georgekoskerid@outlook.com>
+ * Copyright (c) 2015-2018 George Koskeridis <georgekoskerid@outlook.com>
  * All rights reserved.
   ***********************************************************************************/
 
@@ -69,53 +69,56 @@ AListNode *ChainedHash_insert(ChainedHashtable *table,
                               size_t key_size,
                               vdsErrCode *err)
 {
-    vdsErrCode tmp_err = VDS_SUCCESS;
-    AListNode *new_node = NULL;
+    if (table && pKey && key_size) {
+        return AList_insert(&table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pData, pKey, table->KeyCmp, err);
+    }
 
-    if (table && pKey && key_size)
-        new_node = AList_insert(&table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pData, pKey, table->KeyCmp, &tmp_err);
-    else
-        tmp_err = VDS_INVALID_ARGS;
+    SAVE_ERR(err, VDS_INVALID_ARGS);
 
-    SAVE_ERR(err, tmp_err);
-
-    return new_node;
+    return NULL;
 }
 
-KeyValuePair ChainedHash_delete(ChainedHashtable *table,
-                                void *pKey,
-                                size_t key_size,
-                                vdsErrCode *err)
+void *ChainedHash_delete(ChainedHashtable *table,
+                         void *pKey,
+                         size_t key_size,
+                         vdsErrCode *err)
 {
-    vdsErrCode tmp_err = VDS_SUCCESS;
-    KeyValuePair item = { 0 };
+    if (table && pKey && key_size) {
+        return AList_delete(&table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pKey, table->KeyCmp, err);
+    }
 
-    if (table && pKey && key_size)
-        item = AList_deleteByKey(&table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pKey, table->KeyCmp, &tmp_err);
-    else
-        tmp_err = VDS_INVALID_ARGS;
+    SAVE_ERR(err, VDS_INVALID_ARGS);
 
-    SAVE_ERR(err, tmp_err);
-
-    return item;
+    return NULL;
 }
 
-KeyValuePair *ChainedHash_find(ChainedHashtable *table,
-                               void *pKey,
-                               size_t key_size,
-                               vdsErrCode *err)
+void *ChainedHash_find(ChainedHashtable *table,
+                       void *pKey,
+                       size_t key_size,
+                       vdsErrCode *err)
 {
-    vdsErrCode tmp_err = VDS_SUCCESS;
-    KeyValuePair *to_find = NULL;
+    if (table && pKey && key_size) {
+        return AList_find(table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pKey, table->KeyCmp, err);
+    }
 
-    if (table && pKey && key_size)
-        to_find = AList_findByKey(table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pKey, table->KeyCmp, &tmp_err);
-    else
-        tmp_err = VDS_INVALID_ARGS;
+    SAVE_ERR(err, VDS_INVALID_ARGS);
 
-    SAVE_ERR(err, tmp_err);
+    return NULL;
+}
 
-    return to_find;
+void *ChainedHash_replace(ChainedHashtable *table,
+                          void *pNewData,
+                          void *pKey,
+                          size_t key_size,
+                          vdsErrCode *err)
+{
+    if (table && pKey && key_size) {
+        return AList_replace(table->chains[ table->Hash(HashCode(pKey, key_size), table->size) ], pNewData, pKey, table->KeyCmp, err);
+    }
+
+    SAVE_ERR(err, VDS_INVALID_ARGS);
+
+    return NULL;
 }
 
 void ChainedHash_destroy(ChainedHashtable **table,

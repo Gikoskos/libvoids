@@ -61,7 +61,7 @@ VOIDS_API SLListNode *SLList_find(SLListNode *sllHead,
                                   vdsErrCode *err);
 
 VOIDS_API void SLList_traverse(SLListNode *sllHead,
-                               vdsUserDataFunc handleData,
+                               vdsTraverseFunc handleData,
                                vdsErrCode *err);
 
 VOIDS_API void SLList_destroy(SLListNode **sllHead,

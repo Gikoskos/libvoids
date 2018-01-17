@@ -20,7 +20,7 @@ extern "C" {
 
 
 typedef struct _BSTreeNode {
-    KeyValuePair item;
+    KVPair item;
     struct _BSTreeNode *left, *right, *parent;
 } BSTreeNode;
 
@@ -38,13 +38,13 @@ VOIDS_API BSTreeNode *BSTree_insert(BSTree *bst,
                                     void *pKey,
                                     vdsErrCode *err);
 
-VOIDS_API KeyValuePair BSTree_deleteNode(BSTree *bst,
-                                         BSTreeNode *bstToDelete,
-                                         vdsErrCode *err);
+VOIDS_API KVPair BSTree_deleteNode(BSTree *bst,
+                                   BSTreeNode *bstToDelete,
+                                   vdsErrCode *err);
 
-VOIDS_API KeyValuePair BSTree_deleteByKey(BSTree *bst,
-                                          void *pKey,
-                                          vdsErrCode *err);
+VOIDS_API void *BSTree_deleteByKey(BSTree *bst,
+                                   void *pKey,
+                                   vdsErrCode *err);
 
 VOIDS_API BSTreeNode *BSTree_findNode(BSTree *bst,
                                       void *pKey,
@@ -56,7 +56,7 @@ VOIDS_API void *BSTree_findData(BSTree *bst,
 
 VOIDS_API void BSTree_traverse(BSTree *bst,
                                vdsTreeTraversal traversal,
-                               vdsUserDataFunc callback,
+                               vdsTraverseFunc callback,
                                vdsErrCode *err);
 
 VOIDS_API void BSTree_destroy(BSTree **bst,

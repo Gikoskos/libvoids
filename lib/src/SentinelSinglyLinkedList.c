@@ -253,15 +253,16 @@ SLListNode *SSLList_find(SSLList *ssllList,
 }
 
 void SSLList_traverse(SSLList *ssllList,
-                      vdsUserDataFunc handleData,
+                      vdsTraverseFunc handleData,
                       vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
 
-    if (ssllList && handleData && (ssllList->head != ssllList->sentinel))
-        for (SLListNode *curr = ssllList->head; curr != ssllList->sentinel; curr = curr->nxt)
-            handleData(curr->pData);
-    else
+    if (ssllList && handleData && (ssllList->head != ssllList->sentinel)) {
+        for (SLListNode *curr = ssllList->head;
+             (curr != ssllList->sentinel) && handleData(curr->pData);
+             curr = curr->nxt);
+    } else
         tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);

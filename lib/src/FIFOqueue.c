@@ -126,15 +126,14 @@ void FIFO_destroy(FIFOqueue **queue,
 }
 
 void FIFO_traverse(FIFOqueue *queue,
-                   vdsUserDataFunc handleData,
+                   vdsTraverseFunc handleData,
                    vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
 
-    if (queue && handleData)
-        for (FIFOnode *curr = queue->head; curr; curr = curr->next)
-            handleData(curr->data);
-    else
+    if (queue && handleData) {
+        for (FIFOnode *curr = queue->head; curr && handleData(curr->data); curr = curr->next);
+    } else
         tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);

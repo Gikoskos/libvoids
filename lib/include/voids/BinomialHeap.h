@@ -21,7 +21,7 @@ extern "C" {
 
 
 typedef struct _BinomialTree {
-    KeyValuePair item;
+    KVPair item;
     struct _BinomialTree *child, *sibling, *parent;
     unsigned int order;
 } BinomialTree;
@@ -42,11 +42,11 @@ VOIDS_API BinomialTree *BinomialHeap_push(BinomialHeap *binheap,
                                           void *pKey,
                                           vdsErrCode *err);
 
-VOIDS_API KeyValuePair BinomialHeap_pop(BinomialHeap *binheap,
-                                        vdsErrCode *err);
+VOIDS_API KVPair BinomialHeap_pop(BinomialHeap *binheap,
+                                  vdsErrCode *err);
 
-VOIDS_API KeyValuePair BinomialHeap_getTop(BinomialHeap *binheap,
-                                           vdsErrCode *err);
+VOIDS_API KVPair BinomialHeap_getTop(BinomialHeap *binheap,
+                                     vdsErrCode *err);
 
 VOIDS_API void *BinomialHeap_replaceKey(BinomialHeap *binheap,
                                         BinomialTree *tree,

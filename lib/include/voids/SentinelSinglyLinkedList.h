@@ -58,7 +58,7 @@ VOIDS_API SLListNode *SSLList_find(SSLList *ssllList,
                                    vdsErrCode *err);
 
 VOIDS_API void SSLList_traverse(SSLList *ssllList,
-                                vdsUserDataFunc handleData,
+                                vdsTraverseFunc handleData,
                                 vdsErrCode *err);
 
 VOIDS_API void SSLList_destroy(SSLList **ssllList,

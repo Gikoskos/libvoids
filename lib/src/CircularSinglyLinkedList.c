@@ -288,7 +288,7 @@ CSLListNode *CSLList_find(CSLListNode *csllHead,
 }
 
 void CSLList_traverse(CSLListNode *csllHead,
-                      vdsUserDataFunc handleData,
+                      vdsTraverseFunc handleData,
                       vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
@@ -297,7 +297,8 @@ void CSLList_traverse(CSLListNode *csllHead,
         CSLListNode *curr = csllHead;
 
         do {
-            handleData(curr->pData);
+            if (!handleData(curr->pData))
+                break;
             curr = curr->nxt;
         } while (curr != csllHead);
     } else

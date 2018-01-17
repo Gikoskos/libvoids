@@ -224,15 +224,14 @@ SLListNode *SLList_find(SLListNode *sllHead,
 }
 
 void SLList_traverse(SLListNode *sllHead,
-                     vdsUserDataFunc handleData,
+                     vdsTraverseFunc handleData,
                      vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
 
-    if (sllHead && handleData)
-        for (SLListNode *curr = sllHead; curr; curr = curr->nxt)
-            handleData(curr->pData);
-    else
+    if (sllHead && handleData) {
+        for (SLListNode *curr = sllHead; curr && handleData(curr->pData); curr = curr->nxt);
+    } else
         tmp_err = VDS_INVALID_ARGS;
 
     SAVE_ERR(err, tmp_err);

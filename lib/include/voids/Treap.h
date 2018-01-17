@@ -21,7 +21,7 @@ extern "C" {
 
 
 typedef struct _TreapNode {
-    KeyValuePair item;
+    KVPair item;
     struct _TreapNode *left, *right, *parent;
     int priority; //heap priority for each node. randomized on the node's creation
 } TreapNode;
@@ -44,13 +44,13 @@ VOIDS_API TreapNode *Treap_insert(Treap *treap,
                                   void *pData,
                                   vdsErrCode *err);
 
-VOIDS_API KeyValuePair Treap_deleteNode(Treap *treap,
-                                        TreapNode *treapToDelete,
-                                        vdsErrCode *err);
+VOIDS_API KVPair Treap_deleteNode(Treap *treap,
+                                  TreapNode *treapToDelete,
+                                  vdsErrCode *err);
 
-VOIDS_API KeyValuePair Treap_deleteByKey(Treap *treap,
-                                         void *pKey,
-                                         vdsErrCode *err);
+VOIDS_API void *Treap_deleteByKey(Treap *treap,
+                                  void *pKey,
+                                  vdsErrCode *err);
 
 VOIDS_API TreapNode *Treap_findNode(Treap *treap,
                                     void *pKey,
@@ -62,7 +62,7 @@ VOIDS_API void *Treap_findData(Treap *treap,
 
 VOIDS_API void Treap_traverse(Treap *treap,
                               vdsTreeTraversal traversal,
-                              vdsUserDataFunc callback,
+                              vdsTraverseFunc callback,
                               vdsErrCode *err);
 
 VOIDS_API void Treap_destroy(Treap **treap,

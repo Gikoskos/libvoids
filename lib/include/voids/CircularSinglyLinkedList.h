@@ -61,7 +61,7 @@ VOIDS_API CSLListNode *CSLList_find(CSLListNode *csllHead,
                                     vdsErrCode *err);
 
 VOIDS_API void CSLList_traverse(CSLListNode *csllHead,
-                                vdsUserDataFunc handleData,
+                                vdsTraverseFunc handleData,
                                 vdsErrCode *err);
 
 VOIDS_API void CSLList_destroy(CSLListNode **csllHead,

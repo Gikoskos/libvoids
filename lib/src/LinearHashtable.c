@@ -127,15 +127,15 @@ int rehash(LinHashtable *table, vdsUserDataFunc freeData)
     return 1;
 }
 
-KeyValuePair *LinHash_insert(LinHashtable *table,
-                             void *pData,
-                             void *pKey,
-                             size_t key_size,
-                             vdsUserDataFunc freeData,
-                             vdsErrCode *err)
+KVPair *LinHash_insert(LinHashtable *table,
+                       void *pData,
+                       void *pKey,
+                       size_t key_size,
+                       vdsUserDataFunc freeData,
+                       vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    KeyValuePair *new_item = NULL;
+    KVPair *new_item = NULL;
 
     if (table && pKey && key_size && (table->total_elements < table->size)) {
 
@@ -193,13 +193,13 @@ KeyValuePair *LinHash_insert(LinHashtable *table,
     return new_item;
 }
 
-KeyValuePair LinHash_delete(LinHashtable *table,
-                            void *pKey,
-                            size_t key_size,
-                            vdsErrCode *err)
+void *LinHash_delete(LinHashtable *table,
+                     void *pKey,
+                     size_t key_size,
+                     vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    KeyValuePair item = { 0 };
+    void *deleted = NULL;
 
     if (table && pKey && key_size) {
         size_t hash_idx = table->Hash(HashCode(pKey, key_size), table->size);
@@ -211,7 +211,7 @@ KeyValuePair LinHash_delete(LinHashtable *table,
             if (IS_OCCUPIED(table->array[tmp_idx].state) && table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
 
                 SET_DELETED(table->array[tmp_idx].state);
-                item = table->array[tmp_idx].item;
+                deleted = table->array[tmp_idx].item.pData;
 
                 table->total_elements--; //successful deletion
                 break;
@@ -227,16 +227,16 @@ KeyValuePair LinHash_delete(LinHashtable *table,
 
     SAVE_ERR(err, tmp_err);
 
-    return item;
+    return deleted;
 }
 
-KeyValuePair *LinHash_find(LinHashtable *table,
-                           void *pKey,
-                           size_t key_size,
-                           vdsErrCode *err)
+void *LinHash_find(LinHashtable *table,
+                   void *pKey,
+                   size_t key_size,
+                   vdsErrCode *err)
 {
     vdsErrCode tmp_err = VDS_SUCCESS;
-    KeyValuePair *to_find = NULL;
+    void *to_find = NULL;
 
     if (table && pKey && key_size) {
         size_t hash_idx = table->Hash(HashCode(pKey, key_size), table->size);
@@ -248,7 +248,7 @@ KeyValuePair *LinHash_find(LinHashtable *table,
             if (IS_OCCUPIED(table->array[tmp_idx].state) &&
                 !table->KeyCmp(table->array[tmp_idx].item.pKey, pKey)) {
 
-                to_find = &(table->array[tmp_idx].item);
+                to_find = table->array[tmp_idx].item.pData;
                 break;
 
             }

@@ -58,7 +58,7 @@ VOIDS_API DLListNode *SDLList_find(SDLList *sdllList,
                                    vdsErrCode *err);
 
 VOIDS_API void SDLList_traverse(SDLList *sdllList,
-                                vdsUserDataFunc handleData,
+                                vdsTraverseFunc handleData,
                                 vdsErrCode *err);
 
 VOIDS_API void SDLList_destroy(SDLList **sdllList,

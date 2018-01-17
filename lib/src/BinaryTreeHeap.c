@@ -367,7 +367,7 @@ void fix_pop_min(BTHeapNode *curr, vdsUserCompareFunc DataCmp)
 
     }
 }
-/*
+#if 0
 BTHeapNode *recur_get_last(BTHeapNode *subtree, unsigned int total_nodes)
 {
     if (total_nodes <= 4) {
@@ -399,7 +399,7 @@ BTHeapNode *recur_get_last(BTHeapNode *subtree, unsigned int total_nodes)
 
     return recur_get_last(subtree->right, total_nodes - two_to_depth);
 }
-*/
+#endif
 BTHeapNode *breadth_first_get_last(BTHeap *btheap)
 {
     vdsErrCode err;
